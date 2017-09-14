@@ -19,7 +19,7 @@ import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 public class Rule {
 
     public static final Rule NOT_FOUND = new Rule();
-    {
+    static {
         NOT_FOUND.addAction(new StatusResponse(SC_NOT_FOUND));
     }
 
