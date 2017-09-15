@@ -44,7 +44,7 @@ public class HttpClientMockBuilder extends HttpClientMock {
         return this;
     }
 
-    HttpClientMockBuilder withBody(Matcher<String> foo) {
+    public HttpClientMockBuilder withBody(Matcher<String> foo) {
         newRule.addCondition(new BodyMatcher(foo));
         return this;
     }
