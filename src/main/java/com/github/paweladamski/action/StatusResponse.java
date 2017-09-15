@@ -1,6 +1,5 @@
 package com.github.paweladamski.action;
 
-import com.github.paweladamski.action.Action;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.message.BasicHttpResponse;
@@ -14,7 +13,7 @@ public class StatusResponse implements Action {
 
     @Override
     public HttpResponse getResponse() {
-        return new BasicHttpResponse(new ProtocolVersion("http",1,1),status,"ok");
+        return new BasicHttpResponse(new ProtocolVersion("http", 1, 1), status, "ok");
 
     }
 }

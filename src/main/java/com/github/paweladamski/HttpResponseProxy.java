@@ -1,8 +1,5 @@
-
 package com.github.paweladamski;
 
-import java.io.IOException;
-import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -10,11 +7,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-
 import org.apache.http.params.HttpParams;
+
+import java.io.IOException;
+import java.util.Locale;
 
 class HttpResponseProxy implements CloseableHttpResponse {
     private final HttpResponse original;
+
     public HttpResponseProxy(HttpResponse original) {
         this.original = original;
 
@@ -124,13 +124,17 @@ class HttpResponseProxy implements CloseableHttpResponse {
         return this.original.headerIterator(name);
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public HttpParams getParams() {
         return this.original.getParams();
     }
 
-    /** @deprecated */
+    /**
+     * @deprecated
+     */
     @Deprecated
     public void setParams(HttpParams params) {
         this.original.setParams(params);

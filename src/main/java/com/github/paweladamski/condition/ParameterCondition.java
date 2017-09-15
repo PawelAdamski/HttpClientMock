@@ -21,9 +21,9 @@ public class ParameterCondition implements Condition {
 
     @Override
     public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-        String query = httpRequest.getRequestLine().getUri().replaceAll(".*\\?","");
-        List<NameValuePair> params         =URLEncodedUtils.parse(query, Charset.defaultCharset());
+        String query = httpRequest.getRequestLine().getUri().replaceAll(".*\\?", "");
+        List<NameValuePair> params = URLEncodedUtils.parse(query, Charset.defaultCharset());
         return params.stream()
-                .anyMatch(p->p.getName().equals(paramName) && value.matches(p.getValue()));
+                .anyMatch(p -> p.getName().equals(paramName) && value.matches(p.getValue()));
     }
 }

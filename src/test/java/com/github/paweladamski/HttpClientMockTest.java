@@ -1,5 +1,6 @@
 package com.github.paweladamski;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -8,6 +9,8 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.StringEntity;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -16,12 +19,12 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 
 public class HttpClientMockTest {
-
 
     @Test
     public void should_return_staus_404_when_no_rule_matches() throws IOException {
@@ -29,7 +32,6 @@ public class HttpClientMockTest {
         HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost/foo"));
         assertThat(notFound, hasStatus(404));
     }
-
 
     @Test
     public void should_use_next_rule_after_every_call() throws IOException {
@@ -46,7 +48,6 @@ public class HttpClientMockTest {
         HttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
         HttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
 
-
         assertThat(response1, hasContent("first"));
         assertThat(response2, hasContent("second"));
         assertThat(response3, hasContent("third"));
@@ -54,7 +55,6 @@ public class HttpClientMockTest {
         assertThat(response5, hasContent("third"));
 
     }
-
 
     @Test
     public void shouldUseRightMethod() throws IOException {
@@ -102,37 +102,35 @@ public class HttpClientMockTest {
         assertThat(https, hasContent("https"));
     }
 
-
     @Test
     public void should_match_right_header_value() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
         httpClientMock
-                .onGet("/mozilla") .withHeader("User-Agent","Mozilla")
+                .onGet("/mozilla").withHeader("User-Agent", "Mozilla")
                 .doReturn("mozilla");
         httpClientMock
-                .onGet("/chrome") .withHeader("User-Agent","Chrome")
+                .onGet("/chrome").withHeader("User-Agent", "Chrome")
                 .doReturn("chrome");
 
         HttpGet getMozilla = new HttpGet("http://localhost:8080/mozilla");
         HttpGet getChrome = new HttpGet("http://localhost:8080/chrome");
-        getMozilla.addHeader("User-Agent","Mozilla");
-        getChrome.addHeader("User-Agent","Chrome");
+        getMozilla.addHeader("User-Agent", "Mozilla");
+        getChrome.addHeader("User-Agent", "Chrome");
 
         assertThat(httpClientMock.execute(getMozilla), hasContent("mozilla"));
         assertThat(httpClientMock.execute(getChrome), hasContent("chrome"));
     }
-
 
     @Test
     public void should_match_right_parameter_value() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
         httpClientMock
-                .onGet("/foo").withParameter("id","1").withParameter("name","abc")
+                .onGet("/foo").withParameter("id", "1").withParameter("name", "abc")
                 .doReturn("one");
         httpClientMock
-                .onGet("/foo").withParameter("id","2")
+                .onGet("/foo").withParameter("id", "2")
                 .doReturn("two");
 
         HttpResponse one = httpClientMock.execute(new HttpGet("http://localhost:8080/foo?id=1&name=abc"));
@@ -185,6 +183,28 @@ public class HttpClientMockTest {
 
     }
 
+    @Test
+    public void checkBody() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+
+        httpClientMock.onPost("/login")
+                .doReturnStatus(500);
+        httpClientMock.onPost("/login").withBody(containsString("foo"))
+                .doReturnStatus(200);
+
+        HttpResponse badLogin = httpClientMock.execute(new HttpPost("http://localhost:8080/login"));
+        HttpResponse correctLogin = httpClientMock.execute(httpPost("http://localhost:8080/login", "foo"));
+
+        assertThat(correctLogin, hasStatus(200));
+        assertThat(badLogin, hasStatus(500));
+    }
+
+    private HttpUriRequest httpPost(String host, String content) throws UnsupportedEncodingException {
+        HttpPost post = new HttpPost(host);
+        HttpEntity entity = new StringEntity(content);
+        post.setEntity(entity);
+        return post;
+    }
 
     private Matcher<? super HttpResponse> hasContent(final String content) {
         return new BaseMatcher<HttpResponse>() {
@@ -213,11 +233,11 @@ public class HttpClientMockTest {
         };
     }
 
-    private  Matcher<? super HttpResponse> hasStatus(int expectedStatus) {
+    private Matcher<? super HttpResponse> hasStatus(int expectedStatus) {
         return new BaseMatcher<HttpResponse>() {
             public boolean matches(Object o) {
-                    HttpResponse response = (HttpResponse) o;
-                return response.getStatusLine().getStatusCode()==expectedStatus;
+                HttpResponse response = (HttpResponse) o;
+                return response.getStatusLine().getStatusCode() == expectedStatus;
             }
 
             public void describeTo(Description description) {

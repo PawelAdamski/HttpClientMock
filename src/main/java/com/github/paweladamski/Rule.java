@@ -19,13 +19,13 @@ import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 public class Rule {
 
     public static final Rule NOT_FOUND = new Rule();
+
     static {
         NOT_FOUND.addAction(new StatusResponse(SC_NOT_FOUND));
     }
 
     Queue<Action> actions = new LinkedList<>();
     List<Condition> conditions = new ArrayList<>();
-
 
     void addAction(Action o) {
         actions.add(o);
@@ -37,12 +37,12 @@ public class Rule {
 
     boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
         return conditions.stream()
-                .allMatch(c->c.matches(httpHost,httpRequest,httpContext));
+                .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
     }
 
-    HttpResponse nextResponse() throws IOException{
+    HttpResponse nextResponse() throws IOException {
         Action action;
-        if (actions.size()>1) {
+        if (actions.size() > 1) {
             action = actions.poll();
         } else {
             action = actions.peek();

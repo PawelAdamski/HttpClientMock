@@ -3,8 +3,10 @@ package com.github.paweladamski;
 import com.github.paweladamski.action.ExceptionAction;
 import com.github.paweladamski.action.StatusResponse;
 import com.github.paweladamski.action.StringResponse;
+import com.github.paweladamski.condition.BodyMatcher;
 import com.github.paweladamski.condition.HeaderCondition;
 import com.github.paweladamski.condition.ParameterCondition;
+import org.hamcrest.Matcher;
 
 import java.io.IOException;
 
@@ -28,12 +30,10 @@ public class HttpClientMockBuilder extends HttpClientMock {
         return this;
     }
 
-
-    public HttpClientMockBuilder doReturn(String response){
+    public HttpClientMockBuilder doReturn(String response) {
         newRule.addAction(new StringResponse(response));
         return this;
     }
-
 
     public void doReturnStatus(int statusCode) {
         newRule.addAction(new StatusResponse(statusCode));
@@ -41,6 +41,11 @@ public class HttpClientMockBuilder extends HttpClientMock {
 
     public HttpClientMockBuilder doThrowException(IOException e) {
         newRule.addAction(new ExceptionAction(e));
+        return this;
+    }
+
+    HttpClientMockBuilder withBody(Matcher<String> foo) {
+        newRule.addCondition(new BodyMatcher(foo));
         return this;
     }
 }

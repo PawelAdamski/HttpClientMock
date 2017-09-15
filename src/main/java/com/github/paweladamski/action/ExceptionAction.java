@@ -4,7 +4,6 @@ import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 
-
 public class ExceptionAction implements Action {
     private final IOException exception;
 
@@ -13,7 +12,7 @@ public class ExceptionAction implements Action {
     }
 
     @Override
-    public HttpResponse getResponse() throws IOException{
+    public HttpResponse getResponse() throws IOException {
         throw exception;
     }
 }
