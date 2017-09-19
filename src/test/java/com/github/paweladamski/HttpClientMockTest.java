@@ -1,6 +1,5 @@
 package com.github.paweladamski;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -9,8 +8,6 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.StringEntity;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -19,8 +16,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 
+import static com.github.paweladamski.Request.httpPost;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
@@ -197,13 +194,6 @@ public class HttpClientMockTest {
 
         assertThat(correctLogin, hasStatus(200));
         assertThat(badLogin, hasStatus(500));
-    }
-
-    private HttpUriRequest httpPost(String host, String content) throws UnsupportedEncodingException {
-        HttpPost post = new HttpPost(host);
-        HttpEntity entity = new StringEntity(content);
-        post.setEntity(entity);
-        return post;
     }
 
     private Matcher<? super HttpResponse> hasContent(final String content) {
