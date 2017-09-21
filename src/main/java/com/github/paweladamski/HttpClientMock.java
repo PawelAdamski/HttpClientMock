@@ -69,12 +69,13 @@ public class HttpClientMock extends CloseableHttpClient {
 
     @Override
     protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
-        requests.add(new Request(httpHost, httpRequest, httpContext));
+        Request request = new Request(httpHost, httpRequest, httpContext);
+        requests.add(request);
         Rule rule = rules.stream()
                 .filter(r -> r.matches(httpHost, httpRequest, httpContext))
                 .reduce((a, b) -> b)
                 .orElse(NOT_FOUND);
-        HttpResponse response = rule.nextResponse();
+        HttpResponse response = rule.nextResponse(request);
         return new HttpResponseProxy(response);
     }
 

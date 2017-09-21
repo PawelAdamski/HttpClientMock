@@ -1,5 +1,6 @@
 package com.github.paweladamski.action;
 
+import com.github.paweladamski.Request;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.StringEntity;
@@ -16,7 +17,7 @@ public class StringResponse implements Action {
     }
 
     @Override
-    public HttpResponse getResponse() {
+    public HttpResponse getResponse(Request request) {
         BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), 200, "ok");
         try {
             response.setEntity(new StringEntity(this.response));

@@ -1,5 +1,6 @@
 package com.github.paweladamski;
 
+import com.github.paweladamski.action.Action;
 import com.github.paweladamski.action.ExceptionAction;
 import com.github.paweladamski.action.StatusResponse;
 import com.github.paweladamski.action.StringResponse;
@@ -27,6 +28,11 @@ public class HttpClientMockBuilder extends HttpClientMock {
 
     public HttpClientMockBuilder withParameter(String parameter, String value) {
         newRule.addCondition(new ParameterCondition(parameter, equalTo(value)));
+        return this;
+    }
+
+    public HttpClientMockBuilder doAction(Action action) {
+        newRule.addAction(action);
         return this;
     }
 

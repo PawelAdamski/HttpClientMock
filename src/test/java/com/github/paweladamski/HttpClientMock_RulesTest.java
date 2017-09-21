@@ -8,50 +8,17 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import static com.github.paweladamski.Requests.httpPost;
+import static com.github.paweladamski.matchers.HttpResponseMatchers.hasContent;
+import static com.github.paweladamski.matchers.HttpResponseMatchers.hasStatus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class HttpClientMockTest {
-
-    @Test
-    public void should_return_staus_404_when_no_rule_matches() throws IOException {
-        HttpClientMock httpClientMock = new HttpClientMock();
-        HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-        assertThat(notFound, hasStatus(404));
-    }
-
-    @Test
-    public void should_use_next_rule_after_every_call() throws IOException {
-        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-
-        httpClientMock.onGet("/foo")
-                .doReturn("first")
-                .doReturn("second")
-                .doReturn("third");
-
-        HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-        HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-        HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-        HttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-        HttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-
-        assertThat(response1, hasContent("first"));
-        assertThat(response2, hasContent("second"));
-        assertThat(response3, hasContent("third"));
-        assertThat(response4, hasContent("third"));
-        assertThat(response5, hasContent("third"));
-
-    }
+public class HttpClientMock_RulesTest {
 
     @Test
     public void shouldUseRightMethod() throws IOException {
@@ -155,31 +122,6 @@ public class HttpClientMockTest {
 
     }
 
-    @Test(expected = IOException.class)
-    public void should_throw_exception_when_throwing_action_matched() throws IOException {
-        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
-        httpClientMock.onGet("/foo").doThrowException(new IOException());
-        httpClientMock.execute(new HttpGet("http://localhost:8080/foo"));
-    }
-
-    @Test
-    public void should_return_status_corresponding_to_match() throws IOException {
-        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
-
-        httpClientMock.onGet("/login").doReturnStatus(200);
-        httpClientMock.onGet("/abc").doReturnStatus(404);
-        httpClientMock.onGet("/error").doReturnStatus(500);
-
-        HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost:8080/login"));
-        HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost:8080/abc"));
-        HttpResponse error = httpClientMock.execute(new HttpGet("http://localhost:8080/error"));
-
-        assertThat(ok, hasStatus(200));
-        assertThat(notFound, hasStatus(404));
-        assertThat(error, hasStatus(500));
-
-    }
-
     @Test
     public void checkBody() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
@@ -194,46 +136,6 @@ public class HttpClientMockTest {
 
         assertThat(correctLogin, hasStatus(200));
         assertThat(badLogin, hasStatus(500));
-    }
-
-    private Matcher<? super HttpResponse> hasContent(final String content) {
-        return new BaseMatcher<HttpResponse>() {
-            public boolean matches(Object o) {
-                try {
-                    HttpResponse response = (HttpResponse) o;
-                    Reader reader = new InputStreamReader(response.getEntity().getContent());
-
-                    int intValueOfChar;
-                    String targetString = "";
-                    while ((intValueOfChar = reader.read()) != -1) {
-                        targetString += (char) intValueOfChar;
-                    }
-                    reader.close();
-
-                    return targetString.equals(content);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-
-            public void describeTo(Description description) {
-
-            }
-        };
-    }
-
-    private Matcher<? super HttpResponse> hasStatus(int expectedStatus) {
-        return new BaseMatcher<HttpResponse>() {
-            public boolean matches(Object o) {
-                HttpResponse response = (HttpResponse) o;
-                return response.getStatusLine().getStatusCode() == expectedStatus;
-            }
-
-            public void describeTo(Description description) {
-
-            }
-        };
     }
 
 }

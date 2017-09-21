@@ -1,5 +1,6 @@
 package com.github.paweladamski.action;
 
+import com.github.paweladamski.Request;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class ExceptionAction implements Action {
     }
 
     @Override
-    public HttpResponse getResponse() throws IOException {
+    public HttpResponse getResponse(Request request) throws IOException {
         throw exception;
     }
 }

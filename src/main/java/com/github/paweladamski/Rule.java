@@ -40,13 +40,13 @@ public class Rule {
                 .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
     }
 
-    HttpResponse nextResponse() throws IOException {
+    HttpResponse nextResponse(Request request) throws IOException {
         Action action;
         if (actions.size() > 1) {
             action = actions.poll();
         } else {
             action = actions.peek();
         }
-        return action.getResponse();
+        return action.getResponse(request);
     }
 }
