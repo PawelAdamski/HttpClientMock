@@ -8,7 +8,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 
-public class Request {
+class Requests {
 
     public static HttpUriRequest httpPost(String host, String content) throws UnsupportedEncodingException {
         HttpPost post = new HttpPost(host);

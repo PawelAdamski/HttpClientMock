@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class BodyMatcher implements Condition {
 
-    Matcher<String> matcher;
+    private final Matcher<String> matcher;
 
     public BodyMatcher(Matcher<String> matcher) {
         this.matcher = matcher;

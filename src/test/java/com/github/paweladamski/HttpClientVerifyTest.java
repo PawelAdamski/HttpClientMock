@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.github.paweladamski.Request.httpPost;
-import static com.github.paweladamski.Request.httpPut;
+import static com.github.paweladamski.Requests.httpPost;
+import static com.github.paweladamski.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 
 public class HttpClientVerifyTest {

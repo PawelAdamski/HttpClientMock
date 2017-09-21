@@ -141,9 +141,6 @@ class HttpResponseProxy implements CloseableHttpResponse {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder("HttpResponseProxy{");
-        sb.append(this.original);
-        sb.append('}');
-        return sb.toString();
+        return "HttpResponseProxy{" + this.original + '}';
     }
 }

@@ -21,7 +21,7 @@ public class HttpClientMock extends CloseableHttpClient {
 
     private final List<Rule> rules = new ArrayList<>();
     private final String host;
-    private final List<Call> calls = new ArrayList<>();
+    private final List<Request> requests = new ArrayList<>();
 
     public HttpClientMock() {
         this("");
@@ -69,7 +69,7 @@ public class HttpClientMock extends CloseableHttpClient {
 
     @Override
     protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
-        calls.add(new Call(httpHost, httpRequest, httpContext));
+        requests.add(new Request(httpHost, httpRequest, httpContext));
         Rule rule = rules.stream()
                 .filter(r -> r.matches(httpHost, httpRequest, httpContext))
                 .reduce((a, b) -> b)
@@ -94,6 +94,6 @@ public class HttpClientMock extends CloseableHttpClient {
     }
 
     public HttpClientVerifyBuilder verify() {
-        return new HttpClientVerifyBuilder(host, calls);
+        return new HttpClientVerifyBuilder(host, requests);
     }
 }

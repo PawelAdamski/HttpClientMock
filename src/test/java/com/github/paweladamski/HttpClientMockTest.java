@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import static com.github.paweladamski.Request.httpPost;
+import static com.github.paweladamski.Requests.httpPost;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 

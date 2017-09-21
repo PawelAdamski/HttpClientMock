@@ -11,12 +11,12 @@ import java.util.List;
 
 public class HttpClientVerifyBuilder {
 
-    List<Condition> conditions = new ArrayList<>();
-    List<Call> calls;
+    private final List<Condition> conditions = new ArrayList<>();
+    private final List<Request> requests;
     private final String host;
 
-    public HttpClientVerifyBuilder(String host, List<Call> calls) {
-        this.calls = calls;
+    public HttpClientVerifyBuilder(String host, List<Request> requests) {
+        this.requests = requests;
         this.host = host;
     }
 
@@ -57,15 +57,15 @@ public class HttpClientVerifyBuilder {
 
     public void called(int numberOfCalls) {
         int matchingCalls = 0;
-        for (Call call : calls) {
+        for (Request request : requests) {
             boolean matches = conditions.stream()
-                    .allMatch(condition -> condition.matches(call));
+                    .allMatch(condition -> condition.matches(request));
             if (matches) {
                 matchingCalls++;
             }
         }
         if (matchingCalls != numberOfCalls) {
-            throw new IllegalStateException("Expected different number of calls.");
+            throw new IllegalStateException("Expected different number of requests.");
         }
     }
 }

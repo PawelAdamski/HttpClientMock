@@ -6,7 +6,7 @@ import org.apache.http.protocol.HttpContext;
 
 public class HttpMethodCondition implements Condition {
 
-    private String method;
+    private final String method;
 
     public HttpMethodCondition(String method) {
         this.method = method;

@@ -4,7 +4,7 @@
 
     <groupId>com.github.paweladamski</groupId>
     <artifactId>HttpClientMock</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.3</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -74,7 +74,7 @@
                 <configuration>
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
             <plugin>

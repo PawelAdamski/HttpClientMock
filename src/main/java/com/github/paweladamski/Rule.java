@@ -24,8 +24,8 @@ public class Rule {
         NOT_FOUND.addAction(new StatusResponse(SC_NOT_FOUND));
     }
 
-    Queue<Action> actions = new LinkedList<>();
-    List<Condition> conditions = new ArrayList<>();
+    private final Queue<Action> actions = new LinkedList<>();
+    private final List<Condition> conditions = new ArrayList<>();
 
     void addAction(Action o) {
         actions.add(o);

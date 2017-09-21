@@ -8,7 +8,7 @@ import org.apache.http.message.BasicHttpResponse;
 import java.io.UnsupportedEncodingException;
 
 public class StatusResponse implements Action {
-    int status;
+    private final int status;
 
     public StatusResponse(int status) {
         this.status = status;

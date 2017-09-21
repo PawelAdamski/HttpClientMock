@@ -8,7 +8,8 @@ import org.apache.http.message.BasicHttpResponse;
 import java.io.UnsupportedEncodingException;
 
 public class StringResponse implements Action {
-    String response;
+
+    private final String response;
 
     public StringResponse(String response) {
         this.response = response;

@@ -4,13 +4,13 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
 
-public class Call {
+public class Request {
 
-    HttpHost httpHost;
-    HttpRequest httpRequest;
-    HttpContext httpContext;
+    private final HttpHost httpHost;
+    private final HttpRequest httpRequest;
+    private final HttpContext httpContext;
 
-    public Call(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
+    public Request(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
 
         this.httpHost = httpHost;
         this.httpRequest = httpRequest;
