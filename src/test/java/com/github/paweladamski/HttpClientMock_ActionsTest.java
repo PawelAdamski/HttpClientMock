@@ -10,6 +10,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.matchers.HttpResponseMatchers.hasContent;
@@ -46,6 +47,24 @@ public class HttpClientMock_ActionsTest {
         assertThat(response4, hasContent("third"));
         assertThat(response5, hasContent("third"));
 
+    }
+
+    @Test
+    public void should_support_response_in_different_charsets() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onGet("/foo")
+                .doReturn("first")
+                .doReturn("second", Charset.forName("UTF-16"))
+                .doReturn("third", Charset.forName("ASCII"));
+
+        HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+
+        assertThat(response1, hasContent("first", "UTF-8"));
+        assertThat(response2, hasContent("second", "UTF-16"));
+        assertThat(response3, hasContent("third", "ASCII"));
     }
 
     @Test(expected = IOException.class)

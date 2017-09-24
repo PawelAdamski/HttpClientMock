@@ -1,5 +1,8 @@
 package com.github.paweladamski;
 
+import com.github.paweladamski.condition.Condition;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -8,6 +11,7 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -47,6 +51,26 @@ public class HttpClientMock_RulesTest {
         assertThat(headResponse, hasContent("head"));
         assertThat(optionsResponse, hasContent("options"));
         assertThat(patchResponse, hasContent("patch"));
+    }
+
+    @Test
+    public void should_check_custom_rule() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        Condition myCondition = new Condition() {
+            @Override
+            public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
+                return httpRequest.getRequestLine().getUri().contains("foo");
+            }
+        };
+
+        httpClientMock.onGet("/foo/bar")
+                .with(myCondition)
+                .doReturn("yes");
+
+        HttpResponse first = httpClientMock.execute(new HttpGet("http://localhost/foo/bar"));
+
+        assertThat(first, hasContent("yes"));
     }
 
     @Test

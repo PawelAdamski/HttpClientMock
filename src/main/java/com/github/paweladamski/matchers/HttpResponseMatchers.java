@@ -25,11 +25,15 @@ public class HttpResponseMatchers {
     }
 
     public static Matcher<? super HttpResponse> hasContent(final String content) {
+        return hasContent(content, "UTF-8");
+    }
+
+    public static Matcher<? super HttpResponse> hasContent(final String content, final String charset) {
         return new BaseMatcher<HttpResponse>() {
             public boolean matches(Object o) {
                 try {
                     HttpResponse response = (HttpResponse) o;
-                    Reader reader = new InputStreamReader(response.getEntity().getContent());
+                    Reader reader = new InputStreamReader(response.getEntity().getContent(), charset);
 
                     int intValueOfChar;
                     String targetString = "";

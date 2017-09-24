@@ -6,25 +6,22 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 public class StringResponse implements Action {
 
     private final String response;
+    private final Charset charset;
 
-    public StringResponse(String response) {
+    public StringResponse(String response, Charset charset) {
         this.response = response;
+        this.charset = charset;
     }
 
     @Override
     public HttpResponse getResponse(Request request) {
         BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), 200, "ok");
-        try {
-            response.setEntity(new StringEntity(this.response));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        response.setEntity(new StringEntity(this.response, this.charset));
         return response;
     }
 }

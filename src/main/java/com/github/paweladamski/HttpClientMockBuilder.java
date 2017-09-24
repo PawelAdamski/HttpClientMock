@@ -5,11 +5,13 @@ import com.github.paweladamski.action.ExceptionAction;
 import com.github.paweladamski.action.StatusResponse;
 import com.github.paweladamski.action.StringResponse;
 import com.github.paweladamski.condition.BodyMatcher;
+import com.github.paweladamski.condition.Condition;
 import com.github.paweladamski.condition.HeaderCondition;
 import com.github.paweladamski.condition.ParameterCondition;
 import org.hamcrest.Matcher;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.equalTo;
 
@@ -31,13 +33,28 @@ public class HttpClientMockBuilder extends HttpClientMock {
         return this;
     }
 
+    public HttpClientMockBuilder with(Condition condition) {
+        newRule.addCondition(condition);
+        return this;
+    }
+
+    @Override
+    public HttpClientMockBuilder onDelete(String url) {
+        return super.onDelete(url);
+    }
+
     public HttpClientMockBuilder doAction(Action action) {
         newRule.addAction(action);
         return this;
     }
 
     public HttpClientMockBuilder doReturn(String response) {
-        newRule.addAction(new StringResponse(response));
+        newRule.addAction(new StringResponse(response, Charset.forName("UTF-8")));
+        return this;
+    }
+
+    public HttpClientMockBuilder doReturn(String response, Charset charset) {
+        newRule.addAction(new StringResponse(response, charset));
         return this;
     }
 
