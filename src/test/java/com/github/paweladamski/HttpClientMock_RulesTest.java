@@ -162,6 +162,26 @@ public class HttpClientMock_RulesTest {
         assertThat(badLogin, hasStatus(500));
     }
 
+    @Test
+    public void when_url_contains_parameter_it_should_be_added_us_a_separate_condition() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login?user=john")
+                .doReturnStatus(400);
+        httpClientMock.onPost("/login?user=john&pass=abc")
+                .doReturnStatus(200);
+
+        HttpResponse notFound = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login?user=john"));
+        HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login?user=john&pass=abc"));
+        HttpResponse ok_2 = httpClientMock.execute(new HttpPost("http://localhost/login?user=john&pass=abc&foo=bar"));
+
+        assertThat(notFound, hasStatus(404));
+        assertThat(wrong, hasStatus(400));
+        assertThat(ok, hasStatus(200));
+        assertThat(ok_2, hasStatus(200));
+    }
+
 }
 
 
