@@ -7,7 +7,9 @@ import com.github.paweladamski.action.StringResponse;
 import com.github.paweladamski.condition.BodyMatcher;
 import com.github.paweladamski.condition.Condition;
 import com.github.paweladamski.condition.HeaderCondition;
+import com.github.paweladamski.condition.HostCondition;
 import com.github.paweladamski.condition.ParameterCondition;
+import com.github.paweladamski.condition.ReferenceCondition;
 import org.hamcrest.Matcher;
 
 import java.io.IOException;
@@ -19,12 +21,17 @@ public class HttpClientMockBuilder extends HttpClientMock {
 
     private final Rule newRule;
 
-    public HttpClientMockBuilder(Rule rule) {
+     HttpClientMockBuilder(Rule rule) {
         this.newRule = rule;
     }
 
     public HttpClientMockBuilder withHeader(String header, String value) {
         newRule.addCondition(new HeaderCondition(header, equalTo(value)));
+        return this;
+    }
+
+    HttpClientMockBuilder withReference(String ref) {
+        newRule.addCondition(new ReferenceCondition(equalTo(ref)));
         return this;
     }
 

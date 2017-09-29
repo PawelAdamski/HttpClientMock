@@ -182,6 +182,59 @@ public class HttpClientMock_RulesTest {
         assertThat(ok_2, hasStatus(200));
     }
 
+
+    @Test
+    public void when_url_contains_reference_it_should_be_added_us_a_separate_condition() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login")
+                .doReturnStatus(400);
+        httpClientMock.onPost("/login#abc")
+                .doReturnStatus(200);
+
+        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login#abc"));
+
+        assertThat(wrong, hasStatus(400));
+        assertThat(ok, hasStatus(200));
+    }
+
+
+    @Test
+    public void should_handle_path_with_parameters_and_reference() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login?p=1#abc")
+                .doReturnStatus(200);
+
+        HttpResponse wrong1 = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        HttpResponse wrong2 = httpClientMock.execute(new HttpPost("http://localhost/login?p=1"));
+        HttpResponse wrong3 = httpClientMock.execute(new HttpPost("http://localhost/login#abc"));
+        HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login?p=1#abc"));
+
+        assertThat(wrong1, hasStatus(404));
+        assertThat(wrong2, hasStatus(404));
+        assertThat(wrong3, hasStatus(404));
+        assertThat(ok, hasStatus(200));
+    }
+
+    @Test
+    public void should_check_reference_value() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login")
+                .doReturnStatus(400);
+        httpClientMock.onPost("/login")
+                .withReference("ref")
+                .doReturnStatus(200);
+
+        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login#ref"));
+
+        assertThat(wrong, hasStatus(400));
+        assertThat(ok, hasStatus(200));
+    }
+
 }
 
 
