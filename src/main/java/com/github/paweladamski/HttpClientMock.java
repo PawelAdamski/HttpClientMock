@@ -1,9 +1,6 @@
 package com.github.paweladamski;
 
-import com.github.paweladamski.condition.HostCondition;
-import com.github.paweladamski.condition.HttpMethodCondition;
-import com.github.paweladamski.condition.ParameterCondition;
-import com.github.paweladamski.condition.ReferenceCondition;
+import com.github.paweladamski.condition.*;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -68,41 +65,12 @@ public class HttpClientMock extends CloseableHttpClient {
     }
 
     private HttpClientMockBuilder newRule(String method, String urlText) {
-
-        urlText = host+urlText;
-        try {
-            URL url = new URL(urlText);
-            int pathEnd = urlText.indexOf('?');
-            if (pathEnd==-1) {
-                pathEnd = urlText.indexOf('#');
-            }
-            String urlPath;
-            if (pathEnd!=-1) {
-                urlPath = urlText.substring(0,pathEnd);
-            }
-             else {
-                urlPath = urlText;
-            }
-
-            Rule rule = new Rule();
-            rules.add(rule);
-            rule.addCondition(new HttpMethodCondition(method));
-            rule.addCondition(new HostCondition(urlPath));
-
-            if (url.getQuery()!=null) {
-                List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
-                for (NameValuePair param:params) {
-                    rule.addCondition(new ParameterCondition(param.getName(),equalTo(param.getValue())));
-                }
-            }
-            if (url.getRef()!=null ) {
-                rule.addCondition(new ReferenceCondition(equalTo(url.getRef())));
-            }
-            return new HttpClientMockBuilder(rule);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(e);
-        }
-
+        UrlParser urlParser = new UrlParser();
+        Rule r = new Rule();
+        r.addCondition(new HttpMethodCondition(method));
+        List<Condition> urlConditions = urlParser.parse(host+urlText);
+        r.addConditions(urlConditions);
+        return new HttpClientMockBuilder(r);
     }
 
     @Override

@@ -49,4 +49,8 @@ public class Rule {
         }
         return action.getResponse(request);
     }
+
+    public void addConditions(List<Condition> newConditions) {
+        conditions.addAll(newConditions);
+    }
 }
