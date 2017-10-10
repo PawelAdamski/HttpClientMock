@@ -1,26 +1,21 @@
 package com.github.paweladamski;
 
-import com.github.paweladamski.condition.*;
+import com.github.paweladamski.condition.Condition;
+import com.github.paweladamski.condition.HttpMethodCondition;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.paweladamski.Rule.NOT_FOUND;
-import static org.hamcrest.Matchers.equalTo;
 
 public class HttpClientMock extends CloseableHttpClient {
 
@@ -68,8 +63,9 @@ public class HttpClientMock extends CloseableHttpClient {
         UrlParser urlParser = new UrlParser();
         Rule r = new Rule();
         r.addCondition(new HttpMethodCondition(method));
-        List<Condition> urlConditions = urlParser.parse(host+urlText);
+        List<Condition> urlConditions = urlParser.parse(host + urlText);
         r.addConditions(urlConditions);
+        rules.add(r);
         return new HttpClientMockBuilder(r);
     }
 
@@ -103,6 +99,5 @@ public class HttpClientMock extends CloseableHttpClient {
     public HttpClientVerifyBuilder verify() {
         return new HttpClientVerifyBuilder(host, requests);
     }
-
 
 }
