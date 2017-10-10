@@ -10,6 +10,10 @@ import java.io.UnsupportedEncodingException;
 
 class Requests {
 
+    public static HttpUriRequest httpPost(String host) throws UnsupportedEncodingException {
+        return httpPost(host,"");
+    }
+
     public static HttpUriRequest httpPost(String host, String content) throws UnsupportedEncodingException {
         HttpPost post = new HttpPost(host);
         HttpEntity entity = new StringEntity(content);

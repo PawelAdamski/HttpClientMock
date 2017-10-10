@@ -85,4 +85,53 @@ public class HttpClientVerifyTest {
                 .notCalled();
     }
 
+    @Test
+    public void should_handle_path_with_query_parameter() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock();
+
+        httpClientMock.execute(httpPost("http://localhost?a=1&b=2&c=3"));
+        httpClientMock.execute(httpPost("http://localhost?a=1&b=2"));
+        httpClientMock.execute(httpPost("http://localhost?a=1"));
+
+        httpClientMock.verify()
+                .post("http://localhost?d=3")
+                .notCalled();
+        httpClientMock.verify()
+                .post("http://localhost?a=3")
+                .notCalled();
+        httpClientMock.verify()
+                .post("http://localhost?a=1&b=2&c=3")
+                .called(1);
+        httpClientMock.verify()
+                .post("http://localhost?a=1&b=2")
+                .called(2);
+        httpClientMock.verify()
+                .post("http://localhost?a=1")
+                .called(3);
+        httpClientMock.verify()
+                .post("http://localhost")
+                .called(3);
+    }
+
+    @Test
+    public void should_handle_path_with_reference() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock();
+
+        httpClientMock.execute(httpPost("http://localhost?a=1#abc"));
+        httpClientMock.execute(httpPost("http://localhost#xyz"));
+
+        httpClientMock.verify()
+                .post("http://localhost?a=1#abc")
+                .called(1);
+        httpClientMock.verify()
+                .post("http://localhost#abc")
+                .called(1);
+        httpClientMock.verify()
+                .post("http://localhost#xyz")
+                .called(1);
+        httpClientMock.verify()
+                .post("http://localhost")
+                .called(2);
+    }
+
 }

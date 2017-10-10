@@ -22,7 +22,8 @@ public class HttpClientVerifyBuilder {
 
     private HttpClientVerifyBuilder newRule(String method, String url) {
         conditions.add(new HttpMethodCondition(method));
-        conditions.add(new HostCondition(host + url));
+        List<Condition> urlConditions = new UrlParser().parse(host+url);
+        conditions.addAll(urlConditions);
         return this;
     }
 
@@ -65,7 +66,7 @@ public class HttpClientVerifyBuilder {
             }
         }
         if (matchingCalls != numberOfCalls) {
-            throw new IllegalStateException("Expected different number of requests.");
+            throw new IllegalStateException(String.format("Expected %s calls, but found %s.",numberOfCalls,matchingCalls));
         }
     }
 }
