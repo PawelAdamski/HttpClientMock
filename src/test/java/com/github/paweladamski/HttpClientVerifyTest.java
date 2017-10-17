@@ -104,13 +104,18 @@ public class HttpClientVerifyTest {
                 .called(1);
         httpClientMock.verify()
                 .post("http://localhost?a=1&b=2")
-                .called(2);
+                .called(1);
         httpClientMock.verify()
                 .post("http://localhost?a=1")
-                .called(3);
+                .called(1);
         httpClientMock.verify()
                 .post("http://localhost")
-                .called(3);
+                .withParameter("a", "1")
+                .called(1);
+
+        httpClientMock.verify()
+                .post("http://localhost")
+                .notCalled();
     }
 
     @Test
@@ -125,13 +130,13 @@ public class HttpClientVerifyTest {
                 .called(1);
         httpClientMock.verify()
                 .post("http://localhost#abc")
-                .called(1);
+                .notCalled();
         httpClientMock.verify()
                 .post("http://localhost#xyz")
                 .called(1);
         httpClientMock.verify()
                 .post("http://localhost")
-                .called(2);
+                .notCalled();
     }
 
 }

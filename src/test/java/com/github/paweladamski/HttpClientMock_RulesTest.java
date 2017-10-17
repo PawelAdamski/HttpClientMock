@@ -174,14 +174,13 @@ public class HttpClientMock_RulesTest {
         HttpResponse notFound = httpClientMock.execute(new HttpPost("http://localhost/login"));
         HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login?user=john"));
         HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login?user=john&pass=abc"));
-        HttpResponse ok_2 = httpClientMock.execute(new HttpPost("http://localhost/login?user=john&pass=abc&foo=bar"));
+        HttpResponse notFound_2 = httpClientMock.execute(new HttpPost("http://localhost/login?user=john&pass=abc&foo=bar"));
 
         assertThat(notFound, hasStatus(404));
         assertThat(wrong, hasStatus(400));
         assertThat(ok, hasStatus(200));
-        assertThat(ok_2, hasStatus(200));
+        assertThat(notFound_2, hasStatus(404));
     }
-
 
     @Test
     public void when_url_contains_reference_it_should_be_added_us_a_separate_condition() throws IOException {
@@ -198,7 +197,6 @@ public class HttpClientMock_RulesTest {
         assertThat(wrong, hasStatus(400));
         assertThat(ok, hasStatus(200));
     }
-
 
     @Test
     public void should_handle_path_with_parameters_and_reference() throws IOException {
@@ -233,6 +231,35 @@ public class HttpClientMock_RulesTest {
 
         assertThat(wrong, hasStatus(400));
         assertThat(ok, hasStatus(200));
+    }
+
+    @Test
+    public void after_reset_every_call_should_result_in_status_404() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login").doReturnStatus(200);
+        httpClientMock.reset();
+
+        HttpResponse login = httpClientMock.execute(new HttpPost("http://localhost/login"));
+
+        assertThat(login, hasStatus(404));
+    }
+
+    @Test
+    public void after_reset_number_of_calls_should_be_zero() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login").doReturnStatus(200);
+        httpClientMock.execute(new HttpPost("http://localhost/login"));
+        httpClientMock.execute(new HttpPost("http://localhost/login"));
+        httpClientMock.reset();
+        httpClientMock.verify().post("/login").notCalled();
+
+        httpClientMock.onPost("/login").doReturnStatus(200);
+        httpClientMock.execute(new HttpPost("http://localhost/login"));
+        httpClientMock.execute(new HttpPost("http://localhost/login"));
+        httpClientMock.verify().post("/login").called(2);
+
     }
 
 }

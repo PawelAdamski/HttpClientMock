@@ -7,6 +7,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
+import org.hamcrest.Matcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
 public class Rule {
 
-    public static final Rule NOT_FOUND = new Rule();
+    public static final Rule NOT_FOUND = new Rule(new UrlConditions());
 
     static {
         NOT_FOUND.addAction(new StatusResponse(SC_NOT_FOUND));
@@ -26,6 +27,15 @@ public class Rule {
 
     private final Queue<Action> actions = new LinkedList<>();
     private final List<Condition> conditions = new ArrayList<>();
+    private final UrlConditions urlConditions;
+
+    public Rule(UrlConditions urlConditions) {
+        this.urlConditions = urlConditions;
+    }
+
+    public void addParameterCondition(String paramName, Matcher<String> matcher) {
+        urlConditions.addParameterCondition(paramName, matcher);
+    }
 
     void addAction(Action o) {
         actions.add(o);
@@ -36,7 +46,8 @@ public class Rule {
     }
 
     boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-        return conditions.stream()
+        return urlConditions.matches(httpRequest.getRequestLine().getUri())
+                && conditions.stream()
                 .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
     }
 
@@ -52,5 +63,9 @@ public class Rule {
 
     public void addConditions(List<Condition> newConditions) {
         conditions.addAll(newConditions);
+    }
+
+    void addReferenceCondition(Matcher<String> stringMatcher) {
+        urlConditions.referenceConditions = stringMatcher;
     }
 }

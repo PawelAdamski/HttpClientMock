@@ -1,51 +1,43 @@
 package com.github.paweladamski;
 
-
-import com.github.paweladamski.condition.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.hamcrest.Matchers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 public class UrlParser {
 
-    public List<Condition> parse(String urlText){
+    public static int EMPTY_PORT_NUMBER = -1;
+
+    public UrlConditions parse(String urlText) {
         try {
-            List<Condition> conditions = new ArrayList<>();
+            UrlConditions conditions = new UrlConditions();
             URL url = new URL(urlText);
-            int pathEnd = urlText.indexOf('?');
-            if (pathEnd==-1) {
-                pathEnd = urlText.indexOf('#');
+            if (url.getRef() != null) {
+                conditions.referenceConditions = equalTo(url.getRef());
+            } else {
+                conditions.referenceConditions = isEmptyOrNullString();
             }
-            String urlPath;
-            if (pathEnd!=-1) {
-                urlPath = urlText.substring(0,pathEnd);
-            }
-            else {
-                urlPath = urlText;
-            }
-
-            conditions.add(new HostCondition(urlPath));
-
-            if (url.getQuery()!=null) {
-                List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
-                for (NameValuePair param:params) {
-                    conditions.add(new ParameterCondition(param.getName(),equalTo(param.getValue())));
-                }
-            }
-            if (url.getRef()!=null ) {
-                conditions.add(new ReferenceCondition(equalTo(url.getRef())));
+            conditions.schemaConditons = Matchers.equalTo(url.getProtocol());
+            conditions.hostConditions.add(equalTo(url.getHost()));
+            conditions.portConditions.add(equalTo(url.getPort()));
+            conditions.pathConditions.add(equalTo(url.getPath()));
+            List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
+            for (NameValuePair param : params) {
+                conditions.addParameterCondition(param.getName(), equalTo(param.getValue()));
             }
             return conditions;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e);
         }
+
     }
 
 }

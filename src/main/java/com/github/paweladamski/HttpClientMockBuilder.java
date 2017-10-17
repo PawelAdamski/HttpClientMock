@@ -31,12 +31,12 @@ public class HttpClientMockBuilder extends HttpClientMock {
     }
 
     HttpClientMockBuilder withReference(String ref) {
-        newRule.addCondition(new ReferenceCondition(equalTo(ref)));
+        newRule.addReferenceCondition(equalTo(ref));
         return this;
     }
 
     public HttpClientMockBuilder withParameter(String parameter, String value) {
-        newRule.addCondition(new ParameterCondition(parameter, equalTo(value)));
+        newRule.addParameterCondition(parameter, equalTo(value));
         return this;
     }
 

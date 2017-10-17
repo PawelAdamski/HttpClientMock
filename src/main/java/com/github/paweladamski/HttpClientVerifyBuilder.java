@@ -2,15 +2,16 @@ package com.github.paweladamski;
 
 import com.github.paweladamski.condition.BodyMatcher;
 import com.github.paweladamski.condition.Condition;
-import com.github.paweladamski.condition.HostCondition;
 import com.github.paweladamski.condition.HttpMethodCondition;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HttpClientVerifyBuilder {
 
+    private UrlConditions urlConditions;
     private final List<Condition> conditions = new ArrayList<>();
     private final List<Request> requests;
     private final String host;
@@ -22,8 +23,7 @@ public class HttpClientVerifyBuilder {
 
     private HttpClientVerifyBuilder newRule(String method, String url) {
         conditions.add(new HttpMethodCondition(method));
-        List<Condition> urlConditions = new UrlParser().parse(host+url);
-        conditions.addAll(urlConditions);
+        urlConditions = new UrlParser().parse(host + url);
         return this;
     }
 
@@ -43,6 +43,11 @@ public class HttpClientVerifyBuilder {
         return newRule("DELETE", url);
     }
 
+    public HttpClientVerifyBuilder withParameter(String name, String value) {
+        urlConditions.addParameterCondition(name, Matchers.equalTo(value));
+        return this;
+    }
+
     public HttpClientVerifyBuilder withBody(Matcher<String> matcher) {
         conditions.add(new BodyMatcher(matcher));
         return this;
@@ -59,14 +64,15 @@ public class HttpClientVerifyBuilder {
     public void called(int numberOfCalls) {
         int matchingCalls = 0;
         for (Request request : requests) {
-            boolean matches = conditions.stream()
+            boolean matches = urlConditions.matches(request.getHttpRequest().getRequestLine().getUri())
+                    && conditions.stream()
                     .allMatch(condition -> condition.matches(request));
             if (matches) {
                 matchingCalls++;
             }
         }
         if (matchingCalls != numberOfCalls) {
-            throw new IllegalStateException(String.format("Expected %s calls, but found %s.",numberOfCalls,matchingCalls));
+            throw new IllegalStateException(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
         }
     }
 }

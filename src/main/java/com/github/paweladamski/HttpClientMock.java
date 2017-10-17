@@ -61,10 +61,8 @@ public class HttpClientMock extends CloseableHttpClient {
 
     private HttpClientMockBuilder newRule(String method, String urlText) {
         UrlParser urlParser = new UrlParser();
-        Rule r = new Rule();
+        Rule r = new Rule(urlParser.parse(host+urlText));
         r.addCondition(new HttpMethodCondition(method));
-        List<Condition> urlConditions = urlParser.parse(host + urlText);
-        r.addConditions(urlConditions);
         rules.add(r);
         return new HttpClientMockBuilder(r);
     }
@@ -83,7 +81,6 @@ public class HttpClientMock extends CloseableHttpClient {
 
     @Override
     public void close() throws IOException {
-
     }
 
     @Override
@@ -100,4 +97,8 @@ public class HttpClientMock extends CloseableHttpClient {
         return new HttpClientVerifyBuilder(host, requests);
     }
 
+    public void reset() {
+        this.rules.clear();
+        this.requests.clear();
+    }
 }
