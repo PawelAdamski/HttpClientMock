@@ -1,5 +1,6 @@
 package com.github.paweladamski;
 
+import com.github.paweladamski.httpclientmock.HttpClientMock;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -11,7 +12,7 @@ import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 
-public class HttpClientVerifyTest {
+public class HttpClientVerifyBuilderTest {
 
     @Test
     public void shouldCountNumberOfHttpMethodCalls() throws IOException {

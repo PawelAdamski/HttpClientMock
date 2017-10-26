@@ -1,6 +1,6 @@
-package com.github.paweladamski.condition;
+package com.github.paweladamski.httpclientmock.condition;
 
-import com.github.paweladamski.Request;
+import com.github.paweladamski.httpclientmock.Request;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;

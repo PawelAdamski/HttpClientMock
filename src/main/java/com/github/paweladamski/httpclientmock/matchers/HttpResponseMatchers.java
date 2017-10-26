@@ -1,4 +1,4 @@
-package com.github.paweladamski.matchers;
+package com.github.paweladamski.httpclientmock.matchers;
 
 import org.apache.http.HttpResponse;
 import org.hamcrest.BaseMatcher;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-public class HttpResponseMatchers {
+public final class HttpResponseMatchers {
 
     public static Matcher<? super HttpResponse> hasStatus(int expectedStatus) {
         return new BaseMatcher<HttpResponse>() {

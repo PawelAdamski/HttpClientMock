@@ -1,6 +1,6 @@
-package com.github.paweladamski.action;
+package com.github.paweladamski.httpclientmock.action;
 
-import com.github.paweladamski.Request;
+import com.github.paweladamski.httpclientmock.Request;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.StringEntity;

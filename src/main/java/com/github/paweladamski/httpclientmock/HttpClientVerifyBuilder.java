@@ -1,8 +1,8 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.condition.BodyMatcher;
-import com.github.paweladamski.condition.Condition;
-import com.github.paweladamski.condition.HttpMethodCondition;
+import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
+import com.github.paweladamski.httpclientmock.condition.Condition;
+import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
@@ -31,20 +31,20 @@ public class HttpClientVerifyBuilder {
         return newRule("POST", url);
     }
 
-    HttpClientVerifyBuilder get(String url) {
+    public HttpClientVerifyBuilder get(String url) {
         return newRule("GET", url);
     }
 
-    HttpClientVerifyBuilder put(String url) {
+    public HttpClientVerifyBuilder put(String url) {
         return newRule("PUT", url);
     }
 
-    HttpClientVerifyBuilder delete(String url) {
+    public HttpClientVerifyBuilder delete(String url) {
         return newRule("DELETE", url);
     }
 
     public HttpClientVerifyBuilder withParameter(String name, String value) {
-        urlConditions.addParameterCondition(name, Matchers.equalTo(value));
+        urlConditions.getParameterConditions().put(name, Matchers.equalTo(value));
         return this;
     }
 
@@ -53,7 +53,7 @@ public class HttpClientVerifyBuilder {
         return this;
     }
 
-    void notCalled() {
+    public void notCalled() {
         called(0);
     }
 

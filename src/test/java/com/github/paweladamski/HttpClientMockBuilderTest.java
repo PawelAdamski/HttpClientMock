@@ -1,6 +1,7 @@
 package com.github.paweladamski;
 
-import com.github.paweladamski.condition.Condition;
+import com.github.paweladamski.httpclientmock.HttpClientMock;
+import com.github.paweladamski.httpclientmock.condition.Condition;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -17,12 +18,46 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.github.paweladamski.Requests.httpPost;
-import static com.github.paweladamski.matchers.HttpResponseMatchers.hasContent;
-import static com.github.paweladamski.matchers.HttpResponseMatchers.hasStatus;
+import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
+import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class HttpClientMock_RulesTest {
+public class HttpClientMockBuilderTest {
+
+    @Test
+    public void shouldMatchSeparateHostAndPath() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock();
+
+        httpClientMock.onPost()
+                .withHost("http://localhost")
+                .withPath("/login")
+                .doReturnStatus(200);
+
+        HttpResponse ok = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        assertThat(ok, hasStatus(200));
+    }
+
+    @Test
+    public void shouldMatchSeparatePathAndParameter() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost()
+                .withPath("/login")
+                .withParameter("a", "1")
+                .doReturn("one");
+        httpClientMock.onPost()
+                .withPath("/login")
+                .withParameter("b", "2")
+                .doReturn("two");
+
+        HttpResponse one = httpClientMock.execute(new HttpPost("http://localhost/login?a=1"));
+        HttpResponse two = httpClientMock.execute(new HttpPost("http://localhost/login?b=2"));
+        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login??a=1&b=2"));
+        assertThat(one, hasContent("one"));
+        assertThat(two, hasContent("two"));
+        assertThat(wrong, hasStatus(404));
+    }
 
     @Test
     public void shouldUseRightMethod() throws IOException {
@@ -95,14 +130,14 @@ public class HttpClientMock_RulesTest {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
         httpClientMock
-                .onGet("/mozilla").withHeader("User-Agent", "Mozilla")
+                .onGet("/login").withHeader("User-Agent", "Mozilla")
                 .doReturn("mozilla");
         httpClientMock
-                .onGet("/chrome").withHeader("User-Agent", "Chrome")
+                .onGet("/login").withHeader("User-Agent", "Chrome")
                 .doReturn("chrome");
 
-        HttpGet getMozilla = new HttpGet("http://localhost:8080/mozilla");
-        HttpGet getChrome = new HttpGet("http://localhost:8080/chrome");
+        HttpGet getMozilla = new HttpGet("http://localhost:8080/login");
+        HttpGet getChrome = new HttpGet("http://localhost:8080/login");
         getMozilla.addHeader("User-Agent", "Mozilla");
         getChrome.addHeader("User-Agent", "Chrome");
 

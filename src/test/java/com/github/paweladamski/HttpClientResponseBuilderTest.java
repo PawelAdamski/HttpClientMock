@@ -1,6 +1,7 @@
 package com.github.paweladamski;
 
-import com.github.paweladamski.action.Action;
+import com.github.paweladamski.httpclientmock.HttpClientMock;
+import com.github.paweladamski.httpclientmock.action.Action;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -13,11 +14,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import static com.github.paweladamski.Requests.httpPost;
-import static com.github.paweladamski.matchers.HttpResponseMatchers.hasContent;
-import static com.github.paweladamski.matchers.HttpResponseMatchers.hasStatus;
+import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
+import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
-public class HttpClientMock_ActionsTest {
+public class HttpClientResponseBuilderTest {
 
     @Test
     public void should_return_staus_404_when_no_rule_matches() throws IOException {
@@ -99,6 +101,21 @@ public class HttpClientMock_ActionsTest {
         HttpResponse response = httpClientMock.execute(httpPost("http://localhost:8080/login", "foo bar"));
 
         assertThat(response, hasContent("foo bar"));
+
+    }
+
+    @Test
+    public void should_add_header_to_response() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onPost("/login")
+                .doReturn("foo").withHeader("tracking", "123")
+                .doReturn("foo").withHeader("tracking", "456");
+
+        HttpResponse first = httpClientMock.execute(httpPost("http://localhost:8080/login"));
+        HttpResponse second = httpClientMock.execute(httpPost("http://localhost:8080/login"));
+
+        assertThat(first.getFirstHeader("tracking").getValue(), equalTo("123"));
+        assertThat(second.getFirstHeader("tracking").getValue(), equalTo("456"));
 
     }
 

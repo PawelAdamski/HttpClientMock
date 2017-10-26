@@ -1,4 +1,4 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -21,17 +21,17 @@ public class UrlParser {
             UrlConditions conditions = new UrlConditions();
             URL url = new URL(urlText);
             if (url.getRef() != null) {
-                conditions.referenceConditions = equalTo(url.getRef());
+                conditions.setReferenceConditions(equalTo(url.getRef()));
             } else {
-                conditions.referenceConditions = isEmptyOrNullString();
+                conditions.setReferenceConditions(isEmptyOrNullString());
             }
-            conditions.schemaConditons = Matchers.equalTo(url.getProtocol());
-            conditions.hostConditions.add(equalTo(url.getHost()));
-            conditions.portConditions.add(equalTo(url.getPort()));
-            conditions.pathConditions.add(equalTo(url.getPath()));
+            conditions.setSchemaConditions(Matchers.equalTo(url.getProtocol()));
+            conditions.getHostConditions().add(equalTo(url.getHost()));
+            conditions.getPortConditions().add(equalTo(url.getPort()));
+            conditions.getPathConditions().add(equalTo(url.getPath()));
             List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
             for (NameValuePair param : params) {
-                conditions.addParameterCondition(param.getName(), equalTo(param.getValue()));
+                conditions.getParameterConditions().put(param.getName(), equalTo(param.getValue()));
             }
             return conditions;
         } catch (MalformedURLException e) {

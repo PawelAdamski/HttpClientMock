@@ -1,7 +1,6 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.condition.Condition;
-import com.github.paweladamski.condition.HttpMethodCondition;
+import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -15,10 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.paweladamski.Rule.NOT_FOUND;
+import static com.github.paweladamski.httpclientmock.Rule.NOT_FOUND;
 
 public class HttpClientMock extends CloseableHttpClient {
 
+    private final List<RuleBuilder> rulesUnderConstruction = new ArrayList<>();
     private final List<Rule> rules = new ArrayList<>();
     private final String host;
     private final List<Request> requests = new ArrayList<>();
@@ -29,6 +29,10 @@ public class HttpClientMock extends CloseableHttpClient {
 
     public HttpClientMock(String host) {
         this.host = host;
+    }
+
+    public HttpClientMockBuilder onPost() {
+        return newRule("POST");
     }
 
     public HttpClientMockBuilder onGet(String url) {
@@ -59,16 +63,30 @@ public class HttpClientMock extends CloseableHttpClient {
         return newRule("PATCH", url);
     }
 
+    private HttpClientMockBuilder newRule(String method) {
+        RuleBuilder r = new RuleBuilder();
+        r.addCondition(new HttpMethodCondition(method));
+        rulesUnderConstruction.add(r);
+        return new HttpClientMockBuilder(r);
+    }
+
     private HttpClientMockBuilder newRule(String method, String urlText) {
         UrlParser urlParser = new UrlParser();
-        Rule r = new Rule(urlParser.parse(host+urlText));
+        RuleBuilder r = new RuleBuilder();
         r.addCondition(new HttpMethodCondition(method));
-        rules.add(r);
+        r.addUrlConditions(urlParser.parse(host + urlText));
+        rulesUnderConstruction.add(r);
         return new HttpClientMockBuilder(r);
     }
 
     @Override
     protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
+        synchronized (rulesUnderConstruction) {
+            for (RuleBuilder ruleBuilder : rulesUnderConstruction) {
+                rules.add(ruleBuilder.toRule());
+            }
+            rulesUnderConstruction.clear();
+        }
         Request request = new Request(httpHost, httpRequest, httpContext);
         requests.add(request);
         Rule rule = rules.stream()
@@ -98,7 +116,7 @@ public class HttpClientMock extends CloseableHttpClient {
     }
 
     public void reset() {
-        this.rules.clear();
+        this.rulesUnderConstruction.clear();
         this.requests.clear();
     }
 }

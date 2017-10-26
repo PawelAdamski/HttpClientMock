@@ -1,4 +1,4 @@
-package com.github.paweladamski.condition;
+package com.github.paweladamski.httpclientmock.condition;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
