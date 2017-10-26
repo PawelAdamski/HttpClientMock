@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static com.github.paweladamski.Requests.httpGet;
 import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
@@ -116,6 +117,17 @@ public class HttpClientResponseBuilderTest {
 
         assertThat(first.getFirstHeader("tracking").getValue(), equalTo("123"));
         assertThat(second.getFirstHeader("tracking").getValue(), equalTo("456"));
+    }
+
+    @Test
+    public void should_add_status_to_response() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturn("foo").withStatus(300);
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertThat(login, hasContent("foo"));
+        assertThat(login, hasStatus(300));
 
     }
 

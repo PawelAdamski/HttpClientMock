@@ -43,4 +43,11 @@ public class HttpClientResponseBuilder {
         newRule.overrideLastAction(headerAction);
         return this;
     }
+
+    public HttpClientResponseBuilder withStatus(int statusCode) {
+        Action lastAction = newRule.getLastAction();
+        StatusResponse statusAction = new StatusResponse(lastAction, statusCode);
+        newRule.overrideLastAction(statusAction);
+        return this;
+    }
 }
