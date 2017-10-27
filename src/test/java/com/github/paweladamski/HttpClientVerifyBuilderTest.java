@@ -140,4 +140,15 @@ public class HttpClientVerifyBuilderTest {
                 .notCalled();
     }
 
+    @Test(expected = Exception.class)
+    public void should_throw_exception_when_number_of_calls_is_wrong() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock();
+
+        httpClientMock.execute(httpPost("http://localhost?a=1"));
+
+        httpClientMock.verify()
+                .post("http://localhost?a=1#abc")
+                .called(2);
+    }
+
 }

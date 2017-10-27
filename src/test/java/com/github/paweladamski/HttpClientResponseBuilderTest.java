@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static com.github.paweladamski.Asserts.assertThrows;
 import static com.github.paweladamski.Requests.httpGet;
 import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
@@ -30,13 +31,18 @@ public class HttpClientResponseBuilderTest {
     }
 
     @Test
-    public void should_use_next_action_after_every_call() throws IOException {
+    public void should_use_next_action_after_every_call() throws Exception {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
         httpClientMock.onGet("/foo")
                 .doReturn("first")
                 .doReturn("second")
                 .doReturn("third");
+
+        httpClientMock.onGet("/bar")
+                .doReturn("bar")
+                .doReturnStatus(300)
+                .doThrowException(new IOException());
 
         HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
         HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
@@ -49,6 +55,13 @@ public class HttpClientResponseBuilderTest {
         assertThat(response3, hasContent("third"));
         assertThat(response4, hasContent("third"));
         assertThat(response5, hasContent("third"));
+
+        HttpResponse bar1 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
+        HttpResponse bar2 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
+        assertThat(bar1, hasContent("bar"));
+        assertThat(bar2, hasStatus(300));
+
+        assertThrows(IOException.class, () -> httpClientMock.execute(new HttpGet("http://localhost/bar")));
 
     }
 
