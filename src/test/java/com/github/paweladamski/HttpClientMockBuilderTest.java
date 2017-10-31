@@ -297,6 +297,18 @@ public class HttpClientMockBuilderTest {
 
     }
 
+    @Test
+    public void not_all_parameters_occurred() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onPost("/login")
+                .withParameter("foo", "bar")
+                .doReturnStatus(200);
+
+        HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login"));
+        assertThat(response, hasStatus(404));
+    }
+
 }
 
 

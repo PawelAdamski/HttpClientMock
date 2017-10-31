@@ -7,6 +7,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
@@ -17,6 +18,8 @@ import java.util.List;
 import static com.github.paweladamski.httpclientmock.Rule.NOT_FOUND;
 
 public class HttpClientMock extends CloseableHttpClient {
+
+    private final HttpParams params = new BasicHttpParams();
 
     private final List<RuleBuilder> rulesUnderConstruction = new ArrayList<>();
     private final List<Rule> rules = new ArrayList<>();
@@ -103,7 +106,7 @@ public class HttpClientMock extends CloseableHttpClient {
 
     @Override
     public HttpParams getParams() {
-        return null;
+        return params;
     }
 
     @Override

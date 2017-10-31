@@ -19,7 +19,7 @@ public final class HttpResponseMatchers {
             }
 
             public void describeTo(Description description) {
-
+                description.appendValue(expectedStatus);
             }
         };
     }
@@ -50,7 +50,7 @@ public final class HttpResponseMatchers {
             }
 
             public void describeTo(Description description) {
-
+                description.appendText(content);
             }
         };
     }

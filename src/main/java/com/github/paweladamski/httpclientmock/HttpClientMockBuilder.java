@@ -12,6 +12,8 @@ import org.hamcrest.Matcher;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.apache.http.entity.ContentType.APPLICATION_XML;
 import static org.hamcrest.Matchers.equalTo;
 
 public class HttpClientMockBuilder extends HttpClientMock {
@@ -57,8 +59,7 @@ public class HttpClientMockBuilder extends HttpClientMock {
     }
 
     public HttpClientResponseBuilder doReturn(String response) {
-        newRule.addAction(new StringResponse(response, Charset.forName("UTF-8")));
-        return new HttpClientResponseBuilder(newRule);
+        return doReturn(response, Charset.forName("UTF-8"));
     }
 
     public HttpClientResponseBuilder doReturn(String response, Charset charset) {
@@ -79,6 +80,22 @@ public class HttpClientMockBuilder extends HttpClientMock {
     public HttpClientMockBuilder withBody(Matcher<String> foo) {
         newRule.addCondition(new BodyMatcher(foo));
         return this;
+    }
+
+    public HttpClientResponseBuilder doReturnJSON(String response) {
+        return doReturnJSON(response, Charset.forName("UTF-8"));
+    }
+
+    public HttpClientResponseBuilder doReturnJSON(String response, Charset charset) {
+        return doReturn(response, charset).withHeader("Content-type", APPLICATION_JSON.toString());
+    }
+
+    public HttpClientResponseBuilder doReturnXML(String response) {
+        return doReturnXML(response, Charset.forName("UTF-8"));
+    }
+
+    public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
+        return doReturn(response, charset).withHeader("Content-type", APPLICATION_XML.toString());
     }
 
     public HttpClientMockBuilder withHost(String host) {

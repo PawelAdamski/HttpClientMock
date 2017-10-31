@@ -18,6 +18,8 @@ import static com.github.paweladamski.Requests.httpGet;
 import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.apache.http.entity.ContentType.APPLICATION_XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -142,6 +144,28 @@ public class HttpClientResponseBuilderTest {
         assertThat(login, hasContent("foo"));
         assertThat(login, hasStatus(300));
 
+    }
+
+    @Test
+    public void should_return_json_with_right_header() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturnJSON("{foo:1}");
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertThat(login, hasContent("{foo:1}"));
+        assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
+    }
+
+    @Test
+    public void should_return_xml_with_right_header() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturnXML("<foo>bar</foo>");
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertThat(login, hasContent("<foo>bar</foo>"));
+        assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
     }
 
     private Action echo() {

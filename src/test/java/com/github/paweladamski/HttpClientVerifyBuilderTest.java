@@ -3,7 +3,11 @@ package com.github.paweladamski;
 import com.github.paweladamski.httpclientmock.HttpClientMock;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,6 +17,42 @@ import static com.github.paweladamski.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 
 public class HttpClientVerifyBuilderTest {
+
+    @Test
+    public void shouldHandleAllHttpMethods() throws IOException {
+
+        HttpClientMock httpClientMock = new HttpClientMock();
+
+        httpClientMock.execute(new HttpGet("http://localhost"));
+        httpClientMock.execute(new HttpPost("http://localhost"));
+        httpClientMock.execute(new HttpDelete("http://localhost"));
+        httpClientMock.execute(new HttpPut("http://localhost"));
+        httpClientMock.execute(new HttpHead("http://localhost"));
+        httpClientMock.execute(new HttpOptions("http://localhost"));
+        httpClientMock.execute(new HttpPatch("http://localhost"));
+
+        httpClientMock.verify()
+                .get("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .post("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .delete("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .put("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .options("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .head("http://localhost")
+                .called();
+        httpClientMock.verify()
+                .patch("http://localhost")
+                .called();
+    }
 
     @Test
     public void shouldCountNumberOfHttpMethodCalls() throws IOException {

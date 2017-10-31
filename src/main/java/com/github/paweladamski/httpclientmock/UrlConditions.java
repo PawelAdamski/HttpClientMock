@@ -42,28 +42,12 @@ public class UrlConditions {
         return portConditions;
     }
 
-    public Matcher<String> getSchemaConditions() {
-        return schemaConditions;
-    }
-
-    public void setParameterConditions(MatchersMap<String, String> parameterConditions) {
-        this.parameterConditions = parameterConditions;
-    }
-
     public void setReferenceConditions(Matcher<String> referenceConditions) {
         this.referenceConditions = referenceConditions;
     }
 
     public void setHostConditions(MatchersList<String> hostConditions) {
         this.hostConditions = hostConditions;
-    }
-
-    public void setPathConditions(MatchersList<String> pathConditions) {
-        this.pathConditions = pathConditions;
-    }
-
-    public void setPortConditions(MatchersList<Integer> portConditions) {
-        this.portConditions = portConditions;
     }
 
     public void setSchemaConditions(Matcher<String> schemaConditions) {

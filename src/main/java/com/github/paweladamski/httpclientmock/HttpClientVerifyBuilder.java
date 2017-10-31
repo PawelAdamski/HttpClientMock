@@ -43,6 +43,18 @@ public class HttpClientVerifyBuilder {
         return newRule("DELETE", url);
     }
 
+    public HttpClientVerifyBuilder head(String url) {
+        return newRule("HEAD", url);
+    }
+
+    public HttpClientVerifyBuilder options(String url) {
+        return newRule("OPTIONS", url);
+    }
+
+    public HttpClientVerifyBuilder patch(String url) {
+        return newRule("PATCH", url);
+    }
+
     public HttpClientVerifyBuilder withParameter(String name, String value) {
         urlConditions.getParameterConditions().put(name, Matchers.equalTo(value));
         return this;
