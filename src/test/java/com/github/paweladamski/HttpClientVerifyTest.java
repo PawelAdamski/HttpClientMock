@@ -16,7 +16,7 @@ import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 
-public class HttpClientVerifyBuilderTest {
+public class HttpClientVerifyTest {
 
     @Test
     public void shouldHandleAllHttpMethods() throws IOException {
@@ -189,6 +189,38 @@ public class HttpClientVerifyBuilderTest {
         httpClientMock.verify()
                 .post("http://localhost?a=1#abc")
                 .called(2);
+    }
+
+    @Test
+    public void should_allow_different_host_then_default() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onGet("/login").doReturn("login");
+        httpClientMock.onGet("http://www.google.com").doReturn("google");
+
+        httpClientMock.execute(new HttpGet("http://localhost/login"));
+        httpClientMock.execute(new HttpGet("http://www.google.com"));
+
+        httpClientMock.verify().get("/login").called();
+        httpClientMock.verify().get("http://www.google.com").called();
+    }
+
+    @Test
+    public void should_check_header() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+
+        httpClientMock.onGet("/login").doReturn("OK");
+
+        HttpGet getMozilla = new HttpGet("http://localhost:8080/login");
+        HttpGet getChrome = new HttpGet("http://localhost:8080/login");
+        getMozilla.addHeader("User-Agent", "Mozilla");
+        getChrome.addHeader("User-Agent", "Chrome");
+        httpClientMock.execute(getChrome);
+        httpClientMock.execute(getMozilla);
+
+        httpClientMock.verify().get("/login").withHeader("User-Agent", "Mozilla").called();
+        httpClientMock.verify().get("/login").withHeader("User-Agent", "Chrome").called();
+        httpClientMock.verify().get("/login").withHeader("User-Agent", "IE").notCalled();
     }
 
 }

@@ -2,84 +2,168 @@ package com.github.paweladamski.httpclientmock;
 
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
-import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
+import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.hamcrest.Matchers.equalTo;
 
 public class HttpClientVerifyBuilder {
 
-    private UrlConditions urlConditions;
-    private final List<Condition> conditions = new ArrayList<>();
+    private RuleBuilder ruleBuilder;
     private final List<Request> requests;
-    private final String host;
 
-    public HttpClientVerifyBuilder(String host, List<Request> requests) {
+    public HttpClientVerifyBuilder(RuleBuilder ruleBuilder, List<Request> requests) {
         this.requests = requests;
-        this.host = host;
+        this.ruleBuilder = ruleBuilder;
     }
 
-    private HttpClientVerifyBuilder newRule(String method, String url) {
-        conditions.add(new HttpMethodCondition(method));
-        urlConditions = new UrlParser().parse(host + url);
+    /**
+     * Adds header condition. Header must be equal to provided value.
+     *
+     * @param header header name
+     * @param value  expected value
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withHeader(String header, String value) {
+        return withHeader(header, equalTo(value));
+    }
+
+    /**
+     * Adds header condition. Header must be equal to provided value.
+     *
+     * @param header  header name
+     * @param matcher header value matcher
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withHeader(String header, Matcher<String> matcher) {
+        ruleBuilder.addCondition(new HeaderCondition(header, matcher));
         return this;
     }
 
-    public HttpClientVerifyBuilder post(String url) {
-        return newRule("POST", url);
+    /**
+     * Adds reference condition. Reference must be equal to provided value.
+     *
+     * @param reference expected reference
+     * @return conditions builder
+     */
+    public HttpClientVerifyBuilder withReference(String reference) {
+        return withReference(equalTo(reference));
     }
 
-    public HttpClientVerifyBuilder get(String url) {
-        return newRule("GET", url);
+    /**
+     * Adds reference condition. Reference must match.
+     *
+     * @param matcher reference matcher
+     * @return conditions builder
+     */
+    public HttpClientVerifyBuilder withReference(Matcher<String> matcher) {
+        ruleBuilder.addReferenceCondition(matcher);
+        return this;
     }
 
-    public HttpClientVerifyBuilder put(String url) {
-        return newRule("PUT", url);
-    }
-
-    public HttpClientVerifyBuilder delete(String url) {
-        return newRule("DELETE", url);
-    }
-
-    public HttpClientVerifyBuilder head(String url) {
-        return newRule("HEAD", url);
-    }
-
-    public HttpClientVerifyBuilder options(String url) {
-        return newRule("OPTIONS", url);
-    }
-
-    public HttpClientVerifyBuilder patch(String url) {
-        return newRule("PATCH", url);
-    }
-
+    /**
+     * Adds parameter condition. Parameter must be equal to provided value.
+     *
+     * @param name  parameter name
+     * @param value expected parameter value
+     * @return verification builder
+     */
     public HttpClientVerifyBuilder withParameter(String name, String value) {
-        urlConditions.getParameterConditions().put(name, Matchers.equalTo(value));
+        return withParameter(name, equalTo(value));
+    }
+
+    /**
+     * Adds parameter condition. Parameter value must match.
+     *
+     * @param name    parameter name
+     * @param matcher paramter value matcher
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withParameter(String name, Matcher<String> matcher) {
+        ruleBuilder.addParameterCondition(name, matcher);
         return this;
     }
 
+    /**
+     * Adds custom conditions.
+     *
+     * @param condition custom condition
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder with(Condition condition) {
+        ruleBuilder.addCondition(condition);
+        return this;
+    }
+
+    /**
+     * Adds body condition. Request body must match provided matcher.
+     *
+     * @param matcher custom condition
+     * @return verification builder
+     */
     public HttpClientVerifyBuilder withBody(Matcher<String> matcher) {
-        conditions.add(new BodyMatcher(matcher));
+        ruleBuilder.addCondition(new BodyMatcher(matcher));
         return this;
     }
 
+    /**
+     * Adds host condition. Request host must be equal to provided value.
+     *
+     * @param host expected host
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withHost(String host) {
+        ruleBuilder.addHostCondition(host);
+        return this;
+    }
+
+    /**
+     * Adds path condition. Request path must be equal to provided value.
+     *
+     * @param path expected path
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withPath(String path) {
+        return withPath(equalTo(path));
+    }
+
+    /**
+     * Adds path condition. Request path must match.
+     *
+     * @param matcher path matcher
+     * @return verification builder
+     */
+    public HttpClientVerifyBuilder withPath(Matcher<String> matcher) {
+        ruleBuilder.addPathCondition(matcher);
+        return this;
+    }
+
+    /**
+     * Verifies if there were no request matching defined conditions.
+     */
     public void notCalled() {
         called(0);
     }
 
+    /**
+     * Verifies if there was exactly one request matching defined conditions.
+     */
     public void called() {
         called(1);
     }
 
+    /**
+     * Verifies number of request matching defined conditions.
+     *
+     * @param numberOfCalls expected number of calls
+     */
     public void called(int numberOfCalls) {
         int matchingCalls = 0;
+        Rule rule = ruleBuilder.toRule();
         for (Request request : requests) {
-            boolean matches = urlConditions.matches(request.getHttpRequest().getRequestLine().getUri())
-                    && conditions.stream()
-                    .allMatch(condition -> condition.matches(request));
-            if (matches) {
+            if (rule.matches(request)) {
                 matchingCalls++;
             }
         }

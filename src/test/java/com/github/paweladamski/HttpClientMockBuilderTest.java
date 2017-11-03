@@ -309,6 +309,19 @@ public class HttpClientMockBuilderTest {
         assertThat(response, hasStatus(404));
     }
 
+    @Test
+    public void should_allow_different_host_then_default() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onGet("/login").doReturn("login");
+        httpClientMock.onGet("http://www.google.com").doReturn("google");
+
+        HttpResponse login = httpClientMock.execute(new HttpGet("http://localhost/login"));
+        HttpResponse google = httpClientMock.execute(new HttpGet("http://www.google.com"));
+        assertThat(login, hasContent("login"));
+        assertThat(google, hasContent("google"));
+    }
+
 }
 
 

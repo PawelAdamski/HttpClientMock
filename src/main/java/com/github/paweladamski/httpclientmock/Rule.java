@@ -38,6 +38,10 @@ public class Rule {
         this.actions = new LinkedList(actions);
     }
 
+    boolean matches(Request request) {
+        return matches(request.getHttpHost(), request.getHttpRequest(), request.getHttpContext());
+    }
+
     boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
         return urlConditions.matches(httpRequest.getRequestLine().getUri())
                 && conditions.stream()
