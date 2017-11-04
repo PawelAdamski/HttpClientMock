@@ -63,6 +63,11 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
+HttpClientMock constuctor can accept default host, so later methods can accept relative URL-s.
+```
+HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+httpClientMock.onGet("/login").doReturn("ok");
+```
 
 ### Host, path, parameters, reference
 It is possible to define each part of url separately.
@@ -76,6 +81,7 @@ httpClientMock.onGet()
 ```
 
 ### Header
+Adding header condition:
 ```
 httpClientMock.onGet("http://localhost/login")
   .withHeader("tracking","123")
@@ -83,6 +89,7 @@ httpClientMock.onGet("http://localhost/login")
 ```
 
 ### Body
+Adding body condition:
 ```
 httpClientMock.onGet("http://localhost/login")
   .withBody("tracking",containsString(123))
@@ -96,6 +103,15 @@ httpClientMock.onGet("http://localhost/foo/bar")
   .with(fooCondition)
   .doReturn("yes");
 ```         
+
+### Matchers
+Every condition method accept [Hamcrest Matcher](https://github.com/hamcrest/JavaHamcrest) which allows to define custom conditions on requests.
+```
+httpClientMock.onGet("http://localhost")
+  .withPath(containsString("login"))
+  .withParameter("user",equalToIgnoringCase("John)")
+  .reference(not(equalTo("edit")));
+```
 
 
 ## Define response
