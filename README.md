@@ -23,6 +23,12 @@ httpClientMock.onGet("http://localhost/login").doReturn("Ok");
 httpClientMock.onPost("http://localhost/login").doReturnStatus(501);
 ```
 ### Replay
+```
+....
+httpClient.execute(new HttpGet("http://localhost/login")); // returns response with body "Ok"
+httpClient.execute(new HttpPost("http://localhost/login")); // returns response with status 501
+....
+```
 
 ### Verify
 
