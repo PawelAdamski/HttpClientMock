@@ -9,14 +9,7 @@
 
 
 ## Installation 
-Simply add following snippet to your pom.
-```
-<dependency>
-  <groupId>com.github.paweladamski</groupId>
-  <artifactId>HttpClientMock</artifactId>
-  <version>0.1</version>
-</dependency>
-```
+HttpClientMock is available in Maven Central Repository. [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock)
 
 ## Request matching
 ```
