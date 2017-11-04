@@ -38,6 +38,8 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
+On every request made using HttpClientMock each rule is checked if it matches. From all matching rules last defined one is selected. If no rule matches HttpClientMock return response with status 404.
+
 
 ### HTTP method
 HttpClientMock supports all HTTP methods.
@@ -113,11 +115,70 @@ httpClientMock.onGet("http://localhost")
   .reference(not(equalTo("edit")));
 ```
 
-
 ## Define response
-asdf
+
+### Response
+Response with provided body and status 200.
+```
+httpClientMock.onGet("http://localhost").doReturn("my response")
+```
+### Status
+Response with empty body and provided status
+```
+httpClientMock.onGet("http://localhost").doReturnStatus(300)
+httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus("500");
+
+```
+### Exception
+Response with empty body and provided status
+```
+httpClientMock.onGet("http://localhost").doThrowException(new IOException());
+```
+### Custom action
+Response with empty body and provided status
+```
+Action echo r -> {
+  HttpEntity entity = ((HttpEntityEnclosingRequestBase) r.getHttpRequest()).getEntity();
+  BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), 200, "ok");
+  response.setEntity(entity);
+  return response;
+};
+httpClientMock.onGet("http://localhost").doAction(echo);
+```
+### Header
+Adds header to response.
+```
+httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123")
+```
+
+### JSON
+Response with provided body, status 200 and content type "application/json"
+```
+httpClientMock.onPost("/login").doReturnJSON("{foo:1}");
+```
+
+### XML
+Response with provided body, status 200 and content type "application/xml"
+```
+httpClientMock.onPost("/login").doReturnXML("<foo>bar</foo>");
+```
+
+### Multiple actions
+It is possible to add multiple actions to one rule. Every call will use next action until last is reached.
+```
+httpClientMock.onPut("/addUser")
+  .doReturn("ok");
+  .doReturnStatus(500);
+
+httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns "ok"
+httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns status 500
+httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns status 500
+```
+
+
 ## Verification
-sdf
+
+
 ## Examples
 sadf
 ing
