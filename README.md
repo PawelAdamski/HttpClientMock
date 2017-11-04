@@ -83,13 +83,7 @@ httpClientMock.onGet("http://localhost/login")
 
 ### Custom condition
 ```
-Condition fooCondition = new Condition() {
-  @Override
-  public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-    return httpRequest.getRequestLine().getUri().contains("foo");
-  }
-};
-
+Condition fooCondition = request -> request.getUri().contains("foo");
 httpClientMock.onGet("http://localhost/foo/bar")
   .with(fooCondition)
   .doReturn("yes");
