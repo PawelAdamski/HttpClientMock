@@ -38,6 +38,7 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
+
 ### HTTP method
 HttpClientMock supports all HTTP methods.
 ```
@@ -49,10 +50,19 @@ httpClientMock.onOptions().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
-Every `on...()` method accept also URL. It is possible to write:
+Every `onGet(), onPost(), ....` method can accept URL. It is possible to write:
 ```
 httpClientMock.onGet("http://localhost/login?user=john").doReturnStatus(200);
 ```
+which is equal to
+```
+httpClientMock.onGet()
+  .withHost("httt://locahost")
+  .withPath("/login")
+  .withParameter("user","john")
+  .doReturnStatus(200);
+```
+
 
 ### Host, path, parameters, reference
 It is possible to define each part of url separately.
@@ -66,7 +76,6 @@ httpClientMock.onGet()
 ```
 
 ### Header
-It is possbile to check request header value.
 ```
 httpClientMock.onGet("http://localhost/login")
   .withHeader("tracking","123")
@@ -74,7 +83,6 @@ httpClientMock.onGet("http://localhost/login")
 ```
 
 ### Body
-It is possbile to check request body.
 ```
 httpClientMock.onGet("http://localhost/login")
   .withBody("tracking",containsString(123))
