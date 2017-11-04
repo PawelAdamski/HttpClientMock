@@ -36,8 +36,17 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
-###Check HTTP method
-HttpClientMock supports all HTTP methods. You can 
+### HTTP method
+HttpClientMock supports all HTTP methods.
+```
+httpClientMock.onGet().doReturn("get");
+httpClientMock.onPost().doReturn("post");
+httpClientMock.onPut().doReturn("put");
+httpClientMock.onDelete().doReturn("delete");
+httpClientMock.onOptions().doReturn("options");
+httpClientMock.onHead().doReturn("head");
+
+```
 
 ## Define response
 asdf
