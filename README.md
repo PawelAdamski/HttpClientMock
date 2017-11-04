@@ -65,6 +65,35 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
+### Header
+It is possbile to check request header value.
+```
+httpClientMock.onGet("http://localhost/login")
+  .withHeader("tracking","123")
+  .doReturn("ok");
+```
+
+### Body
+It is possbile to check request body.
+```
+httpClientMock.onGet("http://localhost/login")
+  .withBody("tracking","123")
+  .doReturn("ok");
+```
+
+### Custom condition
+```
+        Condition fooCondition = new Condition() {
+            @Override
+            public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
+                return httpRequest.getRequestLine().getUri().contains("foo");
+            }
+        };
+
+        httpClientMock.onGet("http://localhost/foo/bar")
+                .with(fooCondition)
+                .doReturn("yes");
+```         
 
 
 ## Define response
