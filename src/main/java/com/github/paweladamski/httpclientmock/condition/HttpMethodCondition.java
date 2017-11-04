@@ -1,8 +1,6 @@
 package com.github.paweladamski.httpclientmock.condition;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HttpContext;
+import com.github.paweladamski.httpclientmock.Request;
 
 public class HttpMethodCondition implements Condition {
 
@@ -13,7 +11,7 @@ public class HttpMethodCondition implements Condition {
     }
 
     @Override
-    public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-        return httpRequest.getRequestLine().getMethod().equals(method);
+    public boolean matches(Request request) {
+        return request.getHttpRequest().getRequestLine().getMethod().equals(method);
     }
 }

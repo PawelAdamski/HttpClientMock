@@ -63,7 +63,7 @@ public class UrlConditions {
                     && portConditions.allMatches(url.getPort())
                     && referenceConditions.matches(url.getRef())
                     && schemaConditions.matches(url.getProtocol())
-                    && allDefinedParamsOccureInURL(url.getQuery())
+                    && allDefinedParamsOccurredInURL(url.getQuery())
                     && allParamsHaveMatchingValue(url.getQuery());
 
         } catch (MalformedURLException e) {
@@ -77,7 +77,7 @@ public class UrlConditions {
                 .allMatch(param -> parameterConditions.matches(param.getName(), param.getValue()));
     }
 
-    private boolean allDefinedParamsOccureInURL(String query) {
+    private boolean allDefinedParamsOccurredInURL(String query) {
         List<NameValuePair> params = URLEncodedUtils.parse(query, Charset.forName("UTF-8"));
         for (String param : parameterConditions.keySet()) {
             Optional<NameValuePair> paramValue = params.stream().filter(p -> p.getName().equals(param)).findAny();

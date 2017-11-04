@@ -11,9 +11,8 @@ import java.io.UnsupportedEncodingException;
 
 class Requests {
 
-    public static HttpUriRequest httpGet(String host) throws UnsupportedEncodingException {
-        HttpGet get = new HttpGet(host);
-        return get;
+    public static HttpUriRequest httpGet(String host) {
+        return new HttpGet(host);
     }
 
     public static HttpUriRequest httpPost(String host) throws UnsupportedEncodingException {

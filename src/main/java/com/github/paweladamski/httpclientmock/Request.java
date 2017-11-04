@@ -29,4 +29,8 @@ public class Request {
         return httpContext;
     }
 
+    public String getUri() {
+        return getHttpRequest().getRequestLine().getUri();
+    }
+
 }

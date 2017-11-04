@@ -1,8 +1,6 @@
 package com.github.paweladamski.httpclientmock.condition;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HttpContext;
+import com.github.paweladamski.httpclientmock.Request;
 import org.hamcrest.Matcher;
 
 public class HeaderCondition implements Condition {
@@ -15,8 +13,8 @@ public class HeaderCondition implements Condition {
     }
 
     @Override
-    public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-        return httpRequest.getFirstHeader(header) != null &&
-                value.matches(httpRequest.getFirstHeader(header).getValue());
+    public boolean matches(Request request) {
+        return request.getHttpRequest().getFirstHeader(header) != null &&
+                value.matches(request.getHttpRequest().getFirstHeader(header).getValue());
     }
 }

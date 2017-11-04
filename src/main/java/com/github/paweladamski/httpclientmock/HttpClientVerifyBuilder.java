@@ -11,10 +11,10 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class HttpClientVerifyBuilder {
 
-    private RuleBuilder ruleBuilder;
+    private final RuleBuilder ruleBuilder;
     private final List<Request> requests;
 
-    public HttpClientVerifyBuilder(RuleBuilder ruleBuilder, List<Request> requests) {
+    HttpClientVerifyBuilder(RuleBuilder ruleBuilder, List<Request> requests) {
         this.requests = requests;
         this.ruleBuilder = ruleBuilder;
     }
@@ -78,7 +78,7 @@ public class HttpClientVerifyBuilder {
      * Adds parameter condition. Parameter value must match.
      *
      * @param name    parameter name
-     * @param matcher paramter value matcher
+     * @param matcher parameter value matcher
      * @return verification builder
      */
     public HttpClientVerifyBuilder withParameter(String name, Matcher<String> matcher) {
@@ -160,6 +160,15 @@ public class HttpClientVerifyBuilder {
      * @param numberOfCalls expected number of calls
      */
     public void called(int numberOfCalls) {
+        called(equalTo(numberOfCalls));
+    }
+
+    /**
+     * Verifies number of request matching defined conditions.
+     *
+     * @param numberOfCalls expected number of calls
+     */
+    public void called(Matcher<Integer> numberOfCalls) {
         int matchingCalls = 0;
         Rule rule = ruleBuilder.toRule();
         for (Request request : requests) {
@@ -167,7 +176,7 @@ public class HttpClientVerifyBuilder {
                 matchingCalls++;
             }
         }
-        if (matchingCalls != numberOfCalls) {
+        if (!numberOfCalls.matches(matchingCalls)) {
             throw new IllegalStateException(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
         }
     }

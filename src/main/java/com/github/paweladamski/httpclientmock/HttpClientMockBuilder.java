@@ -80,7 +80,7 @@ public class HttpClientMockBuilder {
      * Adds parameter condition. Parameter value must match.
      *
      * @param name    parameter name
-     * @param matcher paramter value matcher
+     * @param matcher parameter value matcher
      * @return condition builder
      */
     public HttpClientMockBuilder withParameter(String name, Matcher<String> matcher) {

@@ -6,9 +6,9 @@ import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
 
 public interface Condition {
-    boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext);
-
-    default boolean matches(Request request) {
-        return matches(request.getHttpHost(), request.getHttpRequest(), request.getHttpContext());
+    default boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
+        return matches(new Request(httpHost, httpRequest, httpContext));
     }
+
+    boolean matches(Request request);
 }

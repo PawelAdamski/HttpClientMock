@@ -7,10 +7,7 @@ import java.util.HashMap;
 public class MatchersMap<K, V> extends HashMap<K, MatchersList<V>> {
 
     public boolean matches(K name, V value) {
-        if (!this.containsKey(name)) {
-            return false;
-        }
-        return this.get(name).allMatches(value);
+        return this.containsKey(name) && this.get(name).allMatches(value);
     }
 
     public void put(K name, Matcher<V> value) {

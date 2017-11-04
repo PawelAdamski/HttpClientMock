@@ -5,7 +5,7 @@ import java.util.List;
 public class HttpClientVerify {
 
     private final String defaultHost;
-    private List<Request> requests;
+    private final List<Request> requests;
 
     public HttpClientVerify(String defaultHost, List<Request> requests) {
         this.requests = requests;

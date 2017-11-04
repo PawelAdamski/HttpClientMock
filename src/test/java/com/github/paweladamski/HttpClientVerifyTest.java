@@ -15,6 +15,7 @@ import java.io.IOException;
 import static com.github.paweladamski.Requests.httpPost;
 import static com.github.paweladamski.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 public class HttpClientVerifyTest {
 
@@ -76,6 +77,10 @@ public class HttpClientVerifyTest {
         httpClientMock.verify()
                 .delete("http://localhost")
                 .called(3);
+
+        httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
+        httpClientMock.verify().post().called(greaterThanOrEqualTo(1));
+        httpClientMock.verify().delete().called(greaterThanOrEqualTo(1));
     }
 
     @Test

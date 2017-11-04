@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class HttpClientResponseBuilderTest {
 
     @Test
-    public void should_return_staus_404_when_no_rule_matches() throws IOException {
+    public void should_return_status_404_when_no_rule_matches() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock();
         HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost/foo"));
         assertThat(notFound, hasStatus(404));

@@ -1,10 +1,8 @@
 package com.github.paweladamski.httpclientmock.condition;
 
+import com.github.paweladamski.httpclientmock.Request;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.hamcrest.Matcher;
 
@@ -19,9 +17,9 @@ public class BodyMatcher implements Condition {
     }
 
     @Override
-    public boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
+    public boolean matches(Request request) {
         try {
-            HttpEntity entity = ((HttpEntityEnclosingRequestBase) httpRequest).getEntity();
+            HttpEntity entity = ((HttpEntityEnclosingRequestBase) request.getHttpRequest()).getEntity();
             if (entity == null) {
                 return false;
             }

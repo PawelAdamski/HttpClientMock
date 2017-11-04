@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 public class UrlParser {
 
-    public static int EMPTY_PORT_NUMBER = -1;
+    public static final int EMPTY_PORT_NUMBER = -1;
 
     public UrlConditions parse(String urlText) {
         try {
