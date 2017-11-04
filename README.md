@@ -177,8 +177,19 @@ httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns statu
 
 
 ## Verification
+HttpClientMock allows to check how many calls were made. Verificatio supports the same set of conditions us rule defining.
+```
+httpClientMock.verify().get("http://localhost").called();
+httpClientMock.verify().get("http://localhost/login")
+  .withParameter("user","john")
+  .called();
+httpClientMock.verify().get("http://localhost/login")
+  .withParameter("user","Ben")
+  .notCalled();
+httpClientMock.verify().delete().notCalled();
+httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 
-
+```
 ## Examples
 sadf
 ing
