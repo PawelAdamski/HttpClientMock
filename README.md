@@ -1,6 +1,6 @@
 # HttpClientMock
 
-HttpClientMock is a library for mocking Apache HttpClient. Mocking it using existing frameworks is very cumbersome because of very general interface. HttpClientMock is record and replay framework with intuitive fluent API.
+HttpClientMock is a library for mocking Apache HttpClient. It has a intuitive API for defining client behaviour and verifing number of made requests. 
 
 * [Installation](#instalation)
 * [Usage](#usage)
@@ -15,7 +15,7 @@ HttpClientMock is available in Maven Central Repository. [![Maven Central](https
 ## Usage
 
 ### Record
-
+Working with HttpClientMock starts with defining client behaviour. Before code under tests starts HttpClientMock must know how to respond to every request.
 ```
 HttpClientMock httpClientMock = new HttpClientMock();
 httpClientMock.onGet("http://localhost/login")
@@ -23,13 +23,16 @@ httpClientMock.onGet("http://localhost/login")
   .doReturn("Ok");
 httpClientMock.onPost("http://localhost/login").doReturnStatus(501);
 ```
+
 ### Replay
+Code uder test starts and uses HttpClientMock with defined behaviour.
 ```
 httpClient.execute(new HttpGet("http://localhost/login?user:john")); // returns response with body "Ok"
 httpClient.execute(new HttpPost("http://localhost/login")); // returns response with status 501
 ```
 
 ### Verify
+When code under test finishes, HttpClientMock allows to check number of made request. It is possible to use the same set of conditions as for defining mock behaviour.
 ```
 httpClientMock.verify().get("http://localhost/login").withParameter("user","john").called()
 httpClientMock.verify().post("http://localhost/login").notCalled()
