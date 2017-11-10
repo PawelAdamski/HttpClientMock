@@ -14,7 +14,7 @@ HttpClientMock is available in Maven Central Repository. [![Maven Central](https
 
 ## Usage
 
-### Record
+#### Record
 Working with HttpClientMock starts with defining client behaviour. Before code under tests starts HttpClientMock must know how to respond to every request.
 ```
 HttpClientMock httpClientMock = new HttpClientMock();
@@ -24,14 +24,14 @@ httpClientMock.onGet("http://localhost/login")
 httpClientMock.onPost("http://localhost/login").doReturnStatus(501);
 ```
 
-### Replay
+#### Replay
 Code uder test starts and uses HttpClientMock with defined behaviour.
 ```
 httpClient.execute(new HttpGet("http://localhost/login?user:john")); // returns response with body "Ok"
 httpClient.execute(new HttpPost("http://localhost/login")); // returns response with status 501
 ```
 
-### Verify
+#### Verify
 When code under test finishes, HttpClientMock allows to check number of made request. It is possible to use the same set of conditions as for defining mock behaviour.
 ```
 httpClientMock.verify().get("http://localhost/login").withParameter("user","john").called()
@@ -73,7 +73,7 @@ HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 httpClientMock.onGet("/login").doReturn("ok");
 ```
 
-### Host, path, parameters, reference
+### Host, path, parameters, reference conditions
 It is possible to define each part of url separately.
 ```
 httpClientMock.onGet()
@@ -84,16 +84,14 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
-### Header
-Adding header condition:
+### Header condition
 ```
 httpClientMock.onGet("http://localhost/login")
   .withHeader("tracking","123")
   .doReturn("ok");
 ```
 
-### Body
-Adding body condition:
+### Body condition
 ```
 httpClientMock.onGet("http://localhost/login")
   .withBody("tracking",containsString(123))
@@ -109,7 +107,7 @@ httpClientMock.onGet("http://localhost/foo/bar")
 ```         
 
 ### Matchers
-Every condition method accept [Hamcrest Matcher](https://github.com/hamcrest/JavaHamcrest) which allows to define custom conditions on requests.
+Every condition method accepts [Hamcrest Matcher](https://github.com/hamcrest/JavaHamcrest) which allows to define custom conditions on requests.
 ```
 httpClientMock.onGet("http://localhost")
   .withPath(containsString("login"))
@@ -129,7 +127,6 @@ Response with empty body and provided status
 ```
 httpClientMock.onGet("http://localhost").doReturnStatus(300)
 httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus("500");
-
 ```
 ### Exception
 Response with empty body and provided status
