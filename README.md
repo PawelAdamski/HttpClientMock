@@ -1,6 +1,6 @@
 # HttpClientMock
 
-HttpClientMock is a library for mocking Apache HttpClient. It has a intuitive API for defining client behaviour and verifing number of made requests. 
+HttpClientMock is a library for mocking Apache HttpClient. It has an intuitive API for defining client behaviour and verifing number of made requests. 
 
 * [Installation](#instalation)
 * [Usage](#usage)
