@@ -54,7 +54,7 @@ httpClientMock.onOptions().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
-Every `onGet(), onPost(), ....` method accept URL. It is possible to write:
+Every `onGet()`, `onPost()`, .... method accept URL. It is possible to write:
 ```
 httpClientMock.onGet("http://localhost/login?user=john").doReturnStatus(200);
 ```
