@@ -40,7 +40,6 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
-On every request made using HttpClientMock each rule is checked if it matches.
 
 ### HTTP method
 HttpClientMock supports all Http methods.
