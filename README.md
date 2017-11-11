@@ -1,12 +1,14 @@
 # HttpClientMock
 
-HttpClientMock is a library for mocking Apache HttpClient. Mocking it using existing frameworks is very cumbersome because of very general interface. HttpClientMock is record and replay framework with intuitive fluent API.
+HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifing number of made requests. 
 
 * [Installation](#instalation)
 * [Usage](#usage)
 * [Request matching](#request-matching)
 * [Define response](#define-response)
 * [Verification](#verification)
+* [Example 1](#example-1)
+* [Example 2](#example-2)
 
 
 ## Installation 
@@ -14,8 +16,8 @@ HttpClientMock is available in Maven Central Repository. [![Maven Central](https
 
 ## Usage
 
-### Record
-
+#### Record
+Working with HttpClientMock starts with defining client behaviour. Before code under tests starts HttpClientMock must know how to respond to every request.
 ```
 HttpClientMock httpClientMock = new HttpClientMock();
 httpClientMock.onGet("http://localhost/login")
@@ -23,13 +25,16 @@ httpClientMock.onGet("http://localhost/login")
   .doReturn("Ok");
 httpClientMock.onPost("http://localhost/login").doReturnStatus(501);
 ```
-### Replay
+
+#### Replay
+Code under test starts and uses HttpClientMock with defined behaviour.
 ```
 httpClient.execute(new HttpGet("http://localhost/login?user:john")); // returns response with body "Ok"
 httpClient.execute(new HttpPost("http://localhost/login")); // returns response with status 501
 ```
 
-### Verify
+#### Verify
+When code under test finishes, HttpClientMock allows to check number of made request. It is possible to use the same set of conditions as for defining mock behaviour.
 ```
 httpClientMock.verify().get("http://localhost/login").withParameter("user","john").called()
 httpClientMock.verify().post("http://localhost/login").notCalled()
@@ -37,11 +42,9 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
-On every request made using HttpClientMock each rule is checked if it matches. From all matching rules last defined one is selected. If no rule matches HttpClientMock return response with status 404.
-
 
 ### HTTP method
-HttpClientMock supports all HTTP methods.
+HttpClientMock supports all Http methods.
 ```
 httpClientMock.onGet().doReturn("get");
 httpClientMock.onPost().doReturn("post");
@@ -51,7 +54,7 @@ httpClientMock.onOptions().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
-Every `onGet(), onPost(), ....` method can accept URL. It is possible to write:
+Every `onGet()`, `onPost()`, .... method accept URL. It is possible to write:
 ```
 httpClientMock.onGet("http://localhost/login?user=john").doReturnStatus(200);
 ```
@@ -64,13 +67,16 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
-HttpClientMock constuctor can accept default host, so later methods can accept relative URL-s.
+It is possible to define default host using HttpClientMock constructor, so later methods can accept relative URL-s.
 ```
 HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 httpClientMock.onGet("/login").doReturn("ok");
+httpClientMock.onPost("/edit?user=john").doReturnStatus(200);
+
+httpClientMock.onGet("http://www.google.com").doReturn("Google") // Absolute paths still work.
 ```
 
-### Host, path, parameters, reference
+### Host, path, parameters, reference conditions
 It is possible to define each part of url separately.
 ```
 httpClientMock.onGet()
@@ -81,16 +87,14 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
-### Header
-Adding header condition:
+### Header condition
 ```
 httpClientMock.onGet("http://localhost/login")
   .withHeader("tracking","123")
   .doReturn("ok");
 ```
 
-### Body
-Adding body condition:
+### Body condition
 ```
 httpClientMock.onGet("http://localhost/login")
   .withBody("tracking",containsString(123))
@@ -106,13 +110,19 @@ httpClientMock.onGet("http://localhost/foo/bar")
 ```         
 
 ### Matchers
-Every condition method accept [Hamcrest Matcher](https://github.com/hamcrest/JavaHamcrest) which allows to define custom conditions on requests.
+Every condition method accepts [Hamcrest Matcher](https://github.com/hamcrest/JavaHamcrest) which allows to define custom conditions on requests.
 ```
 httpClientMock.onGet("http://localhost")
   .withPath(containsString("login"))
   .withParameter("user",equalToIgnoringCase("John)")
   .reference(not(equalTo("edit")));
 ```
+
+### Multiple matching rules
+If request matches more then one rule, then last defined one is used.
+
+### None rule matche
+If request doesn't matche any rule, HttpClientMock return response with status 404.
 
 ## Define response
 
@@ -126,15 +136,13 @@ Response with empty body and provided status
 ```
 httpClientMock.onGet("http://localhost").doReturnStatus(300)
 httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus("500");
-
 ```
 ### Exception
-Response with empty body and provided status
+Instead of returning response it throws defined exception.
 ```
 httpClientMock.onGet("http://localhost").doThrowException(new IOException());
 ```
 ### Custom action
-Response with empty body and provided status
 ```
 Action echo r -> {
   HttpEntity entity = ((HttpEntityEnclosingRequestBase) r.getHttpRequest()).getEntity();
@@ -144,10 +152,13 @@ Action echo r -> {
 };
 httpClientMock.onGet("http://localhost").doAction(echo);
 ```
-### Header
-Adds header to response.
+### Response header
 ```
 httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123")
+```
+### Response status
+```
+httpClientMock.onPost("/login?user=bar").doReturn("Wrong user").withStatus(403)
 ```
 
 ### JSON
@@ -176,7 +187,7 @@ httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns statu
 
 
 ## Verification
-HttpClientMock allows to check how many calls were made. Verificatio supports the same set of conditions us rule defining.
+HttpClientMock allows to check how many calls were made. Verification supports the same set of conditions us rule defining.
 ```
 httpClientMock.verify().get("http://localhost").called();
 
@@ -193,3 +204,45 @@ httpClientMock.verify().delete().notCalled();
 httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 
 ```
+
+## Example 1
+```
+// DEFINE BEHAVIOUR
+HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+httpClientMock.onGet("/login?user=john").doReturnJSON("{permission:1}");
+httpClientMock.onPost("/edit")
+  .withParameter("user","John")
+  .doReturn("ok")
+  .doReturnStatus(503);
+
+// EXECUTION
+// request to http://localhost:8080/login?user=john returns JSON {permission:1}
+// first request to http://localhost:8080/edit?user=john returns message "ok"
+// second request to http://localhost:8080/edit?user=john returns request with status 503
+
+// VERIFICATION
+httpClientMock.verify().get("/login?user=john").called();
+httpClientMock.verify().post("/edit?user=john").called(2);
+httpClientMock.verify().delete().notCalled();
+```
+
+
+## Example 2
+```
+// DEFINE BEHAVIOUR
+HttpClientMock httpClientMock = new HttpClientMock();
+httpClientMock.onGet("http://localhost:8080/login").doReturn("Missing parameter user").withStatus(400);
+httpClientMock.onGet("http://localhost:8080/login")
+  .withParameter("user","JJohn")
+  .doReturn("Wrong user name").withStatus(403);
+httpClientMock.onGet("http://localhost:8080/login")
+  .withParameter("user","John")
+  .doReturn("ok");
+  
+// EXECUTION
+// request to http://localhost:8080/login?user=john returns message "ok"
+
+// VERIFICATION
+httpClientMock.verify().get("/login?user=john").called();
+```
+
