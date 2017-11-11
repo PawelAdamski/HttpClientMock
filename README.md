@@ -1,6 +1,6 @@
 # HttpClientMock
 
-HttpClientMock is a library for mocking Apache HttpClient. It has an intuitive API for defining client behaviour and verifing number of made requests. 
+HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifing number of made requests. 
 
 * [Installation](#instalation)
 * [Usage](#usage)
@@ -25,7 +25,7 @@ httpClientMock.onPost("http://localhost/login").doReturnStatus(501);
 ```
 
 #### Replay
-Code uder test starts and uses HttpClientMock with defined behaviour.
+Code under test starts and uses HttpClientMock with defined behaviour.
 ```
 httpClient.execute(new HttpGet("http://localhost/login?user:john")); // returns response with body "Ok"
 httpClient.execute(new HttpPost("http://localhost/login")); // returns response with status 501
@@ -44,7 +44,7 @@ On every request made using HttpClientMock each rule is checked if it matches. F
 
 
 ### HTTP method
-HttpClientMock supports all HTTP methods.
+HttpClientMock supports all Http methods.
 ```
 httpClientMock.onGet().doReturn("get");
 httpClientMock.onPost().doReturn("post");
@@ -54,7 +54,7 @@ httpClientMock.onOptions().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
-Every `onGet(), onPost(), ....` method can accept URL. It is possible to write:
+Every `onGet(), onPost(), ....` method accept URL. It is possible to write:
 ```
 httpClientMock.onGet("http://localhost/login?user=john").doReturnStatus(200);
 ```
@@ -67,10 +67,13 @@ httpClientMock.onGet()
   .doReturnStatus(200);
 ```
 
-HttpClientMock constuctor can accept default host, so later methods can accept relative URL-s.
+It is possible to define default host using HttpClientMock constructor, so later methods can accept relative URL-s.
 ```
 HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 httpClientMock.onGet("/login").doReturn("ok");
+httpClientMock.onPost("/edit?user=john").doReturnStatus(200);
+
+httpClientMock.onGet("http://www.google.com").doReturn("Google") // Absolute paths still work.
 ```
 
 ### Host, path, parameters, reference conditions
@@ -129,12 +132,11 @@ httpClientMock.onGet("http://localhost").doReturnStatus(300)
 httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus("500");
 ```
 ### Exception
-Response with empty body and provided status
+Instead of returning response it throws defined exception.
 ```
 httpClientMock.onGet("http://localhost").doThrowException(new IOException());
 ```
 ### Custom action
-Response with empty body and provided status
 ```
 Action echo r -> {
   HttpEntity entity = ((HttpEntityEnclosingRequestBase) r.getHttpRequest()).getEntity();
@@ -144,8 +146,7 @@ Action echo r -> {
 };
 httpClientMock.onGet("http://localhost").doAction(echo);
 ```
-### Header
-Adds header to response.
+### Response header
 ```
 httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123")
 ```
