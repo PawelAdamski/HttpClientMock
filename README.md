@@ -154,6 +154,10 @@ httpClientMock.onGet("http://localhost").doAction(echo);
 ```
 httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123")
 ```
+### Response status
+```
+httpClientMock.onPost("/login?user=bar").doReturn("Wrong user").withStatus(403)
+```
 
 ### JSON
 Response with provided body, status 200 and content type "application/json"
@@ -198,3 +202,45 @@ httpClientMock.verify().delete().notCalled();
 httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 
 ```
+
+## Example 1
+```
+// DEFINE BEHAVIOUR
+HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+httpClientMock.onGet("/login?user=john").doReturnJSON("{permission:1}");
+httpClientMock.onPost("/edit")
+  .withParameter("user","John")
+  .doReturn("ok")
+  .doReturnStatus(503);
+
+// EXECUTION
+// request to http://localhost:8080/login?user=john returns JSON {permission:1}
+// first request to http://localhost:8080/edit?user=john returns message "ok"
+// second request to http://localhost:8080/edit?user=john returns request with status 503
+
+// VERIFICATION
+httpClientMock.verify().get("/login?user=john").called();
+httpClientMock.verify().post("/edit?user=john").called(2);
+httpClientMock.verify().delete().notCalled();
+```
+
+
+## Example 2
+```
+// DEFINE BEHAVIOUR
+HttpClientMock httpClientMock = new HttpClientMock();
+httpClientMock.onGet("http://localhost:8080/login").doReturn("Missing parameter user").withStatus(400);
+httpClientMock.onGet("http://localhost:8080/login")
+  .withParameter("user","JJohn")
+  .doReturn("Wrong user name").withStatus(403);
+httpClientMock.onGet("http://localhost:8080/login")
+  .withParameter("user","John")
+  .doReturn("ok");
+  
+// EXECUTION
+// request to http://localhost:8080/login?user=john returns message "ok"
+
+// VERIFICATION
+httpClientMock.verify().get("/login?user=john").called();
+```
+
