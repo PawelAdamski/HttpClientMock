@@ -40,8 +40,7 @@ httpClientMock.verify().post("http://localhost/login").notCalled()
 
 
 ## Request matching
-On every request made using HttpClientMock each rule is checked if it matches. From all matching rules last defined one is selected. If no rule matches HttpClientMock return response with status 404.
-
+On every request made using HttpClientMock each rule is checked if it matches.
 
 ### HTTP method
 HttpClientMock supports all Http methods.
@@ -117,6 +116,12 @@ httpClientMock.onGet("http://localhost")
   .withParameter("user",equalToIgnoringCase("John)")
   .reference(not(equalTo("edit")));
 ```
+
+### Multiple matching rules
+If request matches more then one rule, then last defined one is used.
+
+### None rule matche
+If request doesn't matche any rule, HttpClientMock return response with status 404.
 
 ## Define response
 
