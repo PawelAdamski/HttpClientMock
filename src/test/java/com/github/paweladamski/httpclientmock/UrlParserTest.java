@@ -1,7 +1,5 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.httpclientmock.UrlConditions;
-import com.github.paweladamski.httpclientmock.UrlParser;
 import org.junit.Before;
 import org.junit.Test;
 

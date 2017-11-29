@@ -1,4 +1,4 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
 import org.junit.Assert;
 

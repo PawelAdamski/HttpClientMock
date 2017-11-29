@@ -1,6 +1,5 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.httpclientmock.HttpClientMock;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -12,8 +11,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.github.paweladamski.Requests.httpPost;
-import static com.github.paweladamski.Requests.httpPut;
+import static com.github.paweladamski.httpclientmock.Requests.httpPost;
+import static com.github.paweladamski.httpclientmock.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 

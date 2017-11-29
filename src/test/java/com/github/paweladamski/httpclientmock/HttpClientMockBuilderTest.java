@@ -1,6 +1,5 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.httpclientmock.HttpClientMock;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -14,7 +13,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.github.paweladamski.Requests.httpPost;
+import static com.github.paweladamski.httpclientmock.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
 import static org.hamcrest.MatcherAssert.assertThat;

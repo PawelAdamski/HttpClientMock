@@ -1,7 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.hamcrest.Matchers;
 
 import java.net.MalformedURLException;
@@ -29,7 +28,7 @@ public class UrlParser {
             conditions.getHostConditions().add(equalTo(url.getHost()));
             conditions.getPortConditions().add(equalTo(url.getPort()));
             conditions.getPathConditions().add(equalTo(url.getPath()));
-            List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
+            List<NameValuePair> params = UrlParams.parse(url.getQuery(), Charset.forName("UTF-8"));
             for (NameValuePair param : params) {
                 conditions.getParameterConditions().put(param.getName(), equalTo(param.getValue()));
             }

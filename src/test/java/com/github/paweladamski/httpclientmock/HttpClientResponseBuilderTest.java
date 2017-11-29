@@ -1,6 +1,5 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.httpclientmock.HttpClientMock;
 import com.github.paweladamski.httpclientmock.action.Action;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,9 +12,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static com.github.paweladamski.Asserts.assertThrows;
-import static com.github.paweladamski.Requests.httpGet;
-import static com.github.paweladamski.Requests.httpPost;
+import static com.github.paweladamski.httpclientmock.Asserts.assertThrows;
+import static com.github.paweladamski.httpclientmock.Requests.httpGet;
+import static com.github.paweladamski.httpclientmock.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;

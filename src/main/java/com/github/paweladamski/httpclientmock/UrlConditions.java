@@ -3,13 +3,11 @@ package com.github.paweladamski.httpclientmock;
 import com.github.paweladamski.httpclientmock.matchers.MatchersList;
 import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,13 +70,13 @@ public class UrlConditions {
     }
 
     private boolean allParamsHaveMatchingValue(String query) {
-        List<NameValuePair> params = URLEncodedUtils.parse(query, Charset.forName("UTF-8"));
+        List<NameValuePair> params = UrlParams.parse(query);
         return params.stream()
                 .allMatch(param -> parameterConditions.matches(param.getName(), param.getValue()));
     }
 
     private boolean allDefinedParamsOccurredInURL(String query) {
-        List<NameValuePair> params = URLEncodedUtils.parse(query, Charset.forName("UTF-8"));
+        List<NameValuePair> params = UrlParams.parse(query);
         for (String param : parameterConditions.keySet()) {
             Optional<NameValuePair> paramValue = params.stream().filter(p -> p.getName().equals(param)).findAny();
             if (!paramValue.isPresent()) {

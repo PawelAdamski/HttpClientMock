@@ -1,4 +1,4 @@
-package com.github.paweladamski;
+package com.github.paweladamski.httpclientmock;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
