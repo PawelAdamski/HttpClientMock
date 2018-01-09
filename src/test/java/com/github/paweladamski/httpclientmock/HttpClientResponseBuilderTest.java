@@ -84,6 +84,33 @@ public class HttpClientResponseBuilderTest {
         assertThat(response3, hasContent("third", "ASCII"));
     }
 
+    @Test
+    public void should_support_response_in_body_with_status() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+        httpClientMock.onGet("/foo")
+                .doReturn("first")
+                .doReturn(300, "second")
+                .doReturn(400, "third");
+
+        HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+        HttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+
+        assertThat(response1, hasContent("first"));
+        assertThat(response1, hasStatus(200));
+        assertThat(response2, hasContent("second"));
+        assertThat(response2, hasStatus(300));
+        assertThat(response3, hasContent("third"));
+        assertThat(response3, hasStatus(400));
+        assertThat(response4, hasContent("third"));
+        assertThat(response4, hasStatus(400));
+        assertThat(response5, hasContent("third"));
+        assertThat(response5, hasStatus(400));
+    }
+
     @Test(expected = IOException.class)
     public void should_throw_exception_when_throwing_action_matched() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
