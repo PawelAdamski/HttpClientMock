@@ -69,6 +69,17 @@ public class HttpClientResponseBuilder {
     }
 
     /**
+     * Adds action which returns provided response in UTF-8 with status code.
+     *
+     * @param statusCode status to return
+     * @param response   response to return
+     * @return response builder
+     */
+    public HttpClientResponseBuilder doReturn(int statusCode, String response) {
+        return doReturn(statusCode, response, Charset.forName("UTF-8"));
+    }
+
+    /**
      * Adds action which returns provided response in provided charset and status 200.
      *
      * @param response response to return
@@ -76,6 +87,19 @@ public class HttpClientResponseBuilder {
      */
     public HttpClientResponseBuilder doReturn(String response, Charset charset) {
         newRule.addAction(new StringResponse(response, charset));
+        return new HttpClientResponseBuilder(newRule);
+    }
+
+    /**
+     * Adds action which returns provided response in provided charset and status code.
+     *
+     * @param statusCode status to return
+     * @param response   response to return
+     * @param charset    the charset
+     * @return response builder
+     */
+    public HttpClientResponseBuilder doReturn(int statusCode, String response, Charset charset) {
+        newRule.addAction(new StringResponse(statusCode, response, charset));
         return new HttpClientResponseBuilder(newRule);
     }
 
