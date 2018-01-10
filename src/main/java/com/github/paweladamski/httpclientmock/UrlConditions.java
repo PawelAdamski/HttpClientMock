@@ -77,9 +77,9 @@ public class UrlConditions {
 
     private boolean allDefinedParamsOccurredInURL(String query) {
         List<NameValuePair> params = UrlParams.parse(query);
-        for (String param : parameterConditions.keySet()) {
-            Optional<NameValuePair> paramValue = params.stream().filter(p -> p.getName().equals(param)).findAny();
-            if (!paramValue.isPresent()) {
+        for (Map.Entry<String, MatchersList<String>> param : parameterConditions.entrySet()) {
+            Optional<NameValuePair> matches = params.stream().filter(p -> param.getKey().equals(p.getName()) && param.getValue().allMatches(p.getValue())).findAny();
+            if (!matches.isPresent()) {
                 return false;
             }
         }
