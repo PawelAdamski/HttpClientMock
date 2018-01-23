@@ -163,13 +163,37 @@ public class HttpClientMockBuilder {
     }
 
     /**
+     * Adds action which returns provided response and status in UTF-8.
+     *
+     * @param statusCode status to return
+     * @param response   response to return
+     * @return response builder
+     */
+    public HttpClientResponseBuilder doReturn(int statusCode, String response) {
+        return responseBuilder.doReturn(statusCode, response);
+    }
+
+    /**
      * Adds action which returns provided response in provided charset and status 200.
      *
      * @param response response to return
+     * @param charset  charset to return
      * @return response builder
      */
     public HttpClientResponseBuilder doReturn(String response, Charset charset) {
         return responseBuilder.doReturn(response, charset);
+    }
+
+    /**
+     * Adds action which returns provided response in provided charset and status.
+     *
+     * @param statusCode status to return
+     * @param response   response to return
+     * @param charset    the charset
+     * @return response builder
+     */
+    public HttpClientResponseBuilder doReturn(int statusCode, String response, Charset charset) {
+        return responseBuilder.doReturn(statusCode, response, charset);
     }
 
     /**
