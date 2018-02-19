@@ -1,3 +1,5 @@
+![Maven Central](https://travis-ci.org/PawelAdamski/HttpClientMock.svg?branch=master) ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock/badge.svg)
+
 # HttpClientMock
 
 HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifing number of made requests. 
