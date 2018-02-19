@@ -17,10 +17,12 @@ import static com.github.paweladamski.httpclientmock.Requests.httpGet;
 import static com.github.paweladamski.httpclientmock.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
+import static org.apache.http.HttpStatus.SC_NO_CONTENT;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.apache.http.entity.ContentType.APPLICATION_XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
 
 public class HttpClientResponseBuilderTest {
 
@@ -192,6 +194,17 @@ public class HttpClientResponseBuilderTest {
 
         assertThat(login, hasContent("<foo>bar</foo>"));
         assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
+    }
+
+    @Test
+    public void should_not_set_response_entity_when_status_is_no_content() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturnStatus(SC_NO_CONTENT);
+
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertNull(login.getEntity());
     }
 
     private Action echo() {

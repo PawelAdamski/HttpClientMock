@@ -9,6 +9,8 @@ import org.apache.http.message.BasicHttpResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+import static org.apache.http.HttpStatus.SC_NO_CONTENT;
+
 public class StatusResponse implements Action {
 
     private final Optional<Action> parentAction;
@@ -31,7 +33,9 @@ public class StatusResponse implements Action {
             response = parentAction.get().getResponse(request);
         } else {
             response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), status, "");
-            response.setEntity(new StringEntity(""));
+            if (status != SC_NO_CONTENT) {
+                response.setEntity(new StringEntity(""));
+            }
         }
         response.setStatusCode(status);
         return response;
