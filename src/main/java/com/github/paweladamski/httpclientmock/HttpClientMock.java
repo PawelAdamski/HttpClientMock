@@ -14,16 +14,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.paweladamski.httpclientmock.Rule.NOT_FOUND;
-
 public class HttpClientMock extends CloseableHttpClient {
 
     private final HttpParams params = new BasicHttpParams();
+    private final Debugger debugger;
 
     private final List<RuleBuilder> rulesUnderConstruction = new ArrayList<>();
     private final List<Rule> rules = new ArrayList<>();
     private final String defaultHost;
     private final List<Request> requests = new ArrayList<>();
+    private boolean isDebuggingTurnOn = false;
 
     /**
      * Creates mock of Apache HttpClient
@@ -39,6 +39,18 @@ public class HttpClientMock extends CloseableHttpClient {
      */
     public HttpClientMock(String defaultHost) {
         this.defaultHost = defaultHost;
+        this.debugger = new Debugger();
+    }
+
+    /**
+     * Creates mock of Apache HttpClient with default host. All defined conditions without host will use default host
+     *
+     * @param defaultHost default host for later conditions
+     * @param debugger    debugger used for testing
+     */
+    protected HttpClientMock(String defaultHost, Debugger debugger) {
+        this.defaultHost = defaultHost;
+        this.debugger = debugger;
     }
 
     /**
@@ -219,7 +231,10 @@ public class HttpClientMock extends CloseableHttpClient {
         Rule rule = rules.stream()
                 .filter(r -> r.matches(httpHost, httpRequest, httpContext))
                 .reduce((a, b) -> b)
-                .orElse(NOT_FOUND);
+                .orElse(Rule.NOT_FOUND);
+        if (isDebuggingTurnOn || rule == Rule.NOT_FOUND) {
+            debugger.debug(rules, request);
+        }
         HttpResponse response = rule.nextResponse(request);
         return new HttpResponseProxy(response);
     }
@@ -236,6 +251,16 @@ public class HttpClientMock extends CloseableHttpClient {
     @Override
     public ClientConnectionManager getConnectionManager() {
         return null;
+    }
+
+    public HttpClientMock debugOn() {
+        isDebuggingTurnOn = true;
+        return this;
+    }
+
+    public HttpClientMock debugOff() {
+        isDebuggingTurnOn = false;
+        return this;
     }
 
 }

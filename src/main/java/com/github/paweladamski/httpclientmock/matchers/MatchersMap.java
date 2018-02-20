@@ -14,4 +14,8 @@ public class MatchersMap<K, V> extends HashMap<K, MatchersList<V>> {
         this.putIfAbsent(name, new MatchersList<>());
         this.get(name).add(value);
     }
+
+    public String describe(String name) {
+        return getOrDefault(name, new MatchersList<>()).describe();
+    }
 }

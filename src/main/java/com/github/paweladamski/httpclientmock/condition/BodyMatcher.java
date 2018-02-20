@@ -1,5 +1,6 @@
 package com.github.paweladamski.httpclientmock.condition;
 
+import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.Request;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -28,5 +29,10 @@ public class BodyMatcher implements Condition {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    @Override
+    public void debug(Request request, Debugger debugger) {
+        debugger.message(matches(request), "body matches");
     }
 }

@@ -1,5 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
+import org.apache.http.NameValuePair;
 import org.junit.Test;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class UrlParamsTest {
 
     @Test
     public void shouldParseQueryString() {
-        List<org.apache.http.NameValuePair> params = UrlParams.parse("a=1&b=2");
+        List<NameValuePair> params = UrlParams.parse("a=1&b=2");
         assertEquals("a", params.get(0).getName());
         assertEquals("1", params.get(0).getValue());
         assertEquals("b", params.get(1).getName());

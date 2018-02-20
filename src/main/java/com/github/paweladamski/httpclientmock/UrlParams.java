@@ -5,19 +5,27 @@ import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.List;
 
-public class UrlParams {
+public class UrlParams extends ArrayList<NameValuePair> {
 
-    public static List<NameValuePair> parse(String query) {
+    public static UrlParams parse(String query) {
         return parse(query, Charset.forName("UTF-8"));
     }
 
-    public static List<NameValuePair> parse(String query, Charset charset) {
+    public static UrlParams parse(String query, Charset charset) {
         if (query == null) {
-            return new ArrayList<>();
+            return new UrlParams();
         } else {
-            return URLEncodedUtils.parse(query, charset);
+            UrlParams urlParams = new UrlParams();
+            urlParams.addAll(URLEncodedUtils.parse(query, charset));
+            return urlParams;
         }
+    }
+
+    boolean contain(String name) {
+        return stream()
+                .filter(p -> p.getName().equals(name))
+                .findAny()
+                .isPresent();
     }
 }

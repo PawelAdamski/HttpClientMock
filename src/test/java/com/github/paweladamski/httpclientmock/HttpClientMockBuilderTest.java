@@ -49,7 +49,7 @@ public class HttpClientMockBuilderTest {
 
         HttpResponse one = httpClientMock.execute(new HttpPost("http://localhost/login?a=1"));
         HttpResponse two = httpClientMock.execute(new HttpPost("http://localhost/login?b=2"));
-        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login??a=1&b=2"));
+        HttpResponse wrong = httpClientMock.execute(new HttpPost("http://localhost/login?a=1&b=2"));
         assertThat(one, hasContent("one"));
         assertThat(two, hasContent("two"));
         assertThat(wrong, hasStatus(404));
@@ -129,11 +129,14 @@ public class HttpClientMockBuilderTest {
 
         HttpGet getMozilla = new HttpGet("http://localhost:8080/login");
         HttpGet getChrome = new HttpGet("http://localhost:8080/login");
+        HttpGet getSafari = new HttpGet("http://localhost:8080/login");
         getMozilla.addHeader("User-Agent", "Mozilla");
         getChrome.addHeader("User-Agent", "Chrome");
+        getSafari.addHeader("User-Agent", "Safari");
 
         assertThat(httpClientMock.execute(getMozilla), hasContent("mozilla"));
         assertThat(httpClientMock.execute(getChrome), hasContent("chrome"));
+        assertThat(httpClientMock.execute(getSafari), hasStatus(404));
     }
 
     @Test

@@ -5,14 +5,19 @@ import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import org.apache.http.NameValuePair;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
+import org.hamcrest.StringDescription;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 public class UrlConditions {
 
+    public static final int EMPTY_PORT = -1;
     private MatchersMap<String, String> parameterConditions = new MatchersMap<>();
     private Matcher<String> referenceConditions = Matchers.isEmptyOrNullString();
     private MatchersList<String> hostConditions = new MatchersList<>();
@@ -69,21 +74,21 @@ public class UrlConditions {
         }
     }
 
+    private boolean allDefinedParamsOccurredInURL(String query) {
+        return findMissingParameters(query).isEmpty();
+    }
+
     private boolean allParamsHaveMatchingValue(String query) {
-        List<NameValuePair> params = UrlParams.parse(query);
+        UrlParams params = UrlParams.parse(query);
         return params.stream()
                 .allMatch(param -> parameterConditions.matches(param.getName(), param.getValue()));
     }
 
-    private boolean allDefinedParamsOccurredInURL(String query) {
-        List<NameValuePair> params = UrlParams.parse(query);
-        for (String param : parameterConditions.keySet()) {
-            Optional<NameValuePair> paramValue = params.stream().filter(p -> p.getName().equals(param)).findAny();
-            if (!paramValue.isPresent()) {
-                return false;
-            }
-        }
-        return true;
+    private Set<String> findMissingParameters(String query) {
+        UrlParams params = UrlParams.parse(query);
+        return parameterConditions.keySet().stream()
+                .filter(((Predicate<String>) params::contain).negate())
+                .collect(Collectors.toSet());
     }
 
     public void join(UrlConditions a) {
@@ -99,4 +104,47 @@ public class UrlConditions {
         }
     }
 
+    void debug(Request request, Debugger debugger) {
+        try {
+            URL url = new URL(request.getUri());
+            debugger.message(hostConditions.allMatches(url.getHost()), "schema is " + describe(schemaConditions));
+            debugger.message(hostConditions.allMatches(url.getHost()), "host is " + hostConditions.describe());
+            debugger.message(pathConditions.allMatches(url.getPath()), "path is " + pathConditions.describe());
+            debugger.message(portConditions.allMatches(url.getPort()), "port is " + portDebugDescription());
+            if (referenceConditions != isEmptyOrNullString() || !referenceConditions.matches(url.getRef())) {
+                debugger.message(referenceConditions.matches(url.getRef()), "reference is " + describe(referenceConditions));
+            }
+            Set<String> missingParams = findMissingParameters(url.getQuery());
+            for (String param : missingParams) {
+                debugger.message(false, "parameter " + param + " occurs in request");
+            }
+            UrlParams params = UrlParams.parse(url.getQuery());
+            for (NameValuePair param : params) {
+                if (parameterConditions.containsKey(param.getName())) {
+                    boolean matches = parameterConditions.matches(param.getName(), param.getValue());
+                    String message = "parameter " + param.getName() + " is " + parameterConditions.describe(param.getName());
+                    debugger.message(matches, message);
+                } else {
+                    String message = "parameter " + param.getName() + " is redundant";
+                    debugger.message(false, message);
+                }
+            }
+
+        } catch (MalformedURLException e) {
+            System.out.println("Can't parse URL: " + request.getUri());
+        }
+
+    }
+
+    private String describe(Matcher<String> matcher) {
+        return StringDescription.toString(matcher);
+    }
+
+    private String portDebugDescription() {
+        if (portConditions.allMatches(EMPTY_PORT)) {
+            return "empty";
+        } else {
+            return portConditions.describe();
+        }
+    }
 }

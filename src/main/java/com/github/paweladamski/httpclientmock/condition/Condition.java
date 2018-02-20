@@ -1,5 +1,6 @@
 package com.github.paweladamski.httpclientmock.condition;
 
+import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.Request;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -11,4 +12,9 @@ public interface Condition {
     }
 
     boolean matches(Request request);
+
+    default void debug(Request request, Debugger debugger) {
+        debugger.message(matches(request), getClass().getSimpleName());
+    }
+
 }

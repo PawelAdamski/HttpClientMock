@@ -58,4 +58,11 @@ public class Rule {
         return action.getResponse(request);
     }
 
+    public void debug(Request request, Debugger debugger) {
+        for (Condition condition : conditions) {
+            condition.debug(request, debugger);
+        }
+        urlConditions.debug(request, debugger);
+    }
+
 }
