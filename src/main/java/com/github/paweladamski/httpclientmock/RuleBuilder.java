@@ -8,13 +8,13 @@ import org.hamcrest.Matcher;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RuleBuilder {
+class RuleBuilder {
 
     private final List<Action> actions = new ArrayList<>();
     private final List<Condition> conditions = new ArrayList<>();
     private final UrlConditions urlConditions = new UrlConditions();
 
-    public RuleBuilder(String method, String defaultHost, String url) {
+    RuleBuilder(String method, String defaultHost, String url) {
         UrlParser urlParser = new UrlParser();
         if (url.startsWith("/")) {
             url = defaultHost + url;
@@ -23,7 +23,7 @@ public class RuleBuilder {
         addUrlConditions(urlParser.parse(url));
     }
 
-    public RuleBuilder(String method) {
+    RuleBuilder(String method) {
         addCondition(new HttpMethodCondition(method));
     }
 
@@ -35,7 +35,7 @@ public class RuleBuilder {
         conditions.add(o);
     }
 
-    void addUrlConditions(UrlConditions newUrlConditions) {
+    private void addUrlConditions(UrlConditions newUrlConditions) {
         this.urlConditions.join(newUrlConditions);
     }
 

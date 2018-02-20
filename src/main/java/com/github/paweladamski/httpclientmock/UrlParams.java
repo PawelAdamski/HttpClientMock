@@ -23,9 +23,6 @@ public class UrlParams extends ArrayList<NameValuePair> {
     }
 
     boolean contain(String name) {
-        return stream()
-                .filter(p -> p.getName().equals(name))
-                .findAny()
-                .isPresent();
+        return stream().anyMatch(p -> p.getName().equals(name));
     }
 }

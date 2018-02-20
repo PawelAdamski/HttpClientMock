@@ -2,8 +2,9 @@ package com.github.paweladamski.httpclientmock;
 
 import org.junit.Assert;
 
-public class Asserts {
-    public static <T extends Throwable> T assertThrows(Class<T> expected, ThrowingRunnable action) throws Exception {
+@SuppressWarnings("unchecked")
+class Asserts {
+    static <T extends Throwable> T assertThrows(Class<T> expected, ThrowingRunnable action) throws Exception {
         try {
             action.run();
             Assert.fail("Did not throw expected " + expected.getSimpleName());

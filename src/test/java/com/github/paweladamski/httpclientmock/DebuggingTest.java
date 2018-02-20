@@ -143,8 +143,8 @@ public class DebuggingTest {
         httpClientMock.onGet("/login").doReturn("login");
         httpClientMock.debugOn();
         httpClientMock.execute(httpGet("http://localhost/login"));
-        assertTrue(debugger.matching.stream().allMatch(s -> !s.startsWith("reference")));
-        assertTrue(debugger.notMatching.stream().allMatch(s -> !s.startsWith("reference")));
+        assertTrue(debugger.matching.stream().noneMatch(s -> s.startsWith("reference")));
+        assertTrue(debugger.notMatching.stream().noneMatch(s -> s.startsWith("reference")));
     }
 
     @Test

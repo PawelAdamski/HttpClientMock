@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 public class UrlConditions {
 
-    public static final int EMPTY_PORT = -1;
+    private static final int EMPTY_PORT = -1;
     private MatchersMap<String, String> parameterConditions = new MatchersMap<>();
     private Matcher<String> referenceConditions = Matchers.isEmptyOrNullString();
     private MatchersList<String> hostConditions = new MatchersList<>();
@@ -33,8 +33,16 @@ public class UrlConditions {
         return referenceConditions;
     }
 
+    public void setReferenceConditions(Matcher<String> referenceConditions) {
+        this.referenceConditions = referenceConditions;
+    }
+
     public MatchersList<String> getHostConditions() {
         return hostConditions;
+    }
+
+    public void setHostConditions(MatchersList<String> hostConditions) {
+        this.hostConditions = hostConditions;
     }
 
     public MatchersList<String> getPathConditions() {
@@ -43,14 +51,6 @@ public class UrlConditions {
 
     public MatchersList<Integer> getPortConditions() {
         return portConditions;
-    }
-
-    public void setReferenceConditions(Matcher<String> referenceConditions) {
-        this.referenceConditions = referenceConditions;
-    }
-
-    public void setHostConditions(MatchersList<String> hostConditions) {
-        this.hostConditions = hostConditions;
     }
 
     public void setSchemaConditions(Matcher<String> schemaConditions) {

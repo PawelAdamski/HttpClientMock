@@ -48,7 +48,7 @@ public class HttpClientMock extends CloseableHttpClient {
      * @param defaultHost default host for later conditions
      * @param debugger    debugger used for testing
      */
-    protected HttpClientMock(String defaultHost, Debugger debugger) {
+    HttpClientMock(String defaultHost, Debugger debugger) {
         this.defaultHost = defaultHost;
         this.debugger = debugger;
     }
@@ -253,14 +253,12 @@ public class HttpClientMock extends CloseableHttpClient {
         return null;
     }
 
-    public HttpClientMock debugOn() {
+    public void debugOn() {
         isDebuggingTurnOn = true;
-        return this;
     }
 
-    public HttpClientMock debugOff() {
+    public void debugOff() {
         isDebuggingTurnOn = false;
-        return this;
     }
 
 }
