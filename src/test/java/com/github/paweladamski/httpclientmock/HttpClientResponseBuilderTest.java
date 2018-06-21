@@ -7,6 +7,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.message.BasicHttpResponse;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import static com.github.paweladamski.httpclientmock.Requests.httpGet;
 import static com.github.paweladamski.httpclientmock.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.http.HttpStatus.SC_NO_CONTENT;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.apache.http.entity.ContentType.APPLICATION_XML;
@@ -205,6 +207,17 @@ public class HttpClientResponseBuilderTest {
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
         assertNull(login.getEntity());
+    }
+
+    @Test
+    public void should_not_throw_exception_when_body_matcher_is_present_on_post_request() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onPost("/path1")
+                      .withBody(equalTo("Body content"))
+                      .doReturnStatus(200);
+
+        HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
+        Assert.assertThat(response, hasStatus(SC_NOT_FOUND));
     }
 
     private Action echo() {
