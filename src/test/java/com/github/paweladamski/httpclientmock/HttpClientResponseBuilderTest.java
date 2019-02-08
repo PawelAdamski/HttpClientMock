@@ -4,8 +4,11 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -165,6 +168,21 @@ public class HttpClientResponseBuilderTest {
     }
 
     @Test
+    public void should_add_cookie_to_response() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onPost("/login")
+                .doReturn("foo").withCookie("cookieName", "cookieValue")
+                .doReturn("foo").withCookie("cookieName", "cookieValue2");
+
+        HttpClientContext httpClientContext = new HttpClientContext();
+        httpClientMock.execute(httpPost("http://localhost:8080/login"), httpClientContext);
+        assertThat(getCookieValue(httpClientContext.getCookieStore(),"cookieName"), equalTo("cookieValue"));
+
+        httpClientMock.execute(httpPost("http://localhost:8080/login"), httpClientContext);
+        assertThat(getCookieValue(httpClientContext.getCookieStore(),"cookieName"), equalTo("cookieValue2"));
+    }
+
+    @Test
     public void should_add_status_to_response() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
@@ -227,6 +245,17 @@ public class HttpClientResponseBuilderTest {
             response.setEntity(entity);
             return response;
         };
+    }
+
+    private String getCookieValue(CookieStore cookieStore, String cookieName) {
+        if(cookieStore!=null) {
+            for (Cookie cookie : cookieStore.getCookies()) {
+                if(cookie.getName().equalsIgnoreCase(cookieName)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
 

@@ -1,10 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
-import com.github.paweladamski.httpclientmock.action.Action;
-import com.github.paweladamski.httpclientmock.action.ExceptionAction;
-import com.github.paweladamski.httpclientmock.action.HeaderAction;
-import com.github.paweladamski.httpclientmock.action.StatusResponse;
-import com.github.paweladamski.httpclientmock.action.StringResponse;
+import com.github.paweladamski.httpclientmock.action.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -44,6 +40,21 @@ public class HttpClientResponseBuilder {
         Action lastAction = newRule.getLastAction();
         StatusResponse statusAction = new StatusResponse(lastAction, statusCode);
         newRule.overrideLastAction(statusAction);
+        return this;
+    }
+
+
+    /**
+     * Sets response cookie
+     *
+     * @param cookieName  cookie name
+     * @param cookieValue cookie value
+     * @return response builder
+     */
+    public HttpClientResponseBuilder withCookie(String cookieName, String cookieValue) {
+        Action lastAction = newRule.getLastAction();
+        CookieAction cookieAction = new CookieAction(lastAction, cookieName, cookieValue);
+        newRule.overrideLastAction(cookieAction);
         return this;
     }
 
