@@ -24,10 +24,17 @@ public class CookieAction implements Action {
     public HttpResponse getResponse(Request request) throws IOException {
         HttpResponse response = parentAction.getResponse(request);
 
-        if (((HttpClientContext) request.getHttpContext()).getCookieStore() == null) {
-            ((HttpClientContext) request.getHttpContext()).setCookieStore(new BasicCookieStore());
+        if(request.getHttpContext()==null) {
+            throw new RuntimeException("No Http context");
         }
-        ((HttpClientContext) request.getHttpContext()).getCookieStore().addCookie(new BasicClientCookie(cookieName, cookieValue));
+        if(!(request.getHttpContext() instanceof HttpClientContext)) {
+            throw new RuntimeException("Http context is not a HttpClientContext instance.");
+        }
+        HttpClientContext httpClientContext = (HttpClientContext) request.getHttpContext();
+        if (httpClientContext.getCookieStore() == null) {
+            httpClientContext.setCookieStore(new BasicCookieStore());
+        }
+        httpClientContext.getCookieStore().addCookie(new BasicClientCookie(cookieName, cookieValue));
 
         return response;
     }
