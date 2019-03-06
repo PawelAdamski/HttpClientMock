@@ -1,6 +1,9 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.cookie.Cookie;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -51,6 +54,31 @@ public final class HttpResponseMatchers {
 
             public void describeTo(Description description) {
                 description.appendText(content);
+            }
+        };
+    }
+
+    public static Matcher<? super HttpClientContext> hasCookie(final String expectedCookieName, final String expectedCookieValue) {
+        return new BaseMatcher<HttpClientContext>() {
+            public boolean matches(Object o) {
+                HttpClientContext httpClientContext = (HttpClientContext) o;
+                String cookieValue = getCookieValue(httpClientContext.getCookieStore(), expectedCookieName);
+                return expectedCookieValue.equals(cookieValue);
+            }
+
+            public void describeTo(Description description) {
+                description.appendValue(expectedCookieValue);
+            }
+
+            private String getCookieValue(CookieStore cookieStore, String cookieName) {
+                if(cookieStore!=null) {
+                    for (Cookie cookie : cookieStore.getCookies()) {
+                        if(cookie.getName().equalsIgnoreCase(cookieName)) {
+                            return cookie.getValue();
+                        }
+                    }
+                }
+                return null;
             }
         };
     }
