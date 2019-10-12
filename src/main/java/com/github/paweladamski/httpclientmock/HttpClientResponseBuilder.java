@@ -1,6 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
 import com.github.paweladamski.httpclientmock.action.*;
+import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -101,6 +102,12 @@ public class HttpClientResponseBuilder {
         return new HttpClientResponseBuilder(newRule);
     }
 
+    public HttpClientResponseBuilder doReturn(String response, Charset charset, ContentType contentType) {
+        newRule.addAction(new StringResponse(response, charset, contentType));
+        return new HttpClientResponseBuilder(newRule);
+    }
+
+
     /**
      * Adds action which returns provided response in provided charset and status code.
      *
@@ -153,7 +160,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturnJSON(String response, Charset charset) {
-        return doReturn(response, charset).withHeader("Content-type", APPLICATION_JSON.toString());
+        return doReturn(response, charset, APPLICATION_JSON).withHeader("Content-type", APPLICATION_JSON.toString());
     }
 
     /**
@@ -173,7 +180,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
-        return doReturn(response, charset).withHeader("Content-type", APPLICATION_XML.toString());
+        return doReturn(response, charset, APPLICATION_XML).withHeader("Content-type", APPLICATION_XML.toString());
     }
 
 }
