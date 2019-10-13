@@ -199,7 +199,6 @@ public class HttpClientResponseBuilderTest {
                 .doReturnJSON("{foo:1}", Charset.forName("UTF-8"));
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
-        System.out.println(ContentType.get(login.getEntity()));
         assertThat(login, hasContent("{foo:1}"));
         assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
     }
