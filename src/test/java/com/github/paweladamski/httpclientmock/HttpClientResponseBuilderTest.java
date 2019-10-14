@@ -7,6 +7,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Assert;
 import org.junit.Test;
@@ -203,6 +204,17 @@ public class HttpClientResponseBuilderTest {
     }
 
     @Test
+    public void should_return_json_with_right_content_type() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturnJSON("{foo:1}", Charset.forName("UTF-8"));
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertThat(login, hasContent("{foo:1}"));
+        assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_JSON.toString()));
+    }
+
+    @Test
     public void should_return_xml_with_right_header() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
@@ -211,6 +223,17 @@ public class HttpClientResponseBuilderTest {
 
         assertThat(login, hasContent("<foo>bar</foo>"));
         assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
+    }
+
+    @Test
+    public void should_return_xml_with_right_content_type() throws IOException {
+        HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+        httpClientMock.onGet("/login")
+                .doReturnXML("<foo>bar</foo>", Charset.forName("UTF-8"));
+        HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+        assertThat(login, hasContent("<foo>bar</foo>"));
+        assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_XML.toString()));
     }
 
     @Test
