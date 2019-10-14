@@ -1,5 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
+import java.nio.charset.StandardCharsets;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 public class UrlParams extends ArrayList<NameValuePair> {
 
     public static UrlParams parse(String query) {
-        return parse(query, Charset.forName("UTF-8"));
+        return parse(query, StandardCharsets.UTF_8);
     }
 
     public static UrlParams parse(String query, Charset charset) {

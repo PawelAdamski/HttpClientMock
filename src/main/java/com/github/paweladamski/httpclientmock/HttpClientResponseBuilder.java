@@ -1,6 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
 import com.github.paweladamski.httpclientmock.action.*;
+import java.nio.charset.StandardCharsets;
 import org.apache.http.entity.ContentType;
 
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturn(String response) {
-        return doReturn(response, Charset.forName("UTF-8"));
+        return doReturn(response, StandardCharsets.UTF_8);
     }
 
     /**
@@ -88,7 +89,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturn(int statusCode, String response) {
-        return doReturn(statusCode, response, Charset.forName("UTF-8"));
+        return doReturn(statusCode, response, StandardCharsets.UTF_8);
     }
 
     /**
@@ -156,7 +157,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturnJSON(String response) {
-        return doReturnJSON(response, Charset.forName("UTF-8"));
+        return doReturnJSON(response, StandardCharsets.UTF_8);
     }
 
     /**
@@ -176,7 +177,7 @@ public class HttpClientResponseBuilder {
      * @return response builder
      */
     public HttpClientResponseBuilder doReturnXML(String response) {
-        return doReturnXML(response, Charset.forName("UTF-8"));
+        return doReturnXML(response, StandardCharsets.UTF_8);
     }
 
     /**

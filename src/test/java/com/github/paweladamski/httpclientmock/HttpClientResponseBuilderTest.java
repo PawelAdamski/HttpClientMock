@@ -1,6 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
 import com.github.paweladamski.httpclientmock.action.Action;
+import java.nio.charset.StandardCharsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -77,8 +78,8 @@ public class HttpClientResponseBuilderTest {
 
         httpClientMock.onGet("/foo")
                 .doReturn("first")
-                .doReturn("second", Charset.forName("UTF-16"))
-                .doReturn("third", Charset.forName("ASCII"));
+                .doReturn("second", StandardCharsets.UTF_16)
+                .doReturn("third", StandardCharsets.US_ASCII);
 
         HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
         HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
@@ -217,7 +218,7 @@ public class HttpClientResponseBuilderTest {
     public void should_return_json_with_right_header() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
-                .doReturnJSON("{foo:1}", Charset.forName("UTF-8"));
+                .doReturnJSON("{foo:1}", StandardCharsets.UTF_8);
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
         assertThat(login, hasContent("{foo:1}"));
@@ -228,7 +229,7 @@ public class HttpClientResponseBuilderTest {
     public void should_return_json_with_right_content_type() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
-                .doReturnJSON("{foo:1}", Charset.forName("UTF-8"));
+                .doReturnJSON("{foo:1}", StandardCharsets.UTF_8);
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
         assertThat(login, hasContent("{foo:1}"));
@@ -239,7 +240,7 @@ public class HttpClientResponseBuilderTest {
     public void should_return_xml_with_right_header() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
-                .doReturnXML("<foo>bar</foo>", Charset.forName("UTF-8"));
+                .doReturnXML("<foo>bar</foo>", StandardCharsets.UTF_8);
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
         assertThat(login, hasContent("<foo>bar</foo>"));
@@ -250,7 +251,7 @@ public class HttpClientResponseBuilderTest {
     public void should_return_xml_with_right_content_type() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
         httpClientMock.onGet("/login")
-                .doReturnXML("<foo>bar</foo>", Charset.forName("UTF-8"));
+                .doReturnXML("<foo>bar</foo>", StandardCharsets.UTF_8);
         HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
         assertThat(login, hasContent("<foo>bar</foo>"));

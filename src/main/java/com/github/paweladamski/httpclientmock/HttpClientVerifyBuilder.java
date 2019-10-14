@@ -171,7 +171,7 @@ public class HttpClientVerifyBuilder {
     public void called(Matcher<Integer> numberOfCalls) {
         Rule rule = ruleBuilder.toRule();
         int matchingCalls = (int)requests.stream()
-                .filter(req -> rule.matches(req))
+                .filter(rule::matches)
                 .count();
 
         if (!numberOfCalls.matches(matchingCalls)) {
