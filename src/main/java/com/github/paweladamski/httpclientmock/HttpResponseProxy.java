@@ -1,5 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
+import java.io.IOException;
+import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -9,138 +11,136 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.params.HttpParams;
 
-import java.io.IOException;
-import java.util.Locale;
-
 class HttpResponseProxy implements CloseableHttpResponse {
-    private final HttpResponse original;
 
-    public HttpResponseProxy(HttpResponse original) {
-        this.original = original;
+  private final HttpResponse original;
 
-    }
+  public HttpResponseProxy(HttpResponse original) {
+    this.original = original;
 
-    public void close() throws IOException {
+  }
 
-    }
+  public void close() throws IOException {
 
-    public StatusLine getStatusLine() {
-        return this.original.getStatusLine();
-    }
+  }
 
-    public void setStatusLine(StatusLine statusline) {
-        this.original.setStatusLine(statusline);
-    }
+  public StatusLine getStatusLine() {
+    return this.original.getStatusLine();
+  }
 
-    public void setStatusLine(ProtocolVersion ver, int code) {
-        this.original.setStatusLine(ver, code);
-    }
+  public void setStatusLine(StatusLine statusline) {
+    this.original.setStatusLine(statusline);
+  }
 
-    public void setStatusLine(ProtocolVersion ver, int code, String reason) {
-        this.original.setStatusLine(ver, code, reason);
-    }
+  public void setStatusLine(ProtocolVersion ver, int code) {
+    this.original.setStatusLine(ver, code);
+  }
 
-    public void setStatusCode(int code) throws IllegalStateException {
-        this.original.setStatusCode(code);
-    }
+  public void setStatusLine(ProtocolVersion ver, int code, String reason) {
+    this.original.setStatusLine(ver, code, reason);
+  }
 
-    public void setReasonPhrase(String reason) throws IllegalStateException {
-        this.original.setReasonPhrase(reason);
-    }
+  public void setStatusCode(int code) throws IllegalStateException {
+    this.original.setStatusCode(code);
+  }
 
-    public HttpEntity getEntity() {
-        return this.original.getEntity();
-    }
+  public void setReasonPhrase(String reason) throws IllegalStateException {
+    this.original.setReasonPhrase(reason);
+  }
 
-    public void setEntity(HttpEntity entity) {
-        this.original.setEntity(entity);
-    }
+  public HttpEntity getEntity() {
+    return this.original.getEntity();
+  }
 
-    public Locale getLocale() {
-        return this.original.getLocale();
-    }
+  public void setEntity(HttpEntity entity) {
+    this.original.setEntity(entity);
+  }
 
-    public void setLocale(Locale loc) {
-        this.original.setLocale(loc);
-    }
+  public Locale getLocale() {
+    return this.original.getLocale();
+  }
 
-    public ProtocolVersion getProtocolVersion() {
-        return this.original.getProtocolVersion();
-    }
+  public void setLocale(Locale loc) {
+    this.original.setLocale(loc);
+  }
 
-    public boolean containsHeader(String name) {
-        return this.original.containsHeader(name);
-    }
+  public ProtocolVersion getProtocolVersion() {
+    return this.original.getProtocolVersion();
+  }
 
-    public Header[] getHeaders(String name) {
-        return this.original.getHeaders(name);
-    }
+  public boolean containsHeader(String name) {
+    return this.original.containsHeader(name);
+  }
 
-    public Header getFirstHeader(String name) {
-        return this.original.getFirstHeader(name);
-    }
+  public Header[] getHeaders(String name) {
+    return this.original.getHeaders(name);
+  }
 
-    public Header getLastHeader(String name) {
-        return this.original.getLastHeader(name);
-    }
+  public Header getFirstHeader(String name) {
+    return this.original.getFirstHeader(name);
+  }
 
-    public Header[] getAllHeaders() {
-        return this.original.getAllHeaders();
-    }
+  public Header getLastHeader(String name) {
+    return this.original.getLastHeader(name);
+  }
 
-    public void addHeader(Header header) {
-        this.original.addHeader(header);
-    }
+  public Header[] getAllHeaders() {
+    return this.original.getAllHeaders();
+  }
 
-    public void addHeader(String name, String value) {
-        this.original.addHeader(name, value);
-    }
+  public void addHeader(Header header) {
+    this.original.addHeader(header);
+  }
 
-    public void setHeader(Header header) {
-        this.original.setHeader(header);
-    }
+  public void addHeader(String name, String value) {
+    this.original.addHeader(name, value);
+  }
 
-    public void setHeader(String name, String value) {
-        this.original.setHeader(name, value);
-    }
+  public void setHeader(Header header) {
+    this.original.setHeader(header);
+  }
 
-    public void setHeaders(Header[] headers) {
-        this.original.setHeaders(headers);
-    }
+  public void setHeader(String name, String value) {
+    this.original.setHeader(name, value);
+  }
 
-    public void removeHeader(Header header) {
-        this.original.removeHeader(header);
-    }
+  public void setHeaders(Header[] headers) {
+    this.original.setHeaders(headers);
+  }
 
-    public void removeHeaders(String name) {
-        this.original.removeHeaders(name);
-    }
+  public void removeHeader(Header header) {
+    this.original.removeHeader(header);
+  }
 
-    public HeaderIterator headerIterator() {
-        return this.original.headerIterator();
-    }
+  public void removeHeaders(String name) {
+    this.original.removeHeaders(name);
+  }
 
-    public HeaderIterator headerIterator(String name) {
-        return this.original.headerIterator(name);
-    }
+  public HeaderIterator headerIterator() {
+    return this.original.headerIterator();
+  }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public HttpParams getParams() {
-        return this.original.getParams();
-    }
+  public HeaderIterator headerIterator(String name) {
+    return this.original.headerIterator(name);
+  }
 
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    public void setParams(HttpParams params) {
-        this.original.setParams(params);
-    }
+  /**
+   * @deprecated
+   */
+  @Deprecated
+  public HttpParams getParams() {
+    return this.original.getParams();
+  }
 
-    public String toString() {
-        return "HttpResponseProxy{" + this.original + '}';
-    }
+  /**
+   * @deprecated
+   */
+  @Deprecated
+  public void setParams(HttpParams params) {
+    this.original.setParams(params);
+  }
+
+  public String toString() {
+    return "HttpResponseProxy{" + this.original + '}';
+  }
 }
