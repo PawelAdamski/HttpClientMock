@@ -4,6 +4,7 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
+import org.apache.http.entity.ContentType;
 import org.hamcrest.Matcher;
 
 import java.io.IOException;
@@ -195,6 +196,16 @@ public class HttpClientMockBuilder {
     public HttpClientResponseBuilder doReturn(int statusCode, String response, Charset charset) {
         return responseBuilder.doReturn(statusCode, response, charset);
     }
+
+  /**
+   * Adds action which returns provided response in provided charset, content-type and status 200.
+   *
+   * @param response response to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturn(String response, Charset charset, ContentType contentType) {
+    return responseBuilder.doReturn(response, charset, contentType);
+  }
 
     /**
      * Adds action which returns empty message and provided status.

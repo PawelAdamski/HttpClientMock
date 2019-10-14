@@ -89,6 +89,27 @@ public class HttpClientResponseBuilderTest {
         assertThat(response3, hasContent("third", "ASCII"));
     }
 
+  @Test
+  public void should_support_response_with_different_contentType() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+    httpClientMock
+        .onGet("/json").doReturn("{\"a\":1}", Charset.defaultCharset(), APPLICATION_JSON);
+    httpClientMock
+        .onGet("/xml").doReturn("<a>1</a>", Charset.defaultCharset(), APPLICATION_XML);
+
+    HttpResponse jsonResponse = httpClientMock.execute(httpGet("http://localhost:8080/json"));
+    HttpResponse xmlResponse = httpClientMock.execute(httpGet("http://localhost:8080/xml"));
+
+    assertThat(jsonResponse, hasContent("{\"a\":1}"));
+    assertThat(jsonResponse.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
+    assertThat(ContentType.get(jsonResponse.getEntity()).toString(), equalTo(APPLICATION_JSON.toString()));
+
+    assertThat(xmlResponse, hasContent("<a>1</a>"));
+    assertThat(xmlResponse.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
+    assertThat(ContentType.get(xmlResponse.getEntity()).toString(), equalTo(APPLICATION_XML.toString()));
+
+  }
+
     @Test
     public void should_support_response_in_body_with_status() throws IOException {
         HttpClientMock httpClientMock = new HttpClientMock("http://localhost");

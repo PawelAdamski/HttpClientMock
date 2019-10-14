@@ -41,6 +41,7 @@ public class StringResponse implements Action {
         StringEntity entity = new StringEntity(this.response, this.charset);
         entity.setContentType(contentType.toString());
         response.setEntity(entity);
-        return response;
+        response.addHeader("Content-type", contentType.toString());
+      return response;
     }
 }
