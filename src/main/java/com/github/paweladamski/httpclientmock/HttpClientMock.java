@@ -3,9 +3,12 @@ package com.github.paweladamski.httpclientmock;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,6 +26,9 @@ public class HttpClientMock extends CloseableHttpClient {
   private final String defaultHost;
   private final List<Request> requests = new ArrayList<>();
   private boolean isDebuggingTurnOn = false;
+
+  private final List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
+  private final List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
 
   /**
    * Creates mock of Apache HttpClient
@@ -219,12 +225,24 @@ public class HttpClientMock extends CloseableHttpClient {
 
   @Override
   protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
-    synchronized (rulesUnderConstruction) {
-      for (RuleBuilder ruleBuilder : rulesUnderConstruction) {
-        rules.add(ruleBuilder.toRule());
+    finishBuildingRules();
+    executeRequestInterceptors(httpRequest, httpContext);
+    HttpResponse response = getHttpResponse(httpHost, httpRequest, httpContext);
+    executeResponseInterceptors(httpContext, response);
+    return new HttpResponseProxy(response);
+  }
+
+  private void executeResponseInterceptors(HttpContext httpContext, HttpResponse response) throws IOException {
+    try {
+      for (HttpResponseInterceptor responseInterceptor : responseInterceptors) {
+        responseInterceptor.process(response, httpContext);
       }
-      rulesUnderConstruction.clear();
+    } catch (HttpException e) {
+      throw new IOException(e);
     }
+  }
+
+  private HttpResponse getHttpResponse(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
     Request request = new Request(httpHost, httpRequest, httpContext);
     requests.add(request);
     Rule rule = rules.stream()
@@ -234,8 +252,26 @@ public class HttpClientMock extends CloseableHttpClient {
     if (isDebuggingTurnOn || rule == Rule.NOT_FOUND) {
       debugger.debug(rules, request);
     }
-    HttpResponse response = rule.nextResponse(request);
-    return new HttpResponseProxy(response);
+    return rule.nextResponse(request);
+  }
+
+  private void executeRequestInterceptors(HttpRequest httpRequest, HttpContext httpContext) throws IOException {
+    try {
+      for (HttpRequestInterceptor requestInterceptor : requestInterceptors) {
+        requestInterceptor.process(httpRequest, httpContext);
+      }
+    } catch (HttpException e) {
+      throw new IOException(e);
+    }
+  }
+
+  private void finishBuildingRules() {
+    synchronized (rulesUnderConstruction) {
+      for (RuleBuilder ruleBuilder : rulesUnderConstruction) {
+        rules.add(ruleBuilder.toRule());
+      }
+      rulesUnderConstruction.clear();
+    }
   }
 
   @Override
@@ -260,4 +296,11 @@ public class HttpClientMock extends CloseableHttpClient {
     isDebuggingTurnOn = false;
   }
 
+  public void addRequestInterceptor(HttpRequestInterceptor requestInterceptor) {
+    this.requestInterceptors.add(requestInterceptor);
+  }
+
+  public void addResponseInterceptor(HttpResponseInterceptor responseInterceptor) {
+    this.responseInterceptors.add(responseInterceptor);
+  }
 }
