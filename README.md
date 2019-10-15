@@ -4,11 +4,12 @@
 
 HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifing number of made requests. 
 
-* [Installation](#instalation)
+* [Installation](#installation)
 * [Usage](#usage)
 * [Request matching](#request-matching)
 * [Define response](#define-response)
 * [Verification](#verification)
+* [Debugging] (#debugging)
 * [Example 1](#example-1)
 * [Example 2](#example-2)
 
@@ -206,6 +207,22 @@ httpClientMock.verify().delete().notCalled();
 httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 
 ```
+
+## Debugging
+HttpClientMock can help you to debug your code by displaying information which matchers matched your request.
+You can use `HttpClientMock#debugOn` to turn it on and `HttpClientMock#debugOff` to turn it off.
+Example message: 
+```
+Rule 1:
+	MATCHES		EXPECTED
+	true		HTTP method is GET
+	true		schema is "http"
+	true		host is "localhost"
+	false		path is "/login"
+	true		port is empty
+```
+
+
 
 ## Example 1
 ```
