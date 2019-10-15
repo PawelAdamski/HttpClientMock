@@ -9,7 +9,7 @@ HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.or
 * [Request matching](#request-matching)
 * [Define response](#define-response)
 * [Verification](#verification)
-* [Debugging] (#debugging)
+* [Debugging](#debugging)
 * [Example 1](#example-1)
 * [Example 2](#example-2)
 
