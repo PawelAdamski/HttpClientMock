@@ -1,4 +1,4 @@
-![Maven Central](https://travis-ci.org/PawelAdamski/HttpClientMock.svg?branch=master) ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock/badge.svg)
+![Maven Central](https://github.com/PawelAdamski/HttpClientMock/workflows/Build/badge.svg) ![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock/badge.svg)
 
 # HttpClientMock
 
