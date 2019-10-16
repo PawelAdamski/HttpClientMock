@@ -29,7 +29,7 @@ public class HttpClientMockTest {
     httpClientMock.onGet().doReturn("ok");
 
     HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost"));
-    assertThat(ok.getFirstHeader("foo").getValue(), equalTo("bar"));
+    assertThat(ok.getFirstHeader("foo").getValue(), equalTo("bar2"));
   }
 
 
