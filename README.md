@@ -39,8 +39,8 @@ httpClient.execute(new HttpPost("http://localhost/login")); // returns response 
 #### Verify
 When code under test finishes, HttpClientMock allows to check number of made request. It is possible to use the same set of conditions as for defining mock behaviour.
 ```
-httpClientMock.verify().get("http://localhost/login").withParameter("user","john").called()
-httpClientMock.verify().post("http://localhost/login").notCalled()
+httpClientMock.verify().get("http://localhost/login").withParameter("user","john").called();
+httpClientMock.verify().post("http://localhost/login").notCalled();
 ```
 
 
@@ -53,7 +53,7 @@ httpClientMock.onGet().doReturn("get");
 httpClientMock.onPost().doReturn("post");
 httpClientMock.onPut().doReturn("put");
 httpClientMock.onDelete().doReturn("delete");
-httpClientMock.onOptions().doReturn("options");
+httpClientMock.onOption().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
@@ -100,7 +100,7 @@ httpClientMock.onGet("http://localhost/login")
 ### Body condition
 ```
 httpClientMock.onGet("http://localhost/login")
-  .withBody("tracking",containsString(123))
+  .withBody("tracking",containsString("123"))
   .doReturn("ok");
 ```
 
@@ -132,13 +132,13 @@ If request doesn't matche any rule, HttpClientMock return response with status 4
 ### Response
 Response with provided body and status 200.
 ```
-httpClientMock.onGet("http://localhost").doReturn("my response")
+httpClientMock.onGet("http://localhost").doReturn("my response");
 ```
 ### Status
 Response with empty body and provided status
 ```
-httpClientMock.onGet("http://localhost").doReturnStatus(300)
-httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus("500");
+httpClientMock.onGet("http://localhost").doReturnStatus(300);
+httpClientMock.onGet("http://localhost").doReturn("Overloaded").withStatus(500);
 ```
 ### Exception
 Instead of returning response it throws defined exception.
@@ -147,7 +147,7 @@ httpClientMock.onGet("http://localhost").doThrowException(new IOException());
 ```
 ### Custom action
 ```
-Action echo r -> {
+Action echo = r -> {
   HttpEntity entity = ((HttpEntityEnclosingRequestBase) r.getHttpRequest()).getEntity();
   BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), 200, "ok");
   response.setEntity(entity);
@@ -157,11 +157,11 @@ httpClientMock.onGet("http://localhost").doAction(echo);
 ```
 ### Response header
 ```
-httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123")
+httpClientMock.onPost("/login").doReturn("foo").withHeader("tracking", "123");
 ```
 ### Response status
 ```
-httpClientMock.onPost("/login?user=bar").doReturn("Wrong user").withStatus(403)
+httpClientMock.onPost("/login?user=bar").doReturn("Wrong user").withStatus(403);
 ```
 
 ### JSON
@@ -180,7 +180,7 @@ httpClientMock.onPost("/login").doReturnXML("<foo>bar</foo>");
 It is possible to add multiple actions to one rule. Every call will use next action until last is reached.
 ```
 httpClientMock.onPut("/addUser")
-  .doReturn("ok");
+  .doReturn("ok")
   .doReturnStatus(500);
 
 httpClientMock.execute(new HttpPut("http://localhost/addUser")); //returns "ok"
