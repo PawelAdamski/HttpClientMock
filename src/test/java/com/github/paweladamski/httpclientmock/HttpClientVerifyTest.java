@@ -6,6 +6,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -13,6 +17,9 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.message.BasicNameValuePair;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 public class HttpClientVerifyTest {
@@ -226,4 +233,103 @@ public class HttpClientVerifyTest {
     httpClientMock.verify().get("/login").withHeader("User-Agent", "IE").notCalled();
   }
 
+  @Test
+  public void withFormParameter() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    //username does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "Bob"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+     httpClientMock.execute(request);
+
+    //password does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "1234")
+    )));
+    httpClientMock.execute(request);
+
+    //parameter name does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("phone", "123456789")
+    )));
+    httpClientMock.execute(request);
+    
+    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", "secret!").called();
+    httpClientMock.verify().post("/login").withFormParameter("username", "Bob").withFormParameter("password", "secret!").called();
+    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", "1234").called();
+    httpClientMock.verify().post("/login").withFormParameter("phone", "123456789").called();
+    httpClientMock.verify().post("/login").withFormParameter("foo", "bar").called(0);
+    httpClientMock.verify().post("/login").withFormParameter("username", Matchers.containsString("o")).withFormParameter("password", Matchers.any(String.class)).called(3);
+  }
+  
+  @Test
+  public void withBody_form_parameters() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+    
+    //username does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "Bob"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+    
+    //password does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "1234")
+    )));
+    httpClientMock.execute(request);
+    
+    //parameter name does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("phone", "123456789")
+    )));
+    httpClientMock.execute(request);
+    
+    Map<String, Matcher<String>> parameters = new HashMap<>();
+    parameters.put("username", Matchers.equalTo("Bob"));
+    parameters.put("password", Matchers.equalTo("secret!"));
+    httpClientMock.verify().post("/login").withBody(parameters).called();
+    
+    parameters = new HashMap<>();
+    parameters.put("username", Matchers.equalTo("John"));
+    parameters.put("password", Matchers.equalTo("1234"));
+    httpClientMock.verify().post("/login").withBody(parameters).called();
+    
+    parameters = new HashMap<>();
+    parameters.put("phone", Matchers.equalTo("123456789"));
+    httpClientMock.verify().post("/login").withBody(parameters).called();
+    
+    parameters = new HashMap<>();
+    parameters.put("foo", Matchers.equalTo("bar"));
+    httpClientMock.verify().post("/login").withBody(parameters).called(0);
+    
+    parameters = new HashMap<>();
+    parameters.put("username", Matchers.containsString("o"));
+    parameters.put("password", Matchers.any(String.class));
+    httpClientMock.verify().post("/login").withBody(parameters).called(3);
+  }
 }

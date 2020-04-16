@@ -8,6 +8,10 @@ import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Map;
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.hamcrest.Matcher;
 
@@ -89,6 +93,29 @@ public class HttpClientMockBuilder {
   }
 
   /**
+   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once using {@link #withBody(Map)}.
+   *
+   * @param name parameter name
+   * @param value expected parameter value
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameter(String name, String value) {
+    return withFormParameter(name, equalTo(value));
+  }
+
+  /**
+   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once using {@link #withBody(Map)}.
+   *
+   * @param name parameter name
+   * @param matcher parameter value matcher
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameter(String name, Matcher<String> matcher) {
+    ruleBuilder.addFormParameterCondition(name, matcher);
+    return this;
+  }
+
+  /**
    * Adds custom conditions.
    *
    * @param condition custom condition
@@ -107,6 +134,17 @@ public class HttpClientMockBuilder {
    */
   public HttpClientMockBuilder withBody(Matcher<String> matcher) {
     ruleBuilder.addCondition(new BodyMatcher(matcher));
+    return this;
+  }
+
+  /**
+   * Adds body condition. Request body must contain the given URL-encoded form parameters (typically used in POST requests). Alternatively, parameters may be specified individually using {@link #withFormParameter(String, Matcher)}.
+   * 
+   * @param parameters the parameters
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withBody(Map<String, Matcher<String>> parameters) {
+    ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }
 
@@ -266,4 +304,23 @@ public class HttpClientMockBuilder {
     return responseBuilder.doReturnXML(response, charset);
   }
 
+  /**
+   * Adds action which returns provided URL-encoded parameter response in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param bodyParameters parameters to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters) {
+    return doReturnFormParams(parameters, StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Adds action which returns provided URL-encoded parameter response with status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param bodyParameters parameters to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters, Charset charset) {
+    return responseBuilder.doReturnFormParams(parameters, charset);
+  }
 }

@@ -8,7 +8,11 @@ import static org.hamcrest.Matchers.containsString;
 
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -16,6 +20,9 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.message.BasicNameValuePair;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 public class HttpClientMockBuilderTest {
@@ -313,6 +320,97 @@ public class HttpClientMockBuilderTest {
     HttpResponse google = httpClientMock.execute(new HttpGet("http://www.google.com"));
     assertThat(login, hasContent("login"));
     assertThat(google, hasContent("google"));
+  }
+  
+  @Test
+  public void withFormParameter() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    httpClientMock.onPost("/login")
+      .withFormParameter("username", "John")
+      .withFormParameter("password", Matchers.containsString("secret"))
+    .doReturnStatus(200);
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    HttpResponse response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(200));
+    
+    //username does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "Bob"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+    
+    //password does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "1234")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+    
+    //parameter name does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("phone", "123456789")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+  }
+  
+  @Test
+  public void withBody_form_parameters() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    Map<String, Matcher<String>> parameters = new HashMap<>();
+    parameters.put("username", Matchers.equalTo("John"));
+    parameters.put("password", Matchers.containsString("secret"));
+    
+    httpClientMock.onPost("/login")
+      .withBody(parameters)
+    .doReturnStatus(200);
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    HttpResponse response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(200));
+    
+    //username does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "Bob"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+    
+    //password does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "1234")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+    
+    //parameter name does not match
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("phone", "123456789")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
   }
 
 }

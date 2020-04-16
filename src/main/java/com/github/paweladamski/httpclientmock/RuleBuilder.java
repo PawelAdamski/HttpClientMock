@@ -3,14 +3,17 @@ package com.github.paweladamski.httpclientmock;
 import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
+import com.github.paweladamski.httpclientmock.condition.UrlEncodedFormCondition;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.hamcrest.Matcher;
 
 class RuleBuilder {
 
   private final List<Action> actions = new ArrayList<>();
   private final List<Condition> conditions = new ArrayList<>();
+  private UrlEncodedFormCondition formParametersCondition;
   private final UrlConditions urlConditions = new UrlConditions();
 
   RuleBuilder(String method, String defaultHost, String url) {
@@ -42,6 +45,22 @@ class RuleBuilder {
     UrlConditions urlConditions = new UrlConditions();
     urlConditions.getParameterConditions().put(name, matcher);
     addUrlConditions(urlConditions);
+  }
+  
+  void addFormParameterCondition(String name, Matcher<String> matcher) {
+	  if (formParametersCondition == null) {
+		  formParametersCondition = new UrlEncodedFormCondition();
+		  addCondition(formParametersCondition);
+	  }
+	  formParametersCondition.addExpectedParameter(name, matcher);
+  }
+  
+  void addFormParameterConditions(Map<String, Matcher<String>> parameters) {
+    if (formParametersCondition == null) {
+    	formParametersCondition = new UrlEncodedFormCondition();
+      addCondition(formParametersCondition);
+    }
+    formParametersCondition.addExpectedParameters(parameters);
   }
 
   void addReferenceCondition(Matcher<String> matcher) {
