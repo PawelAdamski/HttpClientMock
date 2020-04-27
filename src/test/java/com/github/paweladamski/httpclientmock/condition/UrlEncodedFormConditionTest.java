@@ -18,6 +18,23 @@ import com.github.paweladamski.httpclientmock.Request;
  * @author Michael Angstadt
  */
 public class UrlEncodedFormConditionTest {
+  /**
+   * Condition should always match if no expected parameters were passed into it.
+   */
+  @Test
+  public void no_expected_parameters_provided() throws Exception {
+    UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
+    
+    HttpPost request = new HttpPost();
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("one", "1"),
+      new BasicNameValuePair("two", "2")
+    )));
+    
+    Request r = new Request(null, request, null);
+    assertTrue(condition.matches(r));
+  }
+  
   @Test
   public void valid_match() throws Exception {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();

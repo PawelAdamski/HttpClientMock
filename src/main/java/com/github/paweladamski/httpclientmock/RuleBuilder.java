@@ -13,20 +13,22 @@ class RuleBuilder {
 
   private final List<Action> actions = new ArrayList<>();
   private final List<Condition> conditions = new ArrayList<>();
-  private UrlEncodedFormCondition formParametersCondition;
+  private final UrlEncodedFormCondition formParametersCondition = new UrlEncodedFormCondition();
   private final UrlConditions urlConditions = new UrlConditions();
 
   RuleBuilder(String method, String defaultHost, String url) {
+    this(method);
+    
     UrlParser urlParser = new UrlParser();
     if (url.startsWith("/")) {
       url = defaultHost + url;
     }
-    addCondition(new HttpMethodCondition(method));
     addUrlConditions(urlParser.parse(url));
   }
 
   RuleBuilder(String method) {
     addCondition(new HttpMethodCondition(method));
+    addCondition(formParametersCondition);
   }
 
   void addAction(Action o) {
@@ -48,18 +50,10 @@ class RuleBuilder {
   }
   
   void addFormParameterCondition(String name, Matcher<String> matcher) {
-	  if (formParametersCondition == null) {
-		  formParametersCondition = new UrlEncodedFormCondition();
-		  addCondition(formParametersCondition);
-	  }
-	  formParametersCondition.addExpectedParameter(name, matcher);
+	formParametersCondition.addExpectedParameter(name, matcher);
   }
   
   void addFormParameterConditions(Map<String, Matcher<String>> parameters) {
-    if (formParametersCondition == null) {
-    	formParametersCondition = new UrlEncodedFormCondition();
-      addCondition(formParametersCondition);
-    }
     formParametersCondition.addExpectedParameters(parameters);
   }
 

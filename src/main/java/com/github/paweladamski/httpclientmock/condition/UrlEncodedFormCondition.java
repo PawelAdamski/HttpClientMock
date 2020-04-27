@@ -18,9 +18,14 @@ import com.github.paweladamski.httpclientmock.Request;
  */
 public class UrlEncodedFormCondition implements Condition {
   private final Map<String, Matcher<String>> expected = new HashMap<>();
+  private boolean enabled = false;
 
   @Override
   public boolean matches(Request r) {
+    if (!enabled) {
+      return true;
+    }
+
     boolean requestHasBody = (r.getHttpRequest() instanceof HttpEntityEnclosingRequest);
     if (!requestHasBody) {
       //body-less requests only match if no parameters are expected
@@ -65,6 +70,7 @@ public class UrlEncodedFormCondition implements Condition {
    */
   public void addExpectedParameter(String name, Matcher<String> matcher) {
     expected.put(name, matcher);
+    enabled = true;
   }
 
   /**
@@ -73,5 +79,6 @@ public class UrlEncodedFormCondition implements Condition {
    */
   public void addExpectedParameters(Map<String, Matcher<String>> parameters) {
     expected.putAll(parameters);
+    enabled = true;
   }
 }
