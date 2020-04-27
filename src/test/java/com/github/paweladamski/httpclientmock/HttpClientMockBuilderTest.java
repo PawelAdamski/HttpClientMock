@@ -7,10 +7,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 import com.github.paweladamski.httpclientmock.condition.Condition;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -21,7 +20,6 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -370,7 +368,7 @@ public class HttpClientMockBuilderTest {
   public void withBody_form_parameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     
-    Map<String, Matcher<String>> parameters = new HashMap<>();
+    MatchersMap<String, String> parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
     

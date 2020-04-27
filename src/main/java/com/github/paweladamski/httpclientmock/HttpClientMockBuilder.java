@@ -6,6 +6,7 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -143,7 +144,7 @@ public class HttpClientMockBuilder {
    * @param parameters the parameters
    * @return condition builder
    */
-  public HttpClientMockBuilder withBody(Map<String, Matcher<String>> parameters) {
+  public HttpClientMockBuilder withBody(MatchersMap<String, String> parameters) {
     ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }

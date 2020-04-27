@@ -1,9 +1,7 @@
 package com.github.paweladamski.httpclientmock.condition;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,13 +11,14 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.hamcrest.Matcher;
 
 import com.github.paweladamski.httpclientmock.Request;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 
 /**
  * Tests the request body for URL-encoded parameters.
  * @author Michael Angstadt
  */
 public class UrlEncodedFormCondition implements Condition {
-  private final Map<String, Matcher<String>> expected = new HashMap<>();
+  private final MatchersMap<String, String> expected = new MatchersMap<>();
   private boolean enabled = false;
 
   @Override
@@ -52,16 +51,7 @@ public class UrlEncodedFormCondition implements Condition {
   }
   
   private boolean allParamsHaveMatchingValue(List<NameValuePair> actual) {
-    for (NameValuePair actualPair : actual) {
-      String actualName = actualPair.getName();
-      String actualValue = actualPair.getValue();
-      
-      if (!expected.get(actualName).matches(actualValue)) {
-        return false;
-      }
-    }
-    
-    return true;
+    return actual.stream().allMatch(actualPair -> expected.matches(actualPair.getName(), actualPair.getValue()));
   }
   
   private List<NameValuePair> parseFormParameters(Request r) {
@@ -87,7 +77,7 @@ public class UrlEncodedFormCondition implements Condition {
    * Adds expected form parameters.
    * @param parameters the expected parameters
    */
-  public void addExpectedParameters(Map<String, Matcher<String>> parameters) {
+  public void addExpectedParameters(MatchersMap<String, String> parameters) {
     expected.putAll(parameters);
     enabled = true;
   }

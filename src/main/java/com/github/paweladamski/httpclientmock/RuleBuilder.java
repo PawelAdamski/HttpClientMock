@@ -4,9 +4,9 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
 import com.github.paweladamski.httpclientmock.condition.UrlEncodedFormCondition;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.hamcrest.Matcher;
 
 class RuleBuilder {
@@ -53,7 +53,7 @@ class RuleBuilder {
 	formParametersCondition.addExpectedParameter(name, matcher);
   }
   
-  void addFormParameterConditions(Map<String, Matcher<String>> parameters) {
+  void addFormParameterConditions(MatchersMap<String, String> parameters) {
     formParametersCondition.addExpectedParameters(parameters);
   }
 

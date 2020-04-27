@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.util.List;
 import java.util.Map;
 import org.hamcrest.Matcher;
@@ -144,7 +145,7 @@ public class HttpClientVerifyBuilder {
    * @param parameters the parameters
    * @return condition builder
    */
-  public HttpClientVerifyBuilder withBody(Map<String, Matcher<String>> parameters) {
+  public HttpClientVerifyBuilder withBody(MatchersMap<String, String> parameters) {
     ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }

@@ -5,10 +5,9 @@ import static com.github.paweladamski.httpclientmock.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -18,7 +17,6 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -309,25 +307,25 @@ public class HttpClientVerifyTest {
     )));
     httpClientMock.execute(request);
     
-    Map<String, Matcher<String>> parameters = new HashMap<>();
+    MatchersMap<String, String> parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("Bob"));
     parameters.put("password", Matchers.equalTo("secret!"));
     httpClientMock.verify().post("/login").withBody(parameters).called();
     
-    parameters = new HashMap<>();
+    parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.equalTo("1234"));
     httpClientMock.verify().post("/login").withBody(parameters).called();
     
-    parameters = new HashMap<>();
+    parameters = new MatchersMap<>();
     parameters.put("phone", Matchers.equalTo("123456789"));
     httpClientMock.verify().post("/login").withBody(parameters).called();
     
-    parameters = new HashMap<>();
+    parameters = new MatchersMap<>();
     parameters.put("foo", Matchers.equalTo("bar"));
     httpClientMock.verify().post("/login").withBody(parameters).called(0);
     
-    parameters = new HashMap<>();
+    parameters = new MatchersMap<>();
     parameters.put("username", Matchers.containsString("o"));
     parameters.put("password", Matchers.any(String.class));
     httpClientMock.verify().post("/login").withBody(parameters).called(3);
