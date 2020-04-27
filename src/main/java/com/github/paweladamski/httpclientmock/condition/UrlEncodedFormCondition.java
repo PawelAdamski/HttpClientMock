@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.NameValuePair;
@@ -26,41 +28,49 @@ public class UrlEncodedFormCondition implements Condition {
       return true;
     }
 
-    boolean requestHasBody = (r.getHttpRequest() instanceof HttpEntityEnclosingRequest);
-    if (!requestHasBody) {
+    if (!requestHasBody(r)) {
       //body-less requests only match if no parameters are expected
       return expected.isEmpty();
     }
 
+    List<NameValuePair> actual = parseFormParameters(r);
+    return allDefinedParamsOccurredInRequest(actual) && allParamsHaveMatchingValue(actual);
+  }
+  
+  private boolean requestHasBody(Request r) {
+    return (r.getHttpRequest() instanceof HttpEntityEnclosingRequest);
+  }
+  
+  private boolean allDefinedParamsOccurredInRequest(List<NameValuePair> actual) {
+    Set<String> actualNames = actual.stream()
+      .map(p -> p.getName())
+    .collect(Collectors.toSet());
+    
+    Set<String> expectedNames = expected.keySet();
+    
+    return expectedNames.equals(actualNames);
+  }
+  
+  private boolean allParamsHaveMatchingValue(List<NameValuePair> actual) {
+    for (NameValuePair actualPair : actual) {
+      String actualName = actualPair.getName();
+      String actualValue = actualPair.getValue();
+      
+      if (!expected.get(actualName).matches(actualValue)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  private List<NameValuePair> parseFormParameters(Request r) {
     HttpEntityEnclosingRequest request = (HttpEntityEnclosingRequest) r.getHttpRequest();
-
-    List<NameValuePair> actual;
     try {
-      actual = URLEncodedUtils.parse(request.getEntity());
+      return URLEncodedUtils.parse(request.getEntity());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    if (expected.size() != actual.size()) {
-      return false;
-    }
-
-    Map<String, Matcher<String>> expectedCopy = new HashMap<>(expected);
-    for (NameValuePair actualPair : actual) {
-      String actualName = actualPair.getName();
-
-      Matcher<String> expectedValue = expectedCopy.remove(actualName);
-      if (expectedValue == null) {
-        return false;
-      }
-
-      String actualValue = actualPair.getValue();
-      if (!expectedValue.matches(actualValue)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   /**
