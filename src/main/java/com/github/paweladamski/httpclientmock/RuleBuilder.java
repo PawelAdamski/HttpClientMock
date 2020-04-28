@@ -50,7 +50,7 @@ class RuleBuilder {
   }
   
   void addFormParameterCondition(String name, Matcher<String> matcher) {
-	formParametersCondition.addExpectedParameter(name, matcher);
+    formParametersCondition.addExpectedParameter(name, matcher);
   }
   
   void addFormParameterConditions(MatchersMap<String, String> parameters) {
