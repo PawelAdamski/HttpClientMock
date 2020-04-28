@@ -1,6 +1,7 @@
 package com.github.paweladamski.httpclientmock.condition;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.hamcrest.Matcher;
 
+import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.Request;
 import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 
@@ -25,11 +27,6 @@ public class UrlEncodedFormCondition implements Condition {
   public boolean matches(Request r) {
     if (!enabled) {
       return true;
-    }
-
-    if (!requestHasBody(r)) {
-      //body-less requests only match if no parameters are expected
-      return expected.isEmpty();
     }
 
     List<NameValuePair> actual = parseFormParameters(r);
@@ -55,6 +52,10 @@ public class UrlEncodedFormCondition implements Condition {
   }
   
   private List<NameValuePair> parseFormParameters(Request r) {
+    if (!requestHasBody(r)) {
+      return Collections.emptyList();
+    }
+    
     HttpEntityEnclosingRequest request = (HttpEntityEnclosingRequest) r.getHttpRequest();
     try {
       return URLEncodedUtils.parse(request.getEntity());
@@ -80,5 +81,51 @@ public class UrlEncodedFormCondition implements Condition {
   public void addExpectedParameters(MatchersMap<String, String> parameters) {
     expected.putAll(parameters);
     enabled = true;
+  }
+  
+  @Override
+  public void debug(Request r, Debugger debugger) {
+    if (!enabled) {
+      return;
+    }
+    
+    List<NameValuePair> actual = parseFormParameters(r);
+
+    for (String param : findExtraParamsInRequest(actual)) {
+      debugger.message(false, "parameter " + param + " was not expected to be in the request");
+    }
+    
+    for (String param : findParamsMissingFromRequest(actual)) {
+      debugger.message(false, "parameter " + param + " is missing from the request");
+    }
+    
+    for (NameValuePair actualPair : actual) {
+      String actualName = actualPair.getName();
+      if (!expected.containsKey(actualName)) {
+        /*
+         * Parameter was not expected to be found in the request.
+         * This is checked for in the code above, so no need to output a message here.
+         */
+        continue;
+      }
+
+      String actualValue = actualPair.getValue();
+      boolean matches = expected.matches(actualName, actualValue);
+      String message = "parameter " + actualName + " is " + expected.describe(actualName);
+      debugger.message(matches, message);
+    }
+  }
+  
+  private Set<String> findExtraParamsInRequest(List<NameValuePair> actual) {
+    return actual.stream()
+      .map(p -> p.getName())
+      .filter(name -> !expected.containsKey(name))
+    .collect(Collectors.toSet());
+  }
+  
+  private Set<String> findParamsMissingFromRequest(List<NameValuePair> actual) {
+    return expected.keySet().stream()
+      .filter(name -> actual.stream().noneMatch(p -> p.getName().equals(name)))
+    .collect(Collectors.toSet());
   }
 }
