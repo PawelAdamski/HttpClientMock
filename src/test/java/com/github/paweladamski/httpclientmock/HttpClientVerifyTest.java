@@ -241,36 +241,8 @@ public class HttpClientVerifyTest {
       new BasicNameValuePair("password", "secret!")
     )));
     httpClientMock.execute(request);
-
-    //username does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "Bob"),
-      new BasicNameValuePair("password", "secret!")
-    )));
-     httpClientMock.execute(request);
-
-    //password does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "1234")
-    )));
-    httpClientMock.execute(request);
-
-    //parameter name does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("phone", "123456789")
-    )));
-    httpClientMock.execute(request);
     
-    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", "secret!").called();
-    httpClientMock.verify().post("/login").withFormParameter("username", "Bob").withFormParameter("password", "secret!").called();
-    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", "1234").called();
-    httpClientMock.verify().post("/login").withFormParameter("phone", "123456789").called();
-    httpClientMock.verify().post("/login").withFormParameter("foo", "bar").called(0);
-    httpClientMock.verify().post("/login").withFormParameter("username", Matchers.containsString("o")).withFormParameter("password", Matchers.any(String.class)).called(3);
+    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", Matchers.containsString("secret")).called();
   }
   
   @Test
@@ -284,50 +256,9 @@ public class HttpClientVerifyTest {
     )));
     httpClientMock.execute(request);
     
-    //username does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "Bob"),
-      new BasicNameValuePair("password", "secret!")
-    )));
-    httpClientMock.execute(request);
-    
-    //password does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "1234")
-    )));
-    httpClientMock.execute(request);
-    
-    //parameter name does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("phone", "123456789")
-    )));
-    httpClientMock.execute(request);
-    
     MatchersMap<String, String> parameters = new MatchersMap<>();
-    parameters.put("username", Matchers.equalTo("Bob"));
-    parameters.put("password", Matchers.equalTo("secret!"));
-    httpClientMock.verify().post("/login").withBody(parameters).called();
-    
-    parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("John"));
-    parameters.put("password", Matchers.equalTo("1234"));
+    parameters.put("password", Matchers.containsString("secret"));
     httpClientMock.verify().post("/login").withBody(parameters).called();
-    
-    parameters = new MatchersMap<>();
-    parameters.put("phone", Matchers.equalTo("123456789"));
-    httpClientMock.verify().post("/login").withBody(parameters).called();
-    
-    parameters = new MatchersMap<>();
-    parameters.put("foo", Matchers.equalTo("bar"));
-    httpClientMock.verify().post("/login").withBody(parameters).called(0);
-    
-    parameters = new MatchersMap<>();
-    parameters.put("username", Matchers.containsString("o"));
-    parameters.put("password", Matchers.any(String.class));
-    httpClientMock.verify().post("/login").withBody(parameters).called(3);
   }
 }

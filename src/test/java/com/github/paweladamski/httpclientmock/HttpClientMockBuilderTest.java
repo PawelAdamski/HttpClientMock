@@ -336,32 +336,6 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
-    
-    //username does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "Bob"),
-      new BasicNameValuePair("password", "secret!")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
-    
-    //password does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "1234")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
-    
-    //parameter name does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("phone", "123456789")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
   }
   
   @Test
@@ -383,32 +357,6 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
-    
-    //username does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "Bob"),
-      new BasicNameValuePair("password", "secret!")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
-    
-    //password does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "1234")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
-    
-    //parameter name does not match
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("phone", "123456789")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
   }
 
 }
