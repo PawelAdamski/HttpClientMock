@@ -246,7 +246,7 @@ public class HttpClientVerifyTest {
   }
   
   @Test
-  public void withBody_form_parameters() throws IOException {
+  public void withFormParameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     
     HttpPost request = new HttpPost("http://localhost/login");
@@ -259,6 +259,6 @@ public class HttpClientVerifyTest {
     MatchersMap<String, String> parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
-    httpClientMock.verify().post("/login").withBody(parameters).called();
+    httpClientMock.verify().post("/login").withFormParameters(parameters).called();
   }
 }

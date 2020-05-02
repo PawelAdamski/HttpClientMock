@@ -347,7 +347,7 @@ public class HttpClientMockBuilderTest {
   }
   
   @Test
-  public void withBody_form_parameters() throws IOException {
+  public void withFormParameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     
     MatchersMap<String, String> parameters = new MatchersMap<>();
@@ -355,7 +355,7 @@ public class HttpClientMockBuilderTest {
     parameters.put("password", Matchers.containsString("secret"));
     
     httpClientMock.onPost("/login")
-      .withBody(parameters)
+      .withFormParameters(parameters)
     .doReturnStatus(200);
     
     HttpPost request = new HttpPost("http://localhost/login");

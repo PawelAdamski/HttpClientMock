@@ -94,7 +94,9 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once using {@link #withBody(Map)}.
+   * Request body must contain the given URL-encoded form parameter (typically
+   * found in POST requests). Alternatively, parameters may be specified all at
+   * once using {@link #withFormParameters(MatchersMap)}.
    *
    * @param name parameter name
    * @param value expected parameter value
@@ -105,7 +107,9 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once using {@link #withBody(Map)}.
+   * Request body must contain the given URL-encoded form parameter (typically
+   * found in POST requests). Alternatively, parameters may be specified all at
+   * once using {@link #withFormParameters(MatchersMap)}.
    *
    * @param name parameter name
    * @param matcher parameter value matcher
@@ -113,6 +117,19 @@ public class HttpClientMockBuilder {
    */
   public HttpClientMockBuilder withFormParameter(String name, Matcher<String> matcher) {
     ruleBuilder.addFormParameterCondition(name, matcher);
+    return this;
+  }
+  
+  /**
+   * Request body must contain the given URL-encoded form parameters (typically
+   * used in POST requests). Alternatively, parameters may be specified
+   * individually using {@link #withFormParameter(String, Matcher)}.
+   * 
+   * @param parameters the parameters
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameters(MatchersMap<String, String> parameters) {
+    ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }
 
@@ -135,17 +152,6 @@ public class HttpClientMockBuilder {
    */
   public HttpClientMockBuilder withBody(Matcher<String> matcher) {
     ruleBuilder.addCondition(new BodyMatcher(matcher));
-    return this;
-  }
-
-  /**
-   * Adds body condition. Request body must contain the given URL-encoded form parameters (typically used in POST requests). Alternatively, parameters may be specified individually using {@link #withFormParameter(String, Matcher)}.
-   * 
-   * @param parameters the parameters
-   * @return condition builder
-   */
-  public HttpClientMockBuilder withBody(MatchersMap<String, String> parameters) {
-    ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }
 
