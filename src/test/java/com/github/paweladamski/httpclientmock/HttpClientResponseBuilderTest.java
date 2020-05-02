@@ -18,14 +18,19 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -279,6 +284,34 @@ public class HttpClientResponseBuilderTest {
 
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
     Assert.assertThat(response, hasStatus(SC_NOT_FOUND));
+  }
+  
+  @Test
+  public void doReturnFormParams() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+
+    List<NameValuePair> expected = Arrays.asList(new BasicNameValuePair("one", "1"));
+    httpClientMock.onGet("/path1").doReturnFormParams(expected);
+
+    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
+    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
+
+    assertThat(response, hasStatus(200));
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void doReturnFormParams_empty() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+
+    List<NameValuePair> expected = Arrays.asList();
+    httpClientMock.onGet("/path1").doReturnFormParams(expected);
+
+    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
+    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
+
+    assertThat(response, hasStatus(200));
+    Assert.assertEquals(expected, actual);
   }
 
   private Action echo() {

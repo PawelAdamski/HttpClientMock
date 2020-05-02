@@ -6,8 +6,13 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Map;
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.hamcrest.Matcher;
 
@@ -85,6 +90,46 @@ public class HttpClientMockBuilder {
    */
   public HttpClientMockBuilder withParameter(String name, Matcher<String> matcher) {
     ruleBuilder.addParameterCondition(name, matcher);
+    return this;
+  }
+
+  /**
+   * Request body must contain the given URL-encoded form parameter (typically
+   * found in POST requests). Alternatively, parameters may be specified all at
+   * once using {@link #withFormParameters(MatchersMap)}.
+   *
+   * @param name parameter name
+   * @param value expected parameter value
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameter(String name, String value) {
+    return withFormParameter(name, equalTo(value));
+  }
+
+  /**
+   * Request body must contain the given URL-encoded form parameter (typically
+   * found in POST requests). Alternatively, parameters may be specified all at
+   * once using {@link #withFormParameters(MatchersMap)}.
+   *
+   * @param name parameter name
+   * @param matcher parameter value matcher
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameter(String name, Matcher<String> matcher) {
+    ruleBuilder.addFormParameterCondition(name, matcher);
+    return this;
+  }
+  
+  /**
+   * Request body must contain the given URL-encoded form parameters (typically
+   * used in POST requests). Alternatively, parameters may be specified
+   * individually using {@link #withFormParameter(String, Matcher)}.
+   * 
+   * @param parameters the parameters
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withFormParameters(MatchersMap<String, String> parameters) {
+    ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }
 
@@ -266,4 +311,23 @@ public class HttpClientMockBuilder {
     return responseBuilder.doReturnXML(response, charset);
   }
 
+  /**
+   * Adds action which returns provided URL-encoded parameter response in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param bodyParameters parameters to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters) {
+    return doReturnFormParams(parameters, StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Adds action which returns provided URL-encoded parameter response with status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param bodyParameters parameters to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters, Charset charset) {
+    return responseBuilder.doReturnFormParams(parameters, charset);
+  }
 }

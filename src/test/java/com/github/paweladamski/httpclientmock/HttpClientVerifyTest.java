@@ -5,7 +5,10 @@ import static com.github.paweladamski.httpclientmock.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
+import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
 import java.io.IOException;
+import java.util.Arrays;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -13,6 +16,8 @@ import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.message.BasicNameValuePair;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 public class HttpClientVerifyTest {
@@ -226,4 +231,34 @@ public class HttpClientVerifyTest {
     httpClientMock.verify().get("/login").withHeader("User-Agent", "IE").notCalled();
   }
 
+  @Test
+  public void withFormParameter() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+    
+    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", Matchers.containsString("secret")).called();
+  }
+  
+  @Test
+  public void withFormParameters() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+    
+    MatchersMap<String, String> parameters = new MatchersMap<>();
+    parameters.put("username", Matchers.equalTo("John"));
+    parameters.put("password", Matchers.containsString("secret"));
+    httpClientMock.verify().post("/login").withFormParameters(parameters).called();
+  }
 }

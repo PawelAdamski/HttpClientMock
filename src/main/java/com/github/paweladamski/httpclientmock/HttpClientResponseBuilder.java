@@ -9,10 +9,13 @@ import com.github.paweladamski.httpclientmock.action.ExceptionAction;
 import com.github.paweladamski.httpclientmock.action.HeaderAction;
 import com.github.paweladamski.httpclientmock.action.StatusResponse;
 import com.github.paweladamski.httpclientmock.action.StringResponse;
+import com.github.paweladamski.httpclientmock.action.UrlEncodedFormEntityResponse;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import org.apache.http.entity.ContentType;
+import org.apache.http.NameValuePair;
 
 public class HttpClientResponseBuilder {
 
@@ -190,6 +193,27 @@ public class HttpClientResponseBuilder {
    */
   public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
     return doReturn(response, charset, APPLICATION_XML);
+  }
+  
+  /**
+   * Adds action which returns provided name/value pairs as URL-encoded form response in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param formParameters the parameters to include in the response
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> formParameters) {
+    return doReturnFormParams(formParameters, StandardCharsets.UTF_8);
+  }
+  
+  /**
+   * Adds action which returns provided name/value pairs as URL-encoded form response and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   *
+   * @param formParameters the parameters to include in the response
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> formParameters, Charset charset) {
+    newRule.addAction(new UrlEncodedFormEntityResponse(formParameters, charset));
+    return new HttpClientResponseBuilder(newRule);
   }
 
 }
