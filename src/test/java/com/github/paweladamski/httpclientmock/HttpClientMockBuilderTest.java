@@ -322,7 +322,7 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void withFormParameter() throws IOException {
+  public void withFormParameter_should_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     httpClientMock.onPost("/login")
@@ -337,14 +337,6 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
-
-    request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-        new BasicNameValuePair("username", "John"),
-        new BasicNameValuePair("password", "wrong")
-    )));
-    response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
   }
 
   @Test
