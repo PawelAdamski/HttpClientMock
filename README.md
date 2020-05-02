@@ -274,7 +274,7 @@ httpClientMock.onGet("http://localhost:8080/login")
 httpClientMock.verify().get("/login?user=john").called();
 ```
 
-##Release notes
+## Release notes
 
 1.7.0
 - Added methods (`withFormParameter`, `withFormParameters`) for matching form parameters (URL encode parameters).
