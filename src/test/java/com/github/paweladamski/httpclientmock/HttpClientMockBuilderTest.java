@@ -336,6 +336,14 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
+    
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "wrong")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
   }
   
   @Test
@@ -357,6 +365,14 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
+    
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "wrong")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
   }
 
 }
