@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -21,14 +22,9 @@ import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
  */
 public class UrlEncodedFormCondition implements Condition {
   private final MatchersMap<String, String> expected = new MatchersMap<>();
-  private boolean enabled = false;
 
   @Override
   public boolean matches(Request r) {
-    if (!enabled) {
-      return true;
-    }
-
     List<NameValuePair> actual = parseFormParameters(r);
     return allDefinedParamsOccurredInRequest(actual) && allParamsHaveMatchingValue(actual);
   }
@@ -57,8 +53,18 @@ public class UrlEncodedFormCondition implements Condition {
     }
     
     HttpEntityEnclosingRequest request = (HttpEntityEnclosingRequest) r.getHttpRequest();
+    HttpEntity entity = request.getEntity();
+    if (entity == null) {
+      return Collections.emptyList();
+    }
+    
     try {
-      return URLEncodedUtils.parse(request.getEntity());
+      /*
+       * The method below returns an empty list if the Content-Type of the
+       * request is not "application/x-www-form-urlencoded". So, requests with
+       * other kinds of data in the body will correctly be ignored here.
+       */
+      return URLEncodedUtils.parse(entity);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -71,7 +77,6 @@ public class UrlEncodedFormCondition implements Condition {
    */
   public void addExpectedParameter(String name, Matcher<String> matcher) {
     expected.put(name, matcher);
-    enabled = true;
   }
 
   /**
@@ -80,15 +85,10 @@ public class UrlEncodedFormCondition implements Condition {
    */
   public void addExpectedParameters(MatchersMap<String, String> parameters) {
     expected.putAll(parameters);
-    enabled = true;
   }
   
   @Override
   public void debug(Request r, Debugger debugger) {
-    if (!enabled) {
-      return;
-    }
-    
     List<NameValuePair> actual = parseFormParameters(r);
 
     for (String param : findExtraParamsInRequest(actual)) {

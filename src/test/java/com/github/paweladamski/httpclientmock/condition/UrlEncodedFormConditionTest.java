@@ -11,9 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
@@ -24,28 +27,6 @@ import com.github.paweladamski.httpclientmock.Request;
  * @author Michael Angstadt
  */
 public class UrlEncodedFormConditionTest {
-  /**
-   * Condition should always match if no expected parameters were passed into it.
-   */
-  @Test
-  public void no_expected_parameters_provided() throws Exception {
-    UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
-    
-    HttpPost request = new HttpPost();
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("one", "1"),
-      new BasicNameValuePair("two", "2")
-    )));
-    
-    Request r = new Request(null, request, null);
-    assertTrue(condition.matches(r));
-
-    TestDebugger debugger = new TestDebugger();
-    condition.debug(r, debugger);
-    assertThat(debugger.matching, empty());
-    assertThat(debugger.notMatching, empty());
-  }
-  
   @Test
   public void valid_match() throws Exception {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
@@ -167,6 +148,49 @@ public class UrlEncodedFormConditionTest {
     assertThat(debugger.notMatching, contains(
       "parameter two was not expected to be in the request"
     ));
+  }
+  
+  /**
+   * The method that is used to extract the form parameters out of the request
+   * body ({@link URLEncodedUtils#parse(HttpEntity)}) also takes the
+   * Content-Type of the request into consideration. If the Content-Type is not
+   * "application/x-www-form-urlencoded", then it will not attempt to parse the
+   * body and it will act as if the body has zero form parameters in it.
+   */
+  @Test
+  public void body_contains_form_parameters_but_content_type_is_different() throws Exception {
+    {
+      UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
+      
+      HttpPost request = new HttpPost();
+      request.setEntity(new StringEntity("one=1"));
+      
+      Request r = new Request(null, request, null);
+      assertTrue(condition.matches(r));
+      
+      TestDebugger debugger = new TestDebugger();
+      condition.debug(r, debugger);
+      assertThat(debugger.matching, empty());
+      assertThat(debugger.notMatching, empty());
+    }
+    
+    {
+      UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
+      condition.addExpectedParameter("one", equalTo("1"));
+      
+      HttpPost request = new HttpPost();
+      request.setEntity(new StringEntity("one=1"));
+      
+      Request r = new Request(null, request, null);
+      assertFalse(condition.matches(r)); //request does not use "application/x-www-form-urlencoded" content type
+      
+      TestDebugger debugger = new TestDebugger();
+      condition.debug(r, debugger);
+      assertThat(debugger.matching, empty());
+      assertThat(debugger.notMatching, contains(
+        "parameter one is missing from the request"
+      ));
+    }
   }
 
   @Test
