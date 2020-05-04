@@ -232,7 +232,7 @@ public class HttpClientVerifyTest {
   }
 
   @Test
-  public void withFormParameter() throws IOException {
+  public void withFormParameter_should_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     
     HttpPost request = new HttpPost("http://localhost/login");
@@ -242,11 +242,33 @@ public class HttpClientVerifyTest {
     )));
     httpClientMock.execute(request);
     
-    httpClientMock.verify().post("/login").withFormParameter("username", "John").withFormParameter("password", Matchers.containsString("secret")).called();
+    httpClientMock.verify()
+        .post("/login")
+        .withFormParameter("username", "John")
+        .withFormParameter("password", Matchers.containsString("secret"))
+        .called();
   }
-  
+
   @Test
-  public void withFormParameters() throws IOException {
+  public void withFormParameter_should_notMatch_when_parameterHaveNotMatchingValue() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    httpClientMock.verify()
+        .post("/login")
+        .withFormParameter("username", "John")
+        .withFormParameter("password", Matchers.containsString("abc"))
+        .notCalled();
+  }
+
+  @Test
+  public void withFormParametersshould_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     
     HttpPost request = new HttpPost("http://localhost/login");
@@ -259,6 +281,8 @@ public class HttpClientVerifyTest {
     MatchersMap<String, String> parameters = new MatchersMap<>();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
-    httpClientMock.verify().post("/login").withFormParameters(parameters).called();
+    httpClientMock.verify().post("/login")
+        .withFormParameters(parameters)
+        .called();
   }
 }

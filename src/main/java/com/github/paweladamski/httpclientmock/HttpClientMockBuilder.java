@@ -314,7 +314,7 @@ public class HttpClientMockBuilder {
   /**
    * Adds action which returns provided URL-encoded parameter response in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
    *
-   * @param bodyParameters parameters to return
+   * @param parameters parameters to return
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters) {
@@ -324,7 +324,7 @@ public class HttpClientMockBuilder {
   /**
    * Adds action which returns provided URL-encoded parameter response with status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
    *
-   * @param bodyParameters parameters to return
+   * @param parameters parameters to return
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters, Charset charset) {

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -305,6 +306,23 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
     List<NameValuePair> expected = Arrays.asList();
+    httpClientMock.onGet("/path1").doReturnFormParams(expected);
+
+    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
+    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
+
+    assertThat(response, hasStatus(200));
+    Assert.assertEquals(expected, actual);
+  }
+
+  @Test
+  public void doReturnFormParams_should_returnResponseEntityWithFormParameters() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+
+    List<NameValuePair> expected = Arrays.asList(
+        new BasicNameValuePair("one", "1"),
+        new BasicNameValuePair("two", "2")
+    );
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));

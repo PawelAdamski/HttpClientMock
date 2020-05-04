@@ -12,6 +12,7 @@ HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.or
 * [Debugging](#debugging)
 * [Example 1](#example-1)
 * [Example 2](#example-2)
+* [Release notes](#release-notes)
 
 
 ## Installation 
@@ -95,6 +96,14 @@ httpClientMock.onGet()
 httpClientMock.onGet("http://localhost/login")
   .withHeader("tracking","123")
   .doReturn("ok");
+```
+
+### Form parameters
+```
+httpClientMock.onPost("/login")
+      .withFormParameter("username", "John")
+      .withFormParameter("password", Matchers.containsString("secret"))
+    .doReturnStatus(200);
 ```
 
 ### Body condition
@@ -265,3 +274,15 @@ httpClientMock.onGet("http://localhost:8080/login")
 httpClientMock.verify().get("/login?user=john").called();
 ```
 
+## Release notes
+
+1.7.0
+- Added methods (`withFormParameter`, `withFormParameters`) for matching form parameters (URL encode parameters).
+- Added action (`doReturnFormParams`) which return response with body containing provided form parameters.
+
+1.6.0
+* Added possibility to set response `Content-Type`.
+* Fixed wrong `Contet-Type` in methods 'doReturnXML', `doReturnJSON`
+
+1.5.0
+* Added possibility to add cookies to the response.
