@@ -54,7 +54,7 @@ httpClientMock.onGet().doReturn("get");
 httpClientMock.onPost().doReturn("post");
 httpClientMock.onPut().doReturn("put");
 httpClientMock.onDelete().doReturn("delete");
-httpClientMock.onOption().doReturn("options");
+httpClientMock.onOptions().doReturn("options");
 httpClientMock.onHead().doReturn("head");
 ```
 ### URL
