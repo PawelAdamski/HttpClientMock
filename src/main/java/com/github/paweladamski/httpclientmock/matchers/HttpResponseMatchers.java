@@ -1,6 +1,7 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
 import java.io.IOException;
+import java.util.Optional;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -64,14 +65,14 @@ public final class HttpResponseMatchers {
       }
 
       private String getCookieValue(CookieStore cookieStore, String cookieName) {
-        if (cookieStore != null) {
-          for (Cookie cookie : cookieStore.getCookies()) {
-            if (cookie.getName().equalsIgnoreCase(cookieName)) {
-              return cookie.getValue();
-            }
-          }
+        if (cookieStore == null) {
+          return null;
         }
-        return null;
+
+        Optional<Cookie> cookie = cookieStore.getCookies().stream()
+          .filter(c -> c.getName().equalsIgnoreCase(cookieName))
+        .findFirst();
+        return cookie.isPresent() ? cookie.get().getValue() : null;
       }
     };
   }
