@@ -1,12 +1,11 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.util.EntityUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -35,14 +34,9 @@ public final class HttpResponseMatchers {
       public boolean matches(Object o) {
         try {
           HttpResponse response = (HttpResponse) o;
-          Reader reader = new InputStreamReader(response.getEntity().getContent(), charset);
 
-          int intValueOfChar;
-          String targetString = "";
-          while ((intValueOfChar = reader.read()) != -1) {
-            targetString += (char) intValueOfChar;
-          }
-          reader.close();
+          byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+          String targetString = new String(bytes, charset);
 
           return targetString.equals(content);
         } catch (IOException e) {
