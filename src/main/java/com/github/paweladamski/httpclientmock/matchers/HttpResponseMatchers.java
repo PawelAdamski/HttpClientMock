@@ -33,17 +33,18 @@ public final class HttpResponseMatchers {
   public static Matcher<? super HttpResponse> hasContent(final String content, final String charset) {
     return new BaseMatcher<HttpResponse>() {
       public boolean matches(Object o) {
+        HttpResponse response = (HttpResponse) o;
+        
+        String targetString;
         try {
-          HttpResponse response = (HttpResponse) o;
-
           byte[] bytes = EntityUtils.toByteArray(response.getEntity());
-          String targetString = new String(bytes, charset);
-
-          return targetString.equals(content);
+          targetString = new String(bytes, charset);
         } catch (IOException e) {
           e.printStackTrace();
           return false;
         }
+
+        return targetString.equals(content);
       }
 
       public void describeTo(Description description) {
