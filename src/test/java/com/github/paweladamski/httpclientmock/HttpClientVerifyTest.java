@@ -188,7 +188,7 @@ public class HttpClientVerifyTest {
         .notCalled();
   }
 
-  @Test(expected = Exception.class)
+  @Test(expected = AssertionError.class)
   public void should_throw_exception_when_number_of_calls_is_wrong() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock();
 
