@@ -2,6 +2,14 @@ package com.github.paweladamski.httpclientmock;
 
 import java.util.List;
 
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+
 public class HttpClientVerify {
 
   private final String defaultHost;
@@ -23,59 +31,59 @@ public class HttpClientVerify {
   }
 
   public HttpClientVerifyBuilder post(String url) {
-    return newRule("POST", url);
+    return newRule(HttpPost.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder get(String url) {
-    return newRule("GET", url);
+    return newRule(HttpGet.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder put(String url) {
-    return newRule("PUT", url);
+    return newRule(HttpPut.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder delete(String url) {
-    return newRule("DELETE", url);
+    return newRule(HttpDelete.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder head(String url) {
-    return newRule("HEAD", url);
+    return newRule(HttpHead.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder options(String url) {
-    return newRule("OPTIONS", url);
+    return newRule(HttpOptions.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder patch(String url) {
-    return newRule("PATCH", url);
+    return newRule(HttpPatch.METHOD_NAME, url);
   }
 
   public HttpClientVerifyBuilder post() {
-    return newRule("POST");
+    return newRule(HttpPost.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder get() {
-    return newRule("GET");
+    return newRule(HttpGet.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder put() {
-    return newRule("PUT");
+    return newRule(HttpPut.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder delete() {
-    return newRule("DELETE");
+    return newRule(HttpDelete.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder head() {
-    return newRule("HEAD");
+    return newRule(HttpHead.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder options() {
-    return newRule("OPTIONS");
+    return newRule(HttpOptions.METHOD_NAME);
   }
 
   public HttpClientVerifyBuilder patch() {
-    return newRule("PATCH");
+    return newRule(HttpPatch.METHOD_NAME);
   }
 
 }
