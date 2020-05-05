@@ -19,22 +19,23 @@ public class BodyMatcher implements Condition {
 
   @Override
   public boolean matches(Request request) {
+    HttpRequest httpRequest = request.getHttpRequest();
+    if (!(httpRequest instanceof HttpEntityEnclosingRequest)) {
+      return false;
+    }
+    
+    HttpEntity entity = ((HttpEntityEnclosingRequest) httpRequest).getEntity();
+    if (entity == null) {
+      return false;
+    }
+    
+    String message;
     try {
-      HttpRequest httpRequest = request.getHttpRequest();
-      if (httpRequest instanceof HttpEntityEnclosingRequest) {
-        HttpEntity entity = ((HttpEntityEnclosingRequest) httpRequest).getEntity();
-        if (entity == null) {
-          return false;
-        }
-        String message = EntityUtils.toString(entity);
-
-        return matcher.matches(message);
-      } else {
-        return false;
-      }
+      message = EntityUtils.toString(entity);
     } catch (IOException e) {
       return false;
     }
+    return matcher.matches(message);
   }
 
   @Override
