@@ -282,7 +282,7 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Adds action which returns provided JSON in provided encoding and status 200. Additionally it sets "Content-type" header to "application/json".
+   * Adds action which returns provided JSON in provided charset and status 200. Additionally it sets "Content-type" header to "application/json".
    *
    * @param response JSON to return
    * @return response builder
@@ -302,7 +302,7 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Adds action which returns provided XML in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/xml".
+   * Adds action which returns provided XML in provided charset and status 200. Additionally it sets "Content-type" header to "application/xml".
    *
    * @param response JSON to return
    * @return response builder
@@ -322,7 +322,7 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Adds action which returns provided URL-encoded parameter response with status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
+   * Adds action which returns provided URL-encoded parameter response in provided charset and status 200. Additionally it sets "Content-type" header to "application/x-www-form-urlencoded".
    *
    * @param parameters parameters to return
    * @return response builder
