@@ -14,6 +14,6 @@ public class MatchersMap<K, V> extends HashMap<K, MatchersList<V>> {
   }
 
   public String describe(String name) {
-    return getOrDefault(name, new MatchersList<>()).describe();
+    return this.containsKey(name) ? this.get(name).describe() : "";
   }
 }
