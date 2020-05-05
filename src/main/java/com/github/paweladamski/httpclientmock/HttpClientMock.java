@@ -50,8 +50,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @param defaultHost default host for later conditions
    */
   public HttpClientMock(String defaultHost) {
-    this.defaultHost = defaultHost;
-    this.debugger = new Debugger();
+    this(defaultHost, new Debugger());
   }
 
   /**
