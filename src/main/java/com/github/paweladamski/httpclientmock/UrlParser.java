@@ -18,11 +18,10 @@ public class UrlParser {
     try {
       UrlConditions conditions = new UrlConditions();
       URL url = new URL(urlText);
-      if (url.getRef() != null) {
-        conditions.setReferenceConditions(equalTo(url.getRef()));
-      } else {
-        conditions.setReferenceConditions(isEmptyOrNullString());
-      }
+      
+      String ref = url.getRef();
+      conditions.setReferenceConditions((ref == null) ? isEmptyOrNullString() : equalTo(ref));
+      
       conditions.setSchemaConditions(Matchers.equalTo(url.getProtocol()));
       conditions.getHostConditions().add(equalTo(url.getHost()));
       conditions.getPortConditions().add(equalTo(url.getPort()));

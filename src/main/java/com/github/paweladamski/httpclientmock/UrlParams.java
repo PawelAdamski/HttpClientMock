@@ -13,13 +13,13 @@ public class UrlParams extends ArrayList<NameValuePair> {
   }
 
   public static UrlParams parse(String query, Charset charset) {
-    if (query == null) {
-      return new UrlParams();
-    } else {
-      UrlParams urlParams = new UrlParams();
+    UrlParams urlParams = new UrlParams();
+    
+    if (query != null) {
       urlParams.addAll(URLEncodedUtils.parse(query, charset));
-      return urlParams;
     }
+
+    return urlParams;
   }
 
   boolean contain(String name) {
