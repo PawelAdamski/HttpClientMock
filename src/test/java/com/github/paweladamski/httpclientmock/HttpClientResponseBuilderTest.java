@@ -286,12 +286,15 @@ public class HttpClientResponseBuilderTest {
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
     Assert.assertThat(response, hasStatus(SC_NOT_FOUND));
   }
-  
+
   @Test
-  public void doReturnFormParams() throws IOException {
+  public void doReturnFormParams_should_returnResponseEntityWithFormParameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
-    List<NameValuePair> expected = Arrays.asList(new BasicNameValuePair("one", "1"));
+    List<NameValuePair> expected = Arrays.asList(
+        new BasicNameValuePair("one", "1"),
+        new BasicNameValuePair("two", "2")
+    );
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
@@ -305,24 +308,7 @@ public class HttpClientResponseBuilderTest {
   public void doReturnFormParams_empty() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
 
-    List<NameValuePair> expected = Arrays.asList();
-    httpClientMock.onGet("/path1").doReturnFormParams(expected);
-
-    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
-    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
-
-    assertThat(response, hasStatus(200));
-    Assert.assertEquals(expected, actual);
-  }
-
-  @Test
-  public void doReturnFormParams_should_returnResponseEntityWithFormParameters() throws IOException {
-    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
-
-    List<NameValuePair> expected = Arrays.asList(
-        new BasicNameValuePair("one", "1"),
-        new BasicNameValuePair("two", "2")
-    );
+    List<NameValuePair> expected = Collections.emptyList();
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
