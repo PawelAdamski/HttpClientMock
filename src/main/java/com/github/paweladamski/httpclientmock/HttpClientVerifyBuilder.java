@@ -216,7 +216,7 @@ public class HttpClientVerifyBuilder {
         .count();
 
     if (!numberOfCalls.matches(matchingCalls)) {
-      throw new AssertionError(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
+      throw new IllegalStateException(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
     }
   }
 }
