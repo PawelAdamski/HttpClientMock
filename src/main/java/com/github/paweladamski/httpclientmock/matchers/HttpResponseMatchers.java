@@ -70,10 +70,9 @@ public final class HttpResponseMatchers {
           return null;
         }
 
-        Optional<Cookie> cookie = cookieStore.getCookies().stream()
+        return cookieStore.getCookies().stream()
           .filter(c -> c.getName().equalsIgnoreCase(cookieName))
-        .findFirst();
-        return cookie.isPresent() ? cookie.get().getValue() : null;
+        .findFirst().map(c -> c.getValue()).orElse(null);
       }
     };
   }
