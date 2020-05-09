@@ -116,6 +116,17 @@ public class HttpClientMock extends CloseableHttpClient {
   public HttpClientMockBuilder onHead() {
     return newRule(HttpHead.METHOD_NAME);
   }
+  
+  /**
+   * Starts defining new rule which requires HTTP OPTIONS method.
+   *
+   * @return HttpClientMockBuilder which allows  to define new rule
+   * @deprecated Method name contains misspelling, use {@link #onOptions}
+   */
+  @Deprecated
+  public HttpClientMockBuilder onOption() {
+    return onOptions();
+  }
 
   /**
    * Starts defining new rule which requires HTTP OPTIONS method.
