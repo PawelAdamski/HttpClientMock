@@ -140,10 +140,6 @@ public class UrlConditions {
   }
 
   private String portDebugDescription() {
-    if (portConditions.allMatches(EMPTY_PORT)) {
-      return "empty";
-    } else {
-      return portConditions.describe();
-    }
+    return portConditions.allMatches(EMPTY_PORT) ? "empty" : portConditions.describe();
   }
 }

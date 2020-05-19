@@ -10,6 +10,13 @@ import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -43,8 +50,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @param defaultHost default host for later conditions
    */
   public HttpClientMock(String defaultHost) {
-    this.defaultHost = defaultHost;
-    this.debugger = new Debugger();
+    this(defaultHost, new Debugger());
   }
 
   /**
@@ -81,7 +87,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onPost() {
-    return newRule("POST");
+    return newRule(HttpPost.METHOD_NAME);
   }
 
   /**
@@ -90,7 +96,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onGet() {
-    return newRule("GET");
+    return newRule(HttpGet.METHOD_NAME);
   }
 
   /**
@@ -99,7 +105,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onDelete() {
-    return newRule("DELETE");
+    return newRule(HttpDelete.METHOD_NAME);
   }
 
   /**
@@ -108,16 +114,27 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onHead() {
-    return newRule("HEAD");
+    return newRule(HttpHead.METHOD_NAME);
+  }
+  
+  /**
+   * Starts defining new rule which requires HTTP OPTIONS method.
+   *
+   * @return HttpClientMockBuilder which allows  to define new rule
+   * @deprecated Method name contains misspelling, use {@link #onOptions}
+   */
+  @Deprecated
+  public HttpClientMockBuilder onOption() {
+    return onOptions();
   }
 
   /**
-   * Starts defining new rule which requires HTTP OPTION method.
+   * Starts defining new rule which requires HTTP OPTIONS method.
    *
    * @return HttpClientMockBuilder which allows  to define new rule
    */
-  public HttpClientMockBuilder onOption() {
-    return newRule("OPTION");
+  public HttpClientMockBuilder onOptions() {
+    return newRule(HttpOptions.METHOD_NAME);
   }
 
   /**
@@ -126,7 +143,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onPut() {
-    return newRule("PUT");
+    return newRule(HttpPut.METHOD_NAME);
   }
 
   /**
@@ -135,7 +152,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows  to define new rule
    */
   public HttpClientMockBuilder onPatch() {
-    return newRule("PATCH");
+    return newRule(HttpPatch.METHOD_NAME);
   }
 
   /**
@@ -148,7 +165,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onGet(String url) {
-    return newRule("GET", url);
+    return newRule(HttpGet.METHOD_NAME, url);
   }
 
   /**
@@ -158,7 +175,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onPost(String url) {
-    return newRule("POST", url);
+    return newRule(HttpPost.METHOD_NAME, url);
   }
 
   /**
@@ -168,7 +185,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onPut(String url) {
-    return newRule("PUT", url);
+    return newRule(HttpPut.METHOD_NAME, url);
   }
 
   /**
@@ -178,7 +195,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onDelete(String url) {
-    return newRule("DELETE", url);
+    return newRule(HttpDelete.METHOD_NAME, url);
   }
 
   /**
@@ -188,7 +205,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onHead(String url) {
-    return newRule("HEAD", url);
+    return newRule(HttpHead.METHOD_NAME, url);
   }
 
   /**
@@ -198,7 +215,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onOptions(String url) {
-    return newRule("OPTIONS", url);
+    return newRule(HttpOptions.METHOD_NAME, url);
   }
 
   /**
@@ -208,7 +225,7 @@ public class HttpClientMock extends CloseableHttpClient {
    * @return HttpClientMockBuilder which allows to define new rule
    */
   public HttpClientMockBuilder onPatch(String url) {
-    return newRule("PATCH", url);
+    return newRule(HttpPatch.METHOD_NAME, url);
   }
 
   private HttpClientMockBuilder newRule(String method) {

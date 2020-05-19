@@ -39,12 +39,7 @@ public class Rule {
   }
 
   HttpResponse nextResponse(Request request) throws IOException {
-    Action action;
-    if (actions.size() > 1) {
-      action = actions.poll();
-    } else {
-      action = actions.peek();
-    }
+    Action action = (actions.size() > 1) ? actions.poll() : actions.peek();
     return action.getResponse(request);
   }
 

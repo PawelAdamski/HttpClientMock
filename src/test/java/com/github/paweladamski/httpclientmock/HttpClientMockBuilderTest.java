@@ -320,6 +320,61 @@ public class HttpClientMockBuilderTest {
     assertThat(login, hasContent("login"));
     assertThat(google, hasContent("google"));
   }
+  
+  @Test
+  public void withFormParameter() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    httpClientMock.onPost("/login")
+      .withFormParameter("username", "John")
+      .withFormParameter("password", Matchers.containsString("secret"))
+    .doReturnStatus(200);
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    HttpResponse response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(200));
+    
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "wrong")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+  }
+  
+  @Test
+  public void withFormParameters() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+    
+    MatchersMap<String, String> parameters = new MatchersMap<>();
+    parameters.put("username", Matchers.equalTo("John"));
+    parameters.put("password", Matchers.containsString("secret"));
+    
+    httpClientMock.onPost("/login")
+      .withFormParameters(parameters)
+    .doReturnStatus(200);
+    
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "secret!")
+    )));
+    HttpResponse response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(200));
+    
+    request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+      new BasicNameValuePair("username", "John"),
+      new BasicNameValuePair("password", "wrong")
+    )));
+    response = httpClientMock.execute(request);
+    assertThat(response, hasStatus(404));
+  }
 
   @Test
   public void withFormParameter_should_match_when_allParametersHaveMatchingValue() throws IOException {

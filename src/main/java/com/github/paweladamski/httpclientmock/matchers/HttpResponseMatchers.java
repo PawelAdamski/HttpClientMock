@@ -1,12 +1,12 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.Optional;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.util.EntityUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -33,22 +33,18 @@ public final class HttpResponseMatchers {
   public static Matcher<? super HttpResponse> hasContent(final String content, final String charset) {
     return new BaseMatcher<HttpResponse>() {
       public boolean matches(Object o) {
+        HttpResponse response = (HttpResponse) o;
+        
+        String targetString;
         try {
-          HttpResponse response = (HttpResponse) o;
-          Reader reader = new InputStreamReader(response.getEntity().getContent(), charset);
-
-          int intValueOfChar;
-          String targetString = "";
-          while ((intValueOfChar = reader.read()) != -1) {
-            targetString += (char) intValueOfChar;
-          }
-          reader.close();
-
-          return targetString.equals(content);
+          byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+          targetString = new String(bytes, charset);
         } catch (IOException e) {
           e.printStackTrace();
           return false;
         }
+
+        return targetString.equals(content);
       }
 
       public void describeTo(Description description) {
@@ -70,14 +66,13 @@ public final class HttpResponseMatchers {
       }
 
       private String getCookieValue(CookieStore cookieStore, String cookieName) {
-        if (cookieStore != null) {
-          for (Cookie cookie : cookieStore.getCookies()) {
-            if (cookie.getName().equalsIgnoreCase(cookieName)) {
-              return cookie.getValue();
-            }
-          }
+        if (cookieStore == null) {
+          return null;
         }
-        return null;
+
+        return cookieStore.getCookies().stream()
+          .filter(c -> c.getName().equalsIgnoreCase(cookieName))
+        .findFirst().map(c -> c.getValue()).orElse(null);
       }
     };
   }
