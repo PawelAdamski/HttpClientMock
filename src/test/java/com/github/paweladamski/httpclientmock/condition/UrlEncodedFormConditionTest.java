@@ -67,8 +67,8 @@ public class UrlEncodedFormConditionTest {
     condition.debug(r, debugger);
     assertThat(debugger.matching, empty());
     assertThat(debugger.notMatching, contains(
-        "form parameter ONE occurs in request",
-        "form parameter one is redundant"
+        "form parameter ONE is missing from the request",
+        "form parameter one was not expected to be in the request"
     ));
   }
 
@@ -145,7 +145,7 @@ public class UrlEncodedFormConditionTest {
         "form parameter one is \"1\""
     ));
     assertThat(debugger.notMatching, contains(
-        "form parameter two is redundant"
+        "form parameter two was not expected to be in the request"
     ));
   }
 
@@ -185,7 +185,7 @@ public class UrlEncodedFormConditionTest {
       condition.debug(r, debugger);
       assertThat(debugger.matching, empty());
       assertThat(debugger.notMatching, contains(
-          "form parameter one occurs in request"
+          "form parameter one is missing from the request"
       ));
     }
   }
@@ -217,7 +217,7 @@ public class UrlEncodedFormConditionTest {
       condition.debug(r, debugger);
       assertThat(debugger.matching, empty());
       assertThat(debugger.notMatching, contains(
-          "form parameter foo occurs in request"
+          "form parameter foo is missing from the request"
       ));
     }
   }

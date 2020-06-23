@@ -48,7 +48,7 @@ public class UrlEncodedFormCondition implements Condition {
 
     Set<String> missingParams = expectedParameters.findMissingParameters(actual);
     for (String param : missingParams) {
-      debugger.message(false, "form parameter " + param + " occurs in request");
+      debugger.message(false, "form parameter " + param + " is missing from the request");
     }
 
     for (NameValuePair param : actual) {
@@ -57,7 +57,7 @@ public class UrlEncodedFormCondition implements Condition {
         String message = "form parameter " + param.getName() + " is " + expectedParameters.get(param.getName()).describe();
         debugger.message(matches, message);
       } else {
-        String message = "form parameter " + param.getName() + " is redundant";
+        String message = "form parameter " + param.getName() + " was not expected to be in the request";
         debugger.message(false, message);
       }
     }

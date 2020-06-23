@@ -79,7 +79,7 @@ public class DebuggingTest {
   public void should_put_message_about_missing_parameter() throws IOException {
     httpClientMock.onGet("/login?foo=bar");
     httpClientMock.execute(httpGet("http://localhost/login"));
-    assertTrue(debugger.notMatching.contains("query parameter foo occurs in request"));
+    assertTrue(debugger.notMatching.contains("query parameter foo is missing from the request"));
   }
 
   @Test
@@ -106,7 +106,7 @@ public class DebuggingTest {
     httpClientMock.onGet("/login")
         .doReturn("login");
     httpClientMock.execute(httpGet("http://localhost/login?foo=bbb"));
-    assertTrue(debugger.notMatching.contains("query parameter foo is redundant"));
+    assertTrue(debugger.notMatching.contains("query parameter foo was not expected to be in the request"));
   }
 
   @Test

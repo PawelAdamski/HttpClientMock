@@ -16,7 +16,6 @@ public class UrlQueryMatcher {
     return expected.matches(actualParameters);
   }
 
-
   public void put(String name, Matcher<String> matcher) {
     expected.put(name, matcher);
   }
@@ -25,7 +24,7 @@ public class UrlQueryMatcher {
     List<NameValuePair> actualParameters = new UrlParamsParser().parse(query);
     Set<String> missingParams = expected.findMissingParameters(actualParameters);
     for (String param : missingParams) {
-      debugger.message(false, "query parameter " + param + " occurs in request");
+      debugger.message(false, "query parameter " + param + " is missing from the request");
     }
 
     for (NameValuePair param : actualParameters) {
@@ -34,7 +33,7 @@ public class UrlQueryMatcher {
         String message = "query parameter " + param.getName() + " is " + expected.get(param.getName()).describe();
         debugger.message(matches, message);
       } else {
-        String message = "query parameter " + param.getName() + " is redundant";
+        String message = "query parameter " + param.getName() + " was not expected to be in the request";
         debugger.message(false, message);
       }
     }
