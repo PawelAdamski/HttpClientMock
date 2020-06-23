@@ -3,13 +3,9 @@ package com.github.paweladamski.httpclientmock;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 import com.github.paweladamski.httpclientmock.matchers.MatchersList;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.UrlQueryMatcher;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import org.apache.http.NameValuePair;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.StringDescription;
@@ -17,15 +13,15 @@ import org.hamcrest.StringDescription;
 public class UrlConditions {
 
   private static final int EMPTY_PORT = -1;
-  private MatchersMap<String, String> parameterConditions = new MatchersMap<>();
+  private UrlQueryMatcher urlQueryConditions = new UrlQueryMatcher();
   private Matcher<String> referenceConditions = Matchers.isEmptyOrNullString();
   private MatchersList<String> hostConditions = new MatchersList<>();
   private MatchersList<String> pathConditions = new MatchersList<>();
   private MatchersList<Integer> portConditions = new MatchersList<>();
   private Matcher<String> schemaConditions = Matchers.any(String.class);
 
-  public MatchersMap<String, String> getParameterConditions() {
-    return parameterConditions;
+  public UrlQueryMatcher getUrlQueryConditions() {
+    return urlQueryConditions;
   }
 
   public Matcher<String> getReferenceConditions() {
@@ -56,38 +52,20 @@ public class UrlConditions {
     this.schemaConditions = schemaConditions;
   }
 
-  boolean matches(String urlText) {
+  boolean matches(String uri) {
     try {
-      URL url = new URL(urlText);
+      URL url = new URL(uri);
 
       return hostConditions.allMatches(url.getHost())
           && pathConditions.allMatches(url.getPath())
           && portConditions.allMatches(url.getPort())
           && referenceConditions.matches(url.getRef())
           && schemaConditions.matches(url.getProtocol())
-          && allDefinedParamsOccurredInURL(url.getQuery())
-          && allParamsHaveMatchingValue(url.getQuery());
+          && urlQueryConditions.matches(url.getQuery());
 
     } catch (MalformedURLException e) {
       return false;
     }
-  }
-
-  private boolean allDefinedParamsOccurredInURL(String query) {
-    return findMissingParameters(query).isEmpty();
-  }
-
-  private boolean allParamsHaveMatchingValue(String query) {
-    UrlParams params = UrlParams.parse(query);
-    return params.stream()
-        .allMatch(param -> parameterConditions.matches(param.getName(), param.getValue()));
-  }
-
-  private Set<String> findMissingParameters(String query) {
-    UrlParams params = UrlParams.parse(query);
-    return parameterConditions.keySet().stream()
-        .filter(((Predicate<String>) params::contain).negate())
-        .collect(Collectors.toSet());
   }
 
   public void join(UrlConditions a) {
@@ -96,11 +74,7 @@ public class UrlConditions {
     this.portConditions.addAll(a.portConditions);
     this.pathConditions.addAll(a.pathConditions);
     this.hostConditions.addAll(a.hostConditions);
-    for (String paramName : a.parameterConditions.keySet()) {
-      for (Matcher<String> paramValue : a.parameterConditions.get(paramName)) {
-        this.parameterConditions.put(paramName, paramValue);
-      }
-    }
+    this.urlQueryConditions.addAll(a.urlQueryConditions);
   }
 
   void debug(Request request, Debugger debugger) {
@@ -113,26 +87,10 @@ public class UrlConditions {
       if (referenceConditions != isEmptyOrNullString() || !referenceConditions.matches(url.getRef())) {
         debugger.message(referenceConditions.matches(url.getRef()), "reference is " + describe(referenceConditions));
       }
-      Set<String> missingParams = findMissingParameters(url.getQuery());
-      for (String param : missingParams) {
-        debugger.message(false, "parameter " + param + " occurs in request");
-      }
-      UrlParams params = UrlParams.parse(url.getQuery());
-      for (NameValuePair param : params) {
-        if (parameterConditions.containsKey(param.getName())) {
-          boolean matches = parameterConditions.matches(param.getName(), param.getValue());
-          String message = "parameter " + param.getName() + " is " + parameterConditions.describe(param.getName());
-          debugger.message(matches, message);
-        } else {
-          String message = "parameter " + param.getName() + " is redundant";
-          debugger.message(false, message);
-        }
-      }
-
+      urlQueryConditions.describe(url.getQuery(), debugger);
     } catch (MalformedURLException e) {
       System.out.println("Can't parse URL: " + request.getUri());
     }
-
   }
 
   private String describe(Matcher<String> matcher) {

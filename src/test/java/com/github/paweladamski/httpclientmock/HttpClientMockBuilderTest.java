@@ -7,7 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 import com.github.paweladamski.httpclientmock.condition.Condition;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -93,7 +93,7 @@ public class HttpClientMockBuilderTest {
   public void should_check_custom_rule() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
-    Condition fooCondition = request -> request.getUri().contains("foo");
+    Condition fooCondition = (request) -> request.getUri().contains("foo");
 
     httpClientMock.onGet("http://localhost/foo/bar")
         .with(fooCondition)
@@ -320,57 +320,57 @@ public class HttpClientMockBuilderTest {
     assertThat(login, hasContent("login"));
     assertThat(google, hasContent("google"));
   }
-  
+
   @Test
   public void withFormParameter() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-    
+
     httpClientMock.onPost("/login")
-      .withFormParameter("username", "John")
-      .withFormParameter("password", Matchers.containsString("secret"))
-    .doReturnStatus(200);
-    
+        .withFormParameter("username", "John")
+        .withFormParameter("password", Matchers.containsString("secret"))
+        .doReturnStatus(200);
+
     HttpPost request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "secret!")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
-    
+
     request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "wrong")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "wrong")
     )));
     response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
   }
-  
+
   @Test
   public void withFormParameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-    
-    MatchersMap<String, String> parameters = new MatchersMap<>();
+
+    ParametersMatcher parameters = new ParametersMatcher();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
-    
+
     httpClientMock.onPost("/login")
-      .withFormParameters(parameters)
-    .doReturnStatus(200);
-    
+        .withFormParameters(parameters)
+        .doReturnStatus(200);
+
     HttpPost request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "secret!")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(200));
-    
+
     request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "wrong")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "wrong")
     )));
     response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
@@ -398,7 +398,7 @@ public class HttpClientMockBuilderTest {
   public void withFormParameters_should_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
-    MatchersMap<String, String> parameters = new MatchersMap<>();
+    ParametersMatcher parameters = new ParametersMatcher();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
 

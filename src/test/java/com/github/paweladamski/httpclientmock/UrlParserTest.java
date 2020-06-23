@@ -42,8 +42,7 @@ public class UrlParserTest {
     UrlConditions urlConditions = urlParser.parse("http://localhost/foo/bar?a=1&b=2");
     assertTrue(urlConditions.getHostConditions().get(0).matches("localhost"));
     assertTrue(urlConditions.getPathConditions().get(0).matches("/foo/bar"));
-    assertTrue(urlConditions.getParameterConditions().get("a").get(0).matches("1"));
-    assertTrue(urlConditions.getParameterConditions().get("b").get(0).matches("2"));
+    assertTrue(urlConditions.getUrlQueryConditions().matches("a=1&b=2"));
   }
 
   @Test

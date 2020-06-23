@@ -5,7 +5,7 @@ import static com.github.paweladamski.httpclientmock.Requests.httpPut;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
 import java.util.Arrays;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -234,14 +234,14 @@ public class HttpClientVerifyTest {
   @Test
   public void withFormParameter_should_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-    
+
     HttpPost request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "secret!")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
     )));
     httpClientMock.execute(request);
-    
+
     httpClientMock.verify()
         .post("/login")
         .withFormParameter("username", "John")
@@ -268,17 +268,17 @@ public class HttpClientVerifyTest {
   }
 
   @Test
-  public void withFormParametersshould_match_when_allParametersHaveMatchingValue() throws IOException {
+  public void withFormParameters_should_match_when_allParametersHaveMatchingValue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-    
+
     HttpPost request = new HttpPost("http://localhost/login");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-      new BasicNameValuePair("username", "John"),
-      new BasicNameValuePair("password", "secret!")
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
     )));
     httpClientMock.execute(request);
-    
-    MatchersMap<String, String> parameters = new MatchersMap<>();
+
+    ParametersMatcher parameters = new ParametersMatcher();
     parameters.put("username", Matchers.equalTo("John"));
     parameters.put("password", Matchers.containsString("secret"));
     httpClientMock.verify().post("/login")

@@ -116,7 +116,7 @@ public class HttpClientMock extends CloseableHttpClient {
   public HttpClientMockBuilder onHead() {
     return newRule(HttpHead.METHOD_NAME);
   }
-  
+
   /**
    * Starts defining new rule which requires HTTP OPTIONS method.
    *

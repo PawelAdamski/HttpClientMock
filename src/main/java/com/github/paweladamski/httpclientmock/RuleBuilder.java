@@ -4,7 +4,7 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
 import com.github.paweladamski.httpclientmock.condition.UrlEncodedFormCondition;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.ArrayList;
 import java.util.List;
 import org.hamcrest.Matcher;
@@ -18,7 +18,7 @@ class RuleBuilder {
 
   RuleBuilder(String method, String defaultHost, String url) {
     this(method);
-    
+
     UrlParser urlParser = new UrlParser();
     if (url.startsWith("/")) {
       url = defaultHost + url;
@@ -45,15 +45,15 @@ class RuleBuilder {
 
   void addParameterCondition(String name, Matcher<String> matcher) {
     UrlConditions urlConditions = new UrlConditions();
-    urlConditions.getParameterConditions().put(name, matcher);
+    urlConditions.getUrlQueryConditions().put(name, matcher);
     addUrlConditions(urlConditions);
   }
-  
+
   void addFormParameterCondition(String name, Matcher<String> matcher) {
     formParametersCondition.addExpectedParameter(name, matcher);
   }
-  
-  void addFormParameterConditions(MatchersMap<String, String> parameters) {
+
+  void addFormParameterConditions(ParametersMatcher parameters) {
     formParametersCondition.addExpectedParameters(parameters);
   }
 
