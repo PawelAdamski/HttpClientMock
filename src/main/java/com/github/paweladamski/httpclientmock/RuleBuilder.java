@@ -14,22 +14,29 @@ class RuleBuilder {
   private final List<Action> actions = new ArrayList<>();
   private final List<Condition> conditions = new ArrayList<>();
   private final UrlEncodedFormCondition formParametersCondition = new UrlEncodedFormCondition();
-  private final UrlConditions urlConditions = new UrlConditions();
+  private final UrlConditions urlConditions;
 
   RuleBuilder(String method, String defaultHost, String url) {
-    this(method);
-
-    UrlParser urlParser = new UrlParser();
-    if (url.startsWith("/")) {
-      url = defaultHost + url;
-    }
-    addUrlConditions(urlParser.parse(url));
-  }
-
-  RuleBuilder(String method) {
+    this.urlConditions = new UrlParser().parse(buildFinalUrl(defaultHost, url));
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
   }
+
+  RuleBuilder(String method) {
+    this.urlConditions = new UrlConditions();
+    addCondition(new HttpMethodCondition(method));
+    addCondition(formParametersCondition);
+  }
+
+  private String buildFinalUrl(String defaultHost, String url) {
+    if (url.startsWith("/")) {
+      return defaultHost + url;
+    } else {
+      return url;
+    }
+  }
+
+
 
   void addAction(Action o) {
     actions.add(o);
@@ -39,14 +46,8 @@ class RuleBuilder {
     conditions.add(o);
   }
 
-  private void addUrlConditions(UrlConditions newUrlConditions) {
-    this.urlConditions.join(newUrlConditions);
-  }
-
   void addParameterCondition(String name, Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.getUrlQueryConditions().put(name, matcher);
-    addUrlConditions(urlConditions);
   }
 
   void addFormParameterCondition(String name, Matcher<String> matcher) {
@@ -58,22 +59,16 @@ class RuleBuilder {
   }
 
   void addReferenceCondition(Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.setReferenceConditions(matcher);
-    addUrlConditions(urlConditions);
   }
 
   void addHostCondition(String host) {
     UrlParser urlParser = new UrlParser();
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.setHostConditions(urlParser.parse(host).getHostConditions());
-    addUrlConditions(urlConditions);
   }
 
   void addPathCondition(Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.getPathConditions().add(matcher);
-    addUrlConditions(urlConditions);
   }
 
   Action getLastAction() {

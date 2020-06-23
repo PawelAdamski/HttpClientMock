@@ -19,7 +19,7 @@ public class UrlEncodedFormCondition implements Condition {
 
   @Override
   public boolean matches(Request r) {
-    List<NameValuePair> actualParameters = new FormParametersParser().parse(r);
+    List<NameValuePair> actualParameters = new UrlEncodedFormParser().parse(r);
     return expectedParameters.matches(actualParameters);
   }
 
@@ -44,7 +44,7 @@ public class UrlEncodedFormCondition implements Condition {
 
   @Override
   public void debug(Request r, Debugger debugger) {
-    List<NameValuePair> actual = new FormParametersParser().parse(r);
+    List<NameValuePair> actual = new UrlEncodedFormParser().parse(r);
 
     Set<String> missingParams = expectedParameters.findMissingParameters(actual);
     for (String param : missingParams) {

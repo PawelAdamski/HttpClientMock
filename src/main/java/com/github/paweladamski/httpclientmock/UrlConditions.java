@@ -52,9 +52,9 @@ public class UrlConditions {
     this.schemaConditions = schemaConditions;
   }
 
-  boolean matches(String uri) {
+  boolean matches(String urlText) {
     try {
-      URL url = new URL(uri);
+      URL url = new URL(urlText);
 
       return hostConditions.allMatches(url.getHost())
           && pathConditions.allMatches(url.getPath())
@@ -68,14 +68,6 @@ public class UrlConditions {
     }
   }
 
-  public void join(UrlConditions a) {
-    this.referenceConditions = a.referenceConditions;
-    this.schemaConditions = a.schemaConditions;
-    this.portConditions.addAll(a.portConditions);
-    this.pathConditions.addAll(a.pathConditions);
-    this.hostConditions.addAll(a.hostConditions);
-    this.urlQueryConditions.addAll(a.urlQueryConditions);
-  }
 
   void debug(Request request, Debugger debugger) {
     try {

@@ -16,9 +16,6 @@ public class UrlQueryMatcher {
     return expected.matches(actualParameters);
   }
 
-  public void addAll(UrlQueryMatcher queryConditions) {
-    this.expected.putAll(queryConditions.expected);
-  }
 
   public void put(String name, Matcher<String> matcher) {
     expected.put(name, matcher);

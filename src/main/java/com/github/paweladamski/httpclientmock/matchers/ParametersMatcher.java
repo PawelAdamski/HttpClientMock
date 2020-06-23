@@ -10,7 +10,7 @@ import org.hamcrest.Matcher;
 
 public class ParametersMatcher {
 
-  HashMap<String, MatchersList<String>> matchers = new HashMap<>();
+  private HashMap<String, MatchersList<String>> matchers = new HashMap<>();
 
   public void put(String name, Matcher<String> value) {
     matchers.computeIfAbsent(name, n -> new MatchersList<>()).add(value);

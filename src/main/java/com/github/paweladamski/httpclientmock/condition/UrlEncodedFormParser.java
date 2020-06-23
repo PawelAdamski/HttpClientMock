@@ -9,7 +9,7 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
-public class FormParametersParser {
+public class UrlEncodedFormParser {
 
   List<NameValuePair> parse(Request request) {
     if (!requestHasBody(request)) {
