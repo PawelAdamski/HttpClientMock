@@ -4,7 +4,7 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HttpMethodCondition;
 import com.github.paweladamski.httpclientmock.condition.UrlEncodedFormCondition;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.ArrayList;
 import java.util.List;
 import org.hamcrest.Matcher;
@@ -14,22 +14,29 @@ class RuleBuilder {
   private final List<Action> actions = new ArrayList<>();
   private final List<Condition> conditions = new ArrayList<>();
   private final UrlEncodedFormCondition formParametersCondition = new UrlEncodedFormCondition();
-  private final UrlConditions urlConditions = new UrlConditions();
+  private final UrlConditions urlConditions;
 
   RuleBuilder(String method, String defaultHost, String url) {
-    this(method);
-    
-    UrlParser urlParser = new UrlParser();
-    if (url.startsWith("/")) {
-      url = defaultHost + url;
-    }
-    addUrlConditions(urlParser.parse(url));
-  }
-
-  RuleBuilder(String method) {
+    this.urlConditions = new UrlParser().parse(buildFinalUrl(defaultHost, url));
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
   }
+
+  RuleBuilder(String method) {
+    this.urlConditions = new UrlConditions();
+    addCondition(new HttpMethodCondition(method));
+    addCondition(formParametersCondition);
+  }
+
+  private String buildFinalUrl(String defaultHost, String url) {
+    if (url.startsWith("/")) {
+      return defaultHost + url;
+    } else {
+      return url;
+    }
+  }
+
+
 
   void addAction(Action o) {
     actions.add(o);
@@ -39,41 +46,29 @@ class RuleBuilder {
     conditions.add(o);
   }
 
-  private void addUrlConditions(UrlConditions newUrlConditions) {
-    this.urlConditions.join(newUrlConditions);
+  void addParameterCondition(String name, Matcher<String> matcher) {
+    urlConditions.getUrlQueryConditions().put(name, matcher);
   }
 
-  void addParameterCondition(String name, Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
-    urlConditions.getParameterConditions().put(name, matcher);
-    addUrlConditions(urlConditions);
-  }
-  
   void addFormParameterCondition(String name, Matcher<String> matcher) {
     formParametersCondition.addExpectedParameter(name, matcher);
   }
-  
-  void addFormParameterConditions(MatchersMap<String, String> parameters) {
+
+  void addFormParameterConditions(ParametersMatcher parameters) {
     formParametersCondition.addExpectedParameters(parameters);
   }
 
   void addReferenceCondition(Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.setReferenceConditions(matcher);
-    addUrlConditions(urlConditions);
   }
 
   void addHostCondition(String host) {
     UrlParser urlParser = new UrlParser();
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.setHostConditions(urlParser.parse(host).getHostConditions());
-    addUrlConditions(urlConditions);
   }
 
   void addPathCondition(Matcher<String> matcher) {
-    UrlConditions urlConditions = new UrlConditions();
     urlConditions.getPathConditions().add(matcher);
-    addUrlConditions(urlConditions);
   }
 
   Action getLastAction() {

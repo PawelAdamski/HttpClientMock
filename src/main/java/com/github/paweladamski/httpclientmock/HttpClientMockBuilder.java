@@ -6,12 +6,11 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Map;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.hamcrest.Matcher;
@@ -96,7 +95,7 @@ public class HttpClientMockBuilder {
   /**
    * Request body must contain the given URL-encoded form parameter (typically
    * found in POST requests). Alternatively, parameters may be specified all at
-   * once using {@link #withFormParameters(MatchersMap)}.
+   * once using {@link #withFormParameters(ParametersMatcher)}.
    *
    * @param name parameter name
    * @param value expected parameter value
@@ -109,7 +108,7 @@ public class HttpClientMockBuilder {
   /**
    * Request body must contain the given URL-encoded form parameter (typically
    * found in POST requests). Alternatively, parameters may be specified all at
-   * once using {@link #withFormParameters(MatchersMap)}.
+   * once using {@link #withFormParameters(ParametersMatcher)}.
    *
    * @param name parameter name
    * @param matcher parameter value matcher
@@ -128,7 +127,7 @@ public class HttpClientMockBuilder {
    * @param parameters the parameters
    * @return condition builder
    */
-  public HttpClientMockBuilder withFormParameters(MatchersMap<String, String> parameters) {
+  public HttpClientMockBuilder withFormParameters(ParametersMatcher parameters) {
     ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }

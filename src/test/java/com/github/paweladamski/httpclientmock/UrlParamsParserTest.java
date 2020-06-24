@@ -6,11 +6,11 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.junit.Test;
 
-public class UrlParamsTest {
+public class UrlParamsParserTest {
 
   @Test
   public void shouldParseQueryString() {
-    List<NameValuePair> params = UrlParams.parse("a=1&b=2");
+    List<NameValuePair> params = new UrlParamsParser().parse("a=1&b=2");
     assertEquals("a", params.get(0).getName());
     assertEquals("1", params.get(0).getValue());
     assertEquals("b", params.get(1).getName());
@@ -19,7 +19,7 @@ public class UrlParamsTest {
 
   @Test
   public void shouldReturnEmptyListForNull() {
-    assertEquals(0, UrlParams.parse(null).size());
+    assertEquals(0, new UrlParamsParser().parse(null).size());
   }
 
 }

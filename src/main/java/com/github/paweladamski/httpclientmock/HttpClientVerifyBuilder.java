@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import com.github.paweladamski.httpclientmock.condition.BodyMatcher;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
-import com.github.paweladamski.httpclientmock.matchers.MatchersMap;
+import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.List;
 import java.util.Map;
 import org.hamcrest.Matcher;
@@ -86,11 +86,10 @@ public class HttpClientVerifyBuilder {
     ruleBuilder.addParameterCondition(name, matcher);
     return this;
   }
-  
+
   /**
-   * Request body must contain the given URL-encoded form parameter (typically
-   * found in POST requests). Alternatively, parameters may be specified all at
-   * once using {@link #withFormParameters(MatchersMap)}.
+   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once
+   * using {@link #withFormParameters(ParametersMatcher)}.
    *
    * @param name parameter name
    * @param value expected parameter value
@@ -101,9 +100,8 @@ public class HttpClientVerifyBuilder {
   }
 
   /**
-   * Request body must contain the given URL-encoded form parameter (typically
-   * found in POST requests). Alternatively, parameters may be specified all at
-   * once using {@link #withFormParameters(MatchersMap)}.
+   * Request body must contain the given URL-encoded form parameter (typically found in POST requests). Alternatively, parameters may be specified all at once
+   * using {@link #withFormParameters(ParametersMatcher)}.
    *
    * @param name parameter name
    * @param matcher parameter value matcher
@@ -113,16 +111,15 @@ public class HttpClientVerifyBuilder {
     ruleBuilder.addFormParameterCondition(name, matcher);
     return this;
   }
-  
+
   /**
-   * Request body must contain the given URL-encoded form parameters (typically
-   * used in POST requests). Alternatively, parameters may be specified
-   * individually using {@link #withFormParameter(String, Matcher)}.
-   * 
+   * Request body must contain the given URL-encoded form parameters (typically used in POST requests). Alternatively, parameters may be specified individually
+   * using {@link #withFormParameter(String, Matcher)}.
+   *
    * @param parameters the parameters
    * @return condition builder
    */
-  public HttpClientVerifyBuilder withFormParameters(MatchersMap<String, String> parameters) {
+  public HttpClientVerifyBuilder withFormParameters(ParametersMatcher parameters) {
     ruleBuilder.addFormParameterConditions(parameters);
     return this;
   }

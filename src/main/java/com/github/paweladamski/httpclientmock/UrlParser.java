@@ -18,17 +18,17 @@ public class UrlParser {
     try {
       UrlConditions conditions = new UrlConditions();
       URL url = new URL(urlText);
-      
+
       String ref = url.getRef();
       conditions.setReferenceConditions((ref == null) ? isEmptyOrNullString() : equalTo(ref));
-      
+
       conditions.setSchemaConditions(Matchers.equalTo(url.getProtocol()));
       conditions.getHostConditions().add(equalTo(url.getHost()));
       conditions.getPortConditions().add(equalTo(url.getPort()));
       conditions.getPathConditions().add(equalTo(url.getPath()));
-      List<NameValuePair> params = UrlParams.parse(url.getQuery(), StandardCharsets.UTF_8);
+      List<NameValuePair> params = new UrlParamsParser().parse(url.getQuery(), StandardCharsets.UTF_8);
       for (NameValuePair param : params) {
-        conditions.getParameterConditions().put(param.getName(), equalTo(param.getValue()));
+        conditions.getUrlQueryConditions().put(param.getName(), equalTo(param.getValue()));
       }
       return conditions;
     } catch (MalformedURLException e) {

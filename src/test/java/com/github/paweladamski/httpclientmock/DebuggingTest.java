@@ -77,9 +77,9 @@ public class DebuggingTest {
 
   @Test
   public void should_put_message_about_missing_parameter() throws IOException {
-    httpClientMock.onGet("/login").withParameter("foo", "bar");
+    httpClientMock.onGet("/login?foo=bar");
     httpClientMock.execute(httpGet("http://localhost/login"));
-    assertTrue(debugger.notMatching.contains("parameter foo occurs in request"));
+    assertTrue(debugger.notMatching.contains("query parameter foo is missing from the request"));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class DebuggingTest {
         .doReturn("login");
     httpClientMock.debugOn();
     httpClientMock.execute(httpGet("http://localhost/login?foo=bar"));
-    assertTrue(debugger.matching.contains("parameter foo is \"bar\""));
+    assertTrue(debugger.matching.contains("query parameter foo is \"bar\""));
   }
 
   @Test
@@ -98,7 +98,7 @@ public class DebuggingTest {
         .withParameter("foo", "bar")
         .doReturn("login");
     httpClientMock.execute(httpGet("http://localhost/login?foo=bbb"));
-    assertTrue(debugger.notMatching.contains("parameter foo is \"bar\""));
+    assertTrue(debugger.notMatching.contains("query parameter foo is \"bar\""));
   }
 
   @Test
@@ -106,7 +106,7 @@ public class DebuggingTest {
     httpClientMock.onGet("/login")
         .doReturn("login");
     httpClientMock.execute(httpGet("http://localhost/login?foo=bbb"));
-    assertTrue(debugger.notMatching.contains("parameter foo is redundant"));
+    assertTrue(debugger.notMatching.contains("query parameter foo was not expected to be in the request"));
   }
 
   @Test
@@ -117,7 +117,7 @@ public class DebuggingTest {
         .doReturn("login");
     httpClientMock.debugOn();
     httpClientMock.execute(httpGet("http://localhost/login?foo=aabb"));
-    assertTrue(debugger.matching.contains("parameter foo is a string starting with \"a\" and a string ending with \"b\""));
+    assertTrue(debugger.matching.contains("query parameter foo is a string starting with \"a\" and a string ending with \"b\""));
   }
 
   @Test
@@ -190,6 +190,7 @@ class TestDebugger extends Debugger {
   public final ArrayList<String> matching = new ArrayList<>();
   public final ArrayList<String> notMatching = new ArrayList<>();
   public final ArrayList<String> requests = new ArrayList<>();
+
 
   @Override
   public Rule debug(List<Rule> rules, Request request) {
