@@ -285,4 +285,83 @@ public class HttpClientVerifyTest {
         .withFormParameters(parameters)
         .called();
   }
+
+  @Test
+  public void withFormParameters_should_match_when_requestHasAdditionalParametersAndAllowAdditionalParametersIsTrue() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    ParametersMatcher parameters = new ParametersMatcher();
+    parameters.put("username", Matchers.equalTo("John"));
+
+    httpClientMock.verify().post("/login")
+        .withFormParameters(parameters)
+        .withAdditionalParameters()
+        .called();
+  }
+
+  @Test
+  public void withFormParameters_should_notMatch_when_requestHasAdditionalParametersAndAllowAdditionalParametersIsFalse() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    ParametersMatcher parameters = new ParametersMatcher();
+    parameters.put("username", Matchers.equalTo("John"));
+
+    httpClientMock.verify().post().withPath("/login")
+        .withFormParameters(parameters)
+        .withoutAdditionalParameters()
+        .notCalled();
+  }
+
+  @Test
+  public void withFormParameters_should_notMatch_when_requestHasAdditionalParametersAndUsedPostWithURI() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    ParametersMatcher parameters = new ParametersMatcher();
+    parameters.put("username", Matchers.equalTo("John"));
+
+    httpClientMock.verify().post("/login")
+        .withFormParameters(parameters)
+        .notCalled();
+  }
+
+  @Test
+  public void withFormParameters_should_match_when_requestHasAdditionalParametersAndUsedPostWithoutURI() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John"),
+        new BasicNameValuePair("password", "secret!")
+    )));
+    httpClientMock.execute(request);
+
+    ParametersMatcher parameters = new ParametersMatcher();
+    parameters.put("username", Matchers.equalTo("John"));
+
+    httpClientMock.verify().post().withPath("/login")
+        .withFormParameters(parameters)
+        .called();
+  }
+
 }

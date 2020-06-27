@@ -22,11 +22,13 @@ public class HttpClientVerify {
 
   private HttpClientVerifyBuilder newRule(String method) {
     RuleBuilder r = new RuleBuilder(method);
+    r.setAllowExtraParameters(true);
     return new HttpClientVerifyBuilder(r, requests);
   }
 
   private HttpClientVerifyBuilder newRule(String method, String url) {
     RuleBuilder r = new RuleBuilder(method, defaultHost, url);
+    r.setAllowExtraParameters(false);
     return new HttpClientVerifyBuilder(r, requests);
   }
 

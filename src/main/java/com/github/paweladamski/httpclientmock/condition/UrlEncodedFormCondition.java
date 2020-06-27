@@ -15,12 +15,17 @@ import org.hamcrest.Matcher;
  */
 public class UrlEncodedFormCondition implements Condition {
 
-  private final ParametersMatcher expectedParameters = new ParametersMatcher();
+  private ParametersMatcher expectedParameters = new ParametersMatcher();
+  private boolean allowExtraParameters = false;
 
   @Override
   public boolean matches(Request r) {
     List<NameValuePair> actualParameters = new UrlEncodedFormParser().parse(r);
-    return expectedParameters.matches(actualParameters);
+    if (allowExtraParameters) {
+      return expectedParameters.matchesAndAllowRedundantParameters(actualParameters);
+    } else {
+      return expectedParameters.matches(actualParameters);
+    }
   }
 
   /**
@@ -56,11 +61,14 @@ public class UrlEncodedFormCondition implements Condition {
         boolean matches = expectedParameters.matches(param.getName(), param.getValue());
         String message = "form parameter " + param.getName() + " is " + expectedParameters.get(param.getName()).describe();
         debugger.message(matches, message);
-      } else {
+      } else if (!allowExtraParameters) {
         String message = "form parameter " + param.getName() + " was not expected to be in the request";
         debugger.message(false, message);
       }
     }
   }
 
+  public void setAllowExtraParameters(boolean allowExtraParameters) {
+    this.allowExtraParameters = allowExtraParameters;
+  }
 }

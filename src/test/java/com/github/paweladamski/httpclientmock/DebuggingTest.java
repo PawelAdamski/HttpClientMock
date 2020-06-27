@@ -10,8 +10,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -183,6 +187,32 @@ public class DebuggingTest {
     assertTrue(debugger.matching.contains("path is \"/login\""));
     assertTrue(debugger.matching.contains("port is <8080>"));
   }
+
+  @Test
+  public void should_not_put_message_not_expected_query_parameters_when_AdditionalParametersAreAllowed() throws IOException {
+    httpClientMock.onGet("http://localhost:8080/login")
+        .withAdditionalParameters()
+        .doReturn("login");
+    httpClientMock.debugOn();
+    httpClientMock.execute(httpPost("http://localhost:8080/login?foo=bar"));
+    assertFalse(debugger.notMatching.contains("query parameter foo was not expected to be in the request"));
+  }
+
+  @Test
+  public void should_not_put_message_not_expected_form_parameters_when_AdditionalParametersAreAllowed() throws IOException {
+    httpClientMock.onPost("http://localhost:8080/login")
+        .withAdditionalParameters()
+        .doReturn("login");
+    httpClientMock.debugOn();
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("foo", "bar")
+    )));
+    httpClientMock.execute(request);
+    assertFalse(debugger.notMatching.contains("form parameter foo was not expected to be in the request"));
+  }
+
 }
 
 class TestDebugger extends Debugger {
@@ -190,7 +220,6 @@ class TestDebugger extends Debugger {
   public final ArrayList<String> matching = new ArrayList<>();
   public final ArrayList<String> notMatching = new ArrayList<>();
   public final ArrayList<String> requests = new ArrayList<>();
-
 
   @Override
   public Rule debug(List<Rule> rules, Request request) {

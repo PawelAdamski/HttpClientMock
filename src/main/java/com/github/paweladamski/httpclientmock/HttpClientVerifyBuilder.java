@@ -7,7 +7,6 @@ import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
 import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.List;
-import java.util.Map;
 import org.hamcrest.Matcher;
 
 public class HttpClientVerifyBuilder {
@@ -179,6 +178,26 @@ public class HttpClientVerifyBuilder {
   }
 
   /**
+   * Allows additional parameters (not defined in condition) in query and form.
+   *
+   * @return condition builder
+   */
+  public HttpClientVerifyBuilder withAdditionalParameters() {
+    ruleBuilder.setAllowExtraParameters(true);
+    return this;
+  }
+
+  /**
+   * Disallows additional parameters (not defined in condition) in query and form.
+   *
+   * @return condition builder
+   */
+  public HttpClientVerifyBuilder withoutAdditionalParameters() {
+    ruleBuilder.setAllowExtraParameters(false);
+    return this;
+  }
+
+  /**
    * Verifies if there were no request matching defined conditions.
    */
   public void notCalled() {
@@ -216,4 +235,5 @@ public class HttpClientVerifyBuilder {
       throw new IllegalStateException(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
     }
   }
+
 }

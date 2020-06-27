@@ -36,8 +36,6 @@ class RuleBuilder {
     }
   }
 
-
-
   void addAction(Action o) {
     actions.add(o);
   }
@@ -83,4 +81,8 @@ class RuleBuilder {
     return new Rule(urlConditions, conditions, actions);
   }
 
+  public void setAllowExtraParameters(boolean allowExtraParameters) {
+    urlConditions.getUrlQueryConditions().setAllowExtraParameters(allowExtraParameters);
+    formParametersCondition.setAllowExtraParameters(allowExtraParameters);
+  }
 }

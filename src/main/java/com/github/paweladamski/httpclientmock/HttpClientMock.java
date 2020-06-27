@@ -230,12 +230,14 @@ public class HttpClientMock extends CloseableHttpClient {
 
   private HttpClientMockBuilder newRule(String method) {
     RuleBuilder r = new RuleBuilder(method);
+    r.setAllowExtraParameters(true);
     rulesUnderConstruction.add(r);
     return new HttpClientMockBuilder(r);
   }
 
   private HttpClientMockBuilder newRule(String method, String url) {
     RuleBuilder r = new RuleBuilder(method, defaultHost, url);
+    r.setAllowExtraParameters(false);
     rulesUnderConstruction.add(r);
     return new HttpClientMockBuilder(r);
   }
