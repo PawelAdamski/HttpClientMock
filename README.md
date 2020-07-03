@@ -219,7 +219,7 @@ httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 ```
 
 ## Matching query and form parameters
-There are two methods that controls HttpClientMock behaviour when request contains extra form
+There are two methods that control HttpClientMock behaviour when request contains extra form
 or query parameters:
  - `withExtraParameters`: allows request to contain extra query parameters
  - `withoutExtraParameters`: disallows request to contain extra query parameters
@@ -305,7 +305,8 @@ httpClientMock.verify().get("/login?user=john").called();
 ## Release notes
 
 1.8.0
-- Added methods {`withExtraParameters`, `withoutExtraParameters`} to better control form and query parameters matching.
+- Added methods {`withExtraParameters`, `withoutExtraParameters`, `withExtraFormParameters`, `withoutExtraFormParameters`} to better control form and query parameters matching.
+Breaking changes: Since this version by default extra form and query are disallowed.
 
 1.7.0
 - Added methods (`withFormParameter`, `withFormParameters`) for matching form parameters (URL encode parameters).

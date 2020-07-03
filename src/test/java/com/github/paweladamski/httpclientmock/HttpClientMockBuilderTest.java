@@ -50,6 +50,7 @@ public class HttpClientMockBuilderTest {
     httpClientMock.onPost()
         .withPath("/login")
         .withParameter("b", "2")
+        .withExtraParameters()
         .doReturn("two");
 
     HttpResponse one = httpClientMock.execute(new HttpPost("http://localhost/login?a=1"));
@@ -201,8 +202,10 @@ public class HttpClientMockBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     httpClientMock.onPost("/login?user=john")
+        .withoutExtraParameters()
         .doReturnStatus(400);
     httpClientMock.onPost("/login?user=john&pass=abc")
+        .withoutExtraParameters()
         .doReturnStatus(200);
 
     HttpResponse notFound = httpClientMock.execute(new HttpPost("http://localhost/login"));
@@ -458,7 +461,7 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void withFormParameter_should_match_when_extraParameterIsPresent() throws IOException {
+  public void withFormParameter_should_notMatch_when_extraParameterIsPresent() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     httpClientMock.debugOn();
     httpClientMock.onPost("/login")
@@ -473,7 +476,7 @@ public class HttpClientMockBuilderTest {
         new BasicNameValuePair("extra", "foo")
     )));
     HttpResponse response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(200));
+    assertThat(response, hasStatus(404));
   }
 
 
@@ -498,7 +501,7 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void should_match_whenRequestHasExtraParametersAndOnPostWithoutUri() throws IOException {
+  public void should_notmatch_whenRequestHasExtraParametersAndOnPostWithoutUri() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     httpClientMock.onPost()
@@ -506,13 +509,13 @@ public class HttpClientMockBuilderTest {
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login?foo=bar"));
-    assertThat(response, hasStatus(200));
+    assertThat(response, hasStatus(404));
   }
 
   @Test
   public void should_notMatch_whenRequestHasExtraParametersAndOnPostWithUri() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-
+    httpClientMock.debugOn();
     httpClientMock.onPost("/login")
         .doReturnStatus(200);
 
