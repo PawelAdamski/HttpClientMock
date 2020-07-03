@@ -184,22 +184,42 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Allows additional parameters (not defined in condition) in query and form.
+   * Allows extra parameters (not defined in condition) in query.
    *
    * @return condition builder
    */
-  public HttpClientMockBuilder withAdditionalParameters() {
+  public HttpClientMockBuilder withExtraParameters() {
     ruleBuilder.setAllowExtraParameters(true);
     return this;
   }
 
   /**
-   * Disallows additional parameters (not defined in condition) in query and form.
+   * Disallows extra parameters (not defined in condition) in query.
    *
    * @return condition builder
    */
   public HttpClientMockBuilder withoutExtraParameters() {
     ruleBuilder.setAllowExtraParameters(false);
+    return this;
+  }
+
+  /**
+   * Allows extra parameters (not defined in condition) in  form.
+   *
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(true);
+    return this;
+  }
+
+  /**
+   * Disallows extra parameters (not defined in condition) in  form.
+   *
+   * @return condition builder
+   */
+  public HttpClientMockBuilder withoutExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(false);
     return this;
   }
 
@@ -348,5 +368,6 @@ public class HttpClientMockBuilder {
   public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters, Charset charset) {
     return responseBuilder.doReturnFormParams(parameters, charset);
   }
+
 
 }

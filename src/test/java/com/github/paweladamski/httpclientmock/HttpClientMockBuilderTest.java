@@ -458,7 +458,7 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void withFormParameter_should_notMatch_when_extraParameterIsPresent() throws IOException {
+  public void withFormParameter_should_match_when_extraParameterIsPresent() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
     httpClientMock.debugOn();
     httpClientMock.onPost("/login")
@@ -470,10 +470,10 @@ public class HttpClientMockBuilderTest {
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("username", "John"),
         new BasicNameValuePair("password", "secret"),
-        new BasicNameValuePair("wrong", "bad")
+        new BasicNameValuePair("extra", "foo")
     )));
     HttpResponse response = httpClientMock.execute(request);
-    assertThat(response, hasStatus(404));
+    assertThat(response, hasStatus(200));
   }
 
 
@@ -484,7 +484,7 @@ public class HttpClientMockBuilderTest {
     httpClientMock.onPost("/login")
         .withFormParameter("username", "John")
         .withFormParameter("password", "secret")
-        .withAdditionalParameters()
+        .withExtraFormParameters()
         .doReturnStatus(200);
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -521,11 +521,11 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void should_match_whenRequestHasExtraParametersAndAllowAdditionalParametersIsTrue() throws IOException {
+  public void should_match_whenRequestHasExtraParametersAndAllowExtraParametersIsTrue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     httpClientMock.onPost("/login")
-        .withAdditionalParameters()
+        .withExtraParameters()
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login?foo=bar"));
@@ -533,7 +533,7 @@ public class HttpClientMockBuilderTest {
   }
 
   @Test
-  public void should_notMatch_whenRequestHasExtraParametersAndAllowAdditionalParametersIsFalse() throws IOException {
+  public void should_notMatch_whenRequestHasExtraParametersAndAllowExtraParametersIsFalse() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     httpClientMock.onPost()
@@ -542,6 +542,26 @@ public class HttpClientMockBuilderTest {
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login?foo=bar"));
+    assertThat(response, hasStatus(404));
+  }
+
+  @Test
+  public void should_notMatch_whenRequestHasExtraFormParametersAndAllowExtraFormParametersIsFalse() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
+
+    httpClientMock.onPost()
+        .withPath("/login")
+        .withoutExtraFormParameters()
+        .doReturnStatus(200);
+    httpClientMock.onPost("/login")
+        .withoutExtraFormParameters()
+        .doReturnStatus(200);
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("username", "John")
+    )));
+    HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
   }
 

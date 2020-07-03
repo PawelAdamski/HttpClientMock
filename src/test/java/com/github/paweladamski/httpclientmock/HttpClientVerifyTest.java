@@ -287,7 +287,7 @@ public class HttpClientVerifyTest {
   }
 
   @Test
-  public void withFormParameters_should_match_when_requestHasAdditionalParametersAndAllowAdditionalParametersIsTrue() throws IOException {
+  public void withFormParameters_should_match_when_requestHasExtraParametersAndAllowExtraParametersIsTrue() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -302,12 +302,12 @@ public class HttpClientVerifyTest {
 
     httpClientMock.verify().post("/login")
         .withFormParameters(parameters)
-        .withAdditionalParameters()
+        .withExtraFormParameters()
         .called();
   }
 
   @Test
-  public void withFormParameters_should_notMatch_when_requestHasAdditionalParametersAndAllowAdditionalParametersIsFalse() throws IOException {
+  public void withFormParameters_should_notMatch_when_requestHasExtraParametersAndAllowExtraFormParametersIsFalse() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -322,12 +322,12 @@ public class HttpClientVerifyTest {
 
     httpClientMock.verify().post().withPath("/login")
         .withFormParameters(parameters)
-        .withoutAdditionalParameters()
+        .withoutExtraFormParameters()
         .notCalled();
   }
 
   @Test
-  public void withFormParameters_should_notMatch_when_requestHasAdditionalParametersAndUsedPostWithURI() throws IOException {
+  public void withFormParameters_should_Match_when_requestHasExtraFormParametersAndUsedPostWithURI() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -342,11 +342,11 @@ public class HttpClientVerifyTest {
 
     httpClientMock.verify().post("/login")
         .withFormParameters(parameters)
-        .notCalled();
+        .called();
   }
 
   @Test
-  public void withFormParameters_should_match_when_requestHasAdditionalParametersAndUsedPostWithoutURI() throws IOException {
+  public void withFormParameters_should_match_when_requestHasExtraFormParametersAndUsedPostWithoutURI() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     HttpPost request = new HttpPost("http://localhost/login");

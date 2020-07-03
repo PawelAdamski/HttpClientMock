@@ -189,9 +189,9 @@ public class DebuggingTest {
   }
 
   @Test
-  public void should_not_put_message_not_expected_query_parameters_when_AdditionalParametersAreAllowed() throws IOException {
+  public void should_not_put_message_not_expected_query_parameters_when_ExtraParametersAreAllowed() throws IOException {
     httpClientMock.onGet("http://localhost:8080/login")
-        .withAdditionalParameters()
+        .withExtraParameters()
         .doReturn("login");
     httpClientMock.debugOn();
     httpClientMock.execute(httpPost("http://localhost:8080/login?foo=bar"));
@@ -199,9 +199,9 @@ public class DebuggingTest {
   }
 
   @Test
-  public void should_not_put_message_not_expected_form_parameters_when_AdditionalParametersAreAllowed() throws IOException {
+  public void should_not_put_message_not_expected_form_parameters_when_ExtraParametersAreAllowed() throws IOException {
     httpClientMock.onPost("http://localhost:8080/login")
-        .withAdditionalParameters()
+        .withExtraFormParameters()
         .doReturn("login");
     httpClientMock.debugOn();
 

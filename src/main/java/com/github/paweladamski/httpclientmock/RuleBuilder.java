@@ -83,6 +83,10 @@ class RuleBuilder {
 
   public void setAllowExtraParameters(boolean allowExtraParameters) {
     urlConditions.getUrlQueryConditions().setAllowExtraParameters(allowExtraParameters);
-    formParametersCondition.setAllowExtraParameters(allowExtraParameters);
   }
+
+  public void setAllowExtraFormParameters(boolean allowExtraFormParameters) {
+    formParametersCondition.setAllowExtraParameters(allowExtraFormParameters);
+  }
+
 }

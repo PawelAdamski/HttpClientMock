@@ -178,22 +178,42 @@ public class HttpClientVerifyBuilder {
   }
 
   /**
-   * Allows additional parameters (not defined in condition) in query and form.
+   * Allows extra parameters (not defined in condition) in query.
    *
    * @return condition builder
    */
-  public HttpClientVerifyBuilder withAdditionalParameters() {
+  public HttpClientVerifyBuilder withExtraParameters() {
     ruleBuilder.setAllowExtraParameters(true);
     return this;
   }
 
   /**
-   * Disallows additional parameters (not defined in condition) in query and form.
+   * Disallows extra parameters (not defined in condition) in query.
    *
    * @return condition builder
    */
-  public HttpClientVerifyBuilder withoutAdditionalParameters() {
+  public HttpClientVerifyBuilder withoutExtraParameters() {
     ruleBuilder.setAllowExtraParameters(false);
+    return this;
+  }
+
+  /**
+   * Allows extra parameters (not defined in condition) in form.
+   *
+   * @return condition builder
+   */
+  public HttpClientVerifyBuilder withExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(true);
+    return this;
+  }
+
+  /**
+   * Disallows extra parameters (not defined in condition) in form.
+   *
+   * @return condition builder
+   */
+  public HttpClientVerifyBuilder withoutExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(false);
     return this;
   }
 
