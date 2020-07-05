@@ -22,7 +22,7 @@ public class UrlEncodedFormCondition implements Condition {
   public boolean matches(Request r) {
     List<NameValuePair> actualParameters = new UrlEncodedFormParser().parse(r);
     if (allowExtraParameters) {
-      return expectedParameters.matchesAndAllowRedundantParameters(actualParameters);
+      return expectedParameters.matchesAndAllowExtraParameters(actualParameters);
     } else {
       return expectedParameters.matches(actualParameters);
     }

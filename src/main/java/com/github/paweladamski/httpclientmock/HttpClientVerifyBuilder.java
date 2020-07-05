@@ -92,7 +92,7 @@ public class HttpClientVerifyBuilder {
    *
    * @param name parameter name
    * @param value expected parameter value
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withFormParameter(String name, String value) {
     return withFormParameter(name, equalTo(value));
@@ -104,7 +104,7 @@ public class HttpClientVerifyBuilder {
    *
    * @param name parameter name
    * @param matcher parameter value matcher
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withFormParameter(String name, Matcher<String> matcher) {
     ruleBuilder.addFormParameterCondition(name, matcher);
@@ -180,7 +180,7 @@ public class HttpClientVerifyBuilder {
   /**
    * Allows extra parameters (not defined in condition) in query.
    *
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withExtraParameters() {
     ruleBuilder.setAllowExtraParameters(true);
@@ -200,7 +200,7 @@ public class HttpClientVerifyBuilder {
   /**
    * Allows extra parameters (not defined in condition) in form.
    *
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withExtraFormParameters() {
     ruleBuilder.setAllowExtraFormParameters(true);
@@ -210,7 +210,7 @@ public class HttpClientVerifyBuilder {
   /**
    * Disallows extra parameters (not defined in condition) in form.
    *
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withoutExtraFormParameters() {
     ruleBuilder.setAllowExtraFormParameters(false);

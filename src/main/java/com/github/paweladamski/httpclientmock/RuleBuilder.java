@@ -20,16 +20,16 @@ class RuleBuilder {
     this.urlConditions = new UrlParser().parse(buildFinalUrl(defaultHost, url));
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
-    setAllowExtraParameters(false);
-    setAllowExtraFormParameters(false);
+    setAllowExtraParameters(true);
+    setAllowExtraFormParameters(true);
   }
 
   RuleBuilder(String method) {
     this.urlConditions = new UrlConditions();
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
-    setAllowExtraParameters(false);
-    setAllowExtraFormParameters(false);
+    setAllowExtraParameters(true);
+    setAllowExtraFormParameters(true);
   }
 
   private String buildFinalUrl(String defaultHost, String url) {

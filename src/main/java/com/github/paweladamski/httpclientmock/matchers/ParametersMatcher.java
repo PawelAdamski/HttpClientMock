@@ -34,7 +34,7 @@ public class ParametersMatcher {
     }
   }
 
-  public boolean matchesAndAllowRedundantParameters(List<NameValuePair> actual) {
+  public boolean matchesAndAllowExtraParameters(List<NameValuePair> actual) {
     return findMissingParameters(actual).isEmpty()
         && allParametersHaveMatchingValue(actual);
   }

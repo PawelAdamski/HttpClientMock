@@ -15,7 +15,7 @@ public class UrlQueryMatcher {
   public boolean matches(String query) {
     List<NameValuePair> actualParameters = new UrlParamsParser().parse(query);
     if (allowExtraParameters) {
-      return expected.matchesAndAllowRedundantParameters(actualParameters);
+      return expected.matchesAndAllowExtraParameters(actualParameters);
     } else {
       return expected.matches(actualParameters);
     }
