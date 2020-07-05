@@ -153,17 +153,22 @@ public class HttpClientVerifyTest {
         .called(1);
     httpClientMock.verify()
         .post("http://localhost?a=1&b=2")
-        .called(1);
+        .called(2);
     httpClientMock.verify()
         .post("http://localhost?a=1")
-        .called(1);
+        .called(3);
     httpClientMock.verify()
         .post("http://localhost")
         .withParameter("a", "1")
-        .called(1);
+        .called(3);
 
     httpClientMock.verify()
         .post("http://localhost")
+        .withExtraParameters()
+        .called(3);
+    httpClientMock.verify()
+        .post("http://localhost")
+        .withoutExtraParameters()
         .notCalled();
   }
 
@@ -179,6 +184,7 @@ public class HttpClientVerifyTest {
         .called(1);
     httpClientMock.verify()
         .post("http://localhost#abc")
+        .withoutExtraParameters()
         .notCalled();
     httpClientMock.verify()
         .post("http://localhost#xyz")
@@ -327,7 +333,7 @@ public class HttpClientVerifyTest {
   }
 
   @Test
-  public void withFormParameters_should_notMatch_when_requestHasExtraFormParametersAndUsedPostWithURI() throws IOException {
+  public void withFormParameters_when_requestHasExtraFormParameters() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -342,26 +348,14 @@ public class HttpClientVerifyTest {
 
     httpClientMock.verify().post("/login")
         .withFormParameters(parameters)
+        .withoutExtraFormParameters()
         .notCalled();
-  }
-
-  @Test
-  public void withFormParameters_should_notmatch_when_requestHasExtraFormParametersAndUsedPostWithoutURI() throws IOException {
-    HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-
-    HttpPost request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
-        new BasicNameValuePair("username", "John"),
-        new BasicNameValuePair("password", "secret!")
-    )));
-    httpClientMock.execute(request);
-
-    ParametersMatcher parameters = new ParametersMatcher();
-    parameters.put("username", Matchers.equalTo("John"));
-
-    httpClientMock.verify().post().withPath("/login")
+    httpClientMock.verify().post("/login")
         .withFormParameters(parameters)
-        .notCalled();
+        .withExtraFormParameters()
+        .called();
   }
+
+
 
 }

@@ -108,6 +108,7 @@ public class DebuggingTest {
   @Test
   public void should_put_message_about_redundant_parameter() throws IOException {
     httpClientMock.onGet("/login")
+        .withoutExtraParameters()
         .doReturn("login");
     httpClientMock.execute(httpGet("http://localhost/login?foo=bbb"));
     assertTrue(debugger.notMatching.contains("query parameter foo was not expected to be in the request"));
@@ -196,6 +197,21 @@ public class DebuggingTest {
     httpClientMock.debugOn();
     httpClientMock.execute(httpPost("http://localhost:8080/login?foo=bar"));
     assertFalse(debugger.notMatching.contains("query parameter foo was not expected to be in the request"));
+  }
+
+  @Test
+  public void should_put_message_not_expected_form_parameters_when_ExtraParametersAreDisAllowed() throws IOException {
+    httpClientMock.onPost("http://localhost:8080/login")
+        .withoutExtraFormParameters()
+        .doReturn("login");
+    httpClientMock.debugOn();
+
+    HttpPost request = new HttpPost("http://localhost/login");
+    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+        new BasicNameValuePair("foo", "bar")
+    )));
+    httpClientMock.execute(request);
+    assertTrue(debugger.notMatching.contains("form parameter foo was not expected to be in the request"));
   }
 
   @Test

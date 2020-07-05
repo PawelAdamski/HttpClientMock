@@ -467,6 +467,7 @@ public class HttpClientMockBuilderTest {
     httpClientMock.onPost("/login")
         .withFormParameter("username", "John")
         .withFormParameter("password", "secret")
+        .withoutExtraFormParameters()
         .doReturnStatus(200);
 
     HttpPost request = new HttpPost("http://localhost/login");
@@ -506,6 +507,7 @@ public class HttpClientMockBuilderTest {
 
     httpClientMock.onPost()
         .withPath("/login")
+        .withoutExtraParameters()
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login?foo=bar"));
@@ -515,8 +517,8 @@ public class HttpClientMockBuilderTest {
   @Test
   public void should_notMatch_whenRequestHasExtraParametersAndOnPostWithUri() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
-    httpClientMock.debugOn();
     httpClientMock.onPost("/login")
+        .withoutExtraParameters()
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(new HttpPost("http://localhost/login?foo=bar"));
