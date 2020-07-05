@@ -9,6 +9,7 @@ HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.or
 * [Request matching](#request-matching)
 * [Define response](#define-response)
 * [Verification](#verification)
+* [Matching query and form parameters](#matching-query-and-form-parameters)
 * [Debugging](#debugging)
 * [Example 1](#example-1)
 * [Example 2](#example-2)
@@ -217,6 +218,35 @@ httpClientMock.verify().get().called(greaterThanOrEqualTo(1));
 
 ```
 
+## Matching query and form parameters
+There are two methods that control HttpClientMock behaviour when request contains extra form
+or query parameters:
+ - `withExtraParameters`: allows request to contain extra query parameters
+ - `withoutExtraParameters`: disallows request to contain extra query parameters
+ - `withExtraFormParameters`: allows request to contain extra form parameters
+ - `withoutExtraFormParameters`: disallows request to contain extra form parameters
+ 
+ Examples:
+ ```
+ httpClientMock.onPost("/login")
+   .withParameter("user","John")
+   .withoutExtraParameters()
+   .doReturn("ok");
+```
+Above condition will not match request `http://www.example.com/login?user=John&password=secret` because
+it contains extra parameter `password`.
+
+ ```
+ httpClientMock.onPost("/login")
+   .withParameter("user","John")
+   .withExtraParameters()
+   .doReturn("ok");
+```
+Above condition will match request `http://www.example.com/login?user=John&password=secret` although
+it contains extra parameter `password`.
+
+By default HttpClientMock matches requests with extra form and query parameters.
+
 ## Debugging
 HttpClientMock can help you to debug your code by displaying information which matchers matched your request.
 You can use `HttpClientMock#debugOn` to turn it on and `HttpClientMock#debugOff` to turn it off.
@@ -275,6 +305,10 @@ httpClientMock.verify().get("/login?user=john").called();
 ```
 
 ## Release notes
+
+1.8.0
+- Added methods {`withExtraParameters`, `withoutExtraParameters`, `withExtraFormParameters`, `withoutExtraFormParameters`} to better control form and query parameters matching.
+*WARNING* Breaking changes: Since this version by default HttpClientMock matches requests with extra form and query parameters.
 
 1.7.0
 - Added methods (`withFormParameter`, `withFormParameters`) for matching form parameters (URL encode parameters).

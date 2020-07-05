@@ -20,12 +20,16 @@ class RuleBuilder {
     this.urlConditions = new UrlParser().parse(buildFinalUrl(defaultHost, url));
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
+    setAllowExtraParameters(true);
+    setAllowExtraFormParameters(true);
   }
 
   RuleBuilder(String method) {
     this.urlConditions = new UrlConditions();
     addCondition(new HttpMethodCondition(method));
     addCondition(formParametersCondition);
+    setAllowExtraParameters(true);
+    setAllowExtraFormParameters(true);
   }
 
   private String buildFinalUrl(String defaultHost, String url) {
@@ -35,8 +39,6 @@ class RuleBuilder {
       return url;
     }
   }
-
-
 
   void addAction(Action o) {
     actions.add(o);
@@ -81,6 +83,14 @@ class RuleBuilder {
 
   Rule toRule() {
     return new Rule(urlConditions, conditions, actions);
+  }
+
+  public void setAllowExtraParameters(boolean allowExtraParameters) {
+    urlConditions.getUrlQueryConditions().setAllowExtraParameters(allowExtraParameters);
+  }
+
+  public void setAllowExtraFormParameters(boolean allowExtraFormParameters) {
+    formParametersCondition.setAllowExtraParameters(allowExtraFormParameters);
   }
 
 }

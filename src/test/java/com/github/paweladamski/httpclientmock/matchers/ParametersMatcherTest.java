@@ -29,8 +29,8 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void matchesAndAllowRedundantParameters_shouldReturnTrue_When_NoParamsWereExpectedAndNoParamsInActualList() {
-    assertTrue(matcher.matchesAndAllowRedundantParameters(Collections.EMPTY_LIST));
+  public void matchesAndAllowExtraParameters_shouldReturnTrue_When_NoParamsWereExpectedAndNoParamsInActualList() {
+    assertTrue(matcher.matchesAndAllowExtraParameters(Collections.EMPTY_LIST));
   }
 
   @Test
@@ -42,7 +42,7 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void matchesAndAllowRedundantParameters_shouldReturnTrue_When_OneParamIsExpectedAndTheSameParamsInActualList() {
+  public void matchesAndAllowExtraParameters_shouldReturnTrue_When_OneParamIsExpectedAndTheSameParamsInActualList() {
     matcher.put("foo", equalTo("bar"));
     actualParameters.add(new BasicNameValuePair("foo", "bar"));
 
@@ -50,7 +50,7 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void match_shouldReturnFalse_When_ActualParametersHaveOneRedundantParameter() {
+  public void match_shouldReturnFalse_When_ActualParametersHaveOneExtraParameter() {
     matcher.put("foo", equalTo("bar"));
     actualParameters.add(new BasicNameValuePair("foo", "bar"));
     actualParameters.add(new BasicNameValuePair("abc", "123"));
@@ -59,12 +59,12 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void matchesAndAllowRedundantParameters_shouldReturnTrue_When_ActualParametersHaveOneRedundantParameter() {
+  public void matchesAndAllowExtraParameters_shouldReturnTrue_When_ActualParametersHaveOneExtraParameter() {
     matcher.put("foo", equalTo("bar"));
     actualParameters.add(new BasicNameValuePair("foo", "bar"));
     actualParameters.add(new BasicNameValuePair("abc", "123"));
 
-    assertTrue(matcher.matchesAndAllowRedundantParameters(actualParameters));
+    assertTrue(matcher.matchesAndAllowExtraParameters(actualParameters));
   }
 
   @Test
@@ -76,11 +76,11 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void matchesAndAllowRedundantParameters_shouldReturnFalse_When_ActualContainNotMatchingParameter() {
+  public void matchesAndAllowExtraParameters_shouldReturnFalse_When_ActualContainNotMatchingParameter() {
     matcher.put("foo", equalTo("bar"));
     actualParameters.add(new BasicNameValuePair("foo", "123"));
 
-    assertFalse(matcher.matchesAndAllowRedundantParameters(actualParameters));
+    assertFalse(matcher.matchesAndAllowExtraParameters(actualParameters));
   }
 
   @Test
@@ -93,12 +93,12 @@ public class ParametersMatcherTest {
   }
 
   @Test
-  public void matchesAndAllowRedundantParameters_shouldReturnFalse_When_ActualMissesOneOfTheExpectedParameter() {
+  public void matchesAndAllowExtraParameters_shouldReturnFalse_When_ActualMissesOneOfTheExpectedParameter() {
     matcher.put("foo", equalTo("bar"));
     matcher.put("abc", equalTo("123"));
     actualParameters.add(new BasicNameValuePair("foo", "bar"));
 
-    assertFalse(matcher.matchesAndAllowRedundantParameters(actualParameters));
+    assertFalse(matcher.matchesAndAllowExtraParameters(actualParameters));
   }
 
   @Test

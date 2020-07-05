@@ -7,7 +7,6 @@ import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.condition.HeaderCondition;
 import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.List;
-import java.util.Map;
 import org.hamcrest.Matcher;
 
 public class HttpClientVerifyBuilder {
@@ -93,7 +92,7 @@ public class HttpClientVerifyBuilder {
    *
    * @param name parameter name
    * @param value expected parameter value
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withFormParameter(String name, String value) {
     return withFormParameter(name, equalTo(value));
@@ -105,7 +104,7 @@ public class HttpClientVerifyBuilder {
    *
    * @param name parameter name
    * @param matcher parameter value matcher
-   * @return condition builder
+   * @return verification builder
    */
   public HttpClientVerifyBuilder withFormParameter(String name, Matcher<String> matcher) {
     ruleBuilder.addFormParameterCondition(name, matcher);
@@ -179,6 +178,46 @@ public class HttpClientVerifyBuilder {
   }
 
   /**
+   * Allows extra parameters (not defined in condition) in query.
+   *
+   * @return verification builder
+   */
+  public HttpClientVerifyBuilder withExtraParameters() {
+    ruleBuilder.setAllowExtraParameters(true);
+    return this;
+  }
+
+  /**
+   * Disallows extra parameters (not defined in condition) in query.
+   *
+   * @return condition builder
+   */
+  public HttpClientVerifyBuilder withoutExtraParameters() {
+    ruleBuilder.setAllowExtraParameters(false);
+    return this;
+  }
+
+  /**
+   * Allows extra parameters (not defined in condition) in form.
+   *
+   * @return verification builder
+   */
+  public HttpClientVerifyBuilder withExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(true);
+    return this;
+  }
+
+  /**
+   * Disallows extra parameters (not defined in condition) in form.
+   *
+   * @return verification builder
+   */
+  public HttpClientVerifyBuilder withoutExtraFormParameters() {
+    ruleBuilder.setAllowExtraFormParameters(false);
+    return this;
+  }
+
+  /**
    * Verifies if there were no request matching defined conditions.
    */
   public void notCalled() {
@@ -216,4 +255,5 @@ public class HttpClientVerifyBuilder {
       throw new IllegalStateException(String.format("Expected %s calls, but found %s.", numberOfCalls, matchingCalls));
     }
   }
+
 }
