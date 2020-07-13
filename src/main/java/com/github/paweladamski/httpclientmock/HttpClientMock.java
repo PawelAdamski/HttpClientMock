@@ -69,6 +69,7 @@ public class HttpClientMock extends CloseableHttpClient {
    */
   public void reset() {
     this.rulesUnderConstruction.clear();
+    this.rules.clear();
     this.requests.clear();
   }
 
