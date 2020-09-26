@@ -1,15 +1,12 @@
 package com.github.paweladamski.httpclientmock.action;
 
+import com.github.paweladamski.httpclientmock.Request;
 import java.nio.charset.Charset;
 import java.util.Collection;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicHttpResponse;
-
-import com.github.paweladamski.httpclientmock.Request;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 
 /**
  * @author Michael Angstadt
@@ -31,8 +28,8 @@ public class UrlEncodedFormEntityResponse implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request request) {
-    BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), statusCode, "ok");
+  public ClassicHttpResponse getResponse(Request request) {
+    BasicClassicHttpResponse response = new BasicClassicHttpResponse(statusCode, "ok");
 
     UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, charset);
     response.setEntity(entity);

@@ -12,13 +12,13 @@ import com.github.paweladamski.httpclientmock.Request;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.junit.Test;
 
 /**
@@ -32,7 +32,7 @@ public class UrlEncodedFormConditionTest {
     condition.addExpectedParameter("one", equalTo("1"));
     condition.addExpectedParameter("two", equalTo("2"));
 
-    HttpPost request = new HttpPost();
+    HttpPost request = new HttpPost("localhost");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("one", "1"),
         new BasicNameValuePair("two", "2")
@@ -55,7 +55,7 @@ public class UrlEncodedFormConditionTest {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("ONE", equalTo("1"));
 
-    HttpPost request = new HttpPost();
+    HttpPost request = new HttpPost("localhost");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("one", "1")
     )));
@@ -78,7 +78,7 @@ public class UrlEncodedFormConditionTest {
     condition.addExpectedParameter("one", equalTo("1"));
     condition.addExpectedParameter("two", equalTo("2"));
 
-    HttpPost request = new HttpPost();
+    HttpPost request = new HttpPost("localhost");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("one", "1"),
         new BasicNameValuePair("two", "not 2")
@@ -107,7 +107,7 @@ public class UrlEncodedFormConditionTest {
     condition.addExpectedParameter("one", equalTo(
         "3")); //MatchersMap requires that the parameter value match BOTH conditions--so the value must equal "1" and must also equal "3", which is impossible
 
-    HttpPost request = new HttpPost();
+    HttpPost request = new HttpPost("localhost");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("one", "1"),
         new BasicNameValuePair("one", "3")
@@ -130,7 +130,7 @@ public class UrlEncodedFormConditionTest {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("one", equalTo("1"));
 
-    HttpPost request = new HttpPost();
+    HttpPost request = new HttpPost("localhost");
     request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
         new BasicNameValuePair("one", "1"),
         new BasicNameValuePair("two", "2")
@@ -150,7 +150,7 @@ public class UrlEncodedFormConditionTest {
   }
 
   /**
-   * The method that is used to extract the form parameters out of the request body ({@link URLEncodedUtils#parse(HttpEntity)}) also takes the Content-Type of
+   * The method that is used to extract the form parameters out of the request body also takes the Content-Type of
    * the request into consideration. If the Content-Type is not "application/x-www-form-urlencoded", then it will not attempt to parse the body and it will act
    * as if the body has zero form parameters in it.
    */
@@ -159,7 +159,7 @@ public class UrlEncodedFormConditionTest {
     {
       UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
 
-      HttpPost request = new HttpPost();
+      HttpPost request = new HttpPost("localhost");
       request.setEntity(new StringEntity("one=1"));
 
       Request r = new Request(null, request, null);
@@ -175,7 +175,7 @@ public class UrlEncodedFormConditionTest {
       UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
       condition.addExpectedParameter("one", equalTo("1"));
 
-      HttpPost request = new HttpPost();
+      HttpPost request = new HttpPost("localhost");
       request.setEntity(new StringEntity("one=1"));
 
       Request r = new Request(null, request, null);
@@ -195,7 +195,7 @@ public class UrlEncodedFormConditionTest {
     //without expected params
     {
       UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
-      HttpGet request = new HttpGet();
+      HttpGet request = new HttpGet("localhost");
       Request r = new Request(null, request, null);
       assertTrue(condition.matches(r));
 
@@ -209,7 +209,7 @@ public class UrlEncodedFormConditionTest {
     {
       UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
       condition.addExpectedParameter("foo", equalTo("bar"));
-      HttpGet request = new HttpGet();
+      HttpGet request = new HttpGet("localhost");
       Request r = new Request(null, request, null);
       assertFalse(condition.matches(r));
 

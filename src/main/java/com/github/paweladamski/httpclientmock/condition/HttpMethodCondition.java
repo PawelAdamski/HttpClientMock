@@ -13,7 +13,7 @@ public class HttpMethodCondition implements Condition {
 
   @Override
   public boolean matches(Request request) {
-    return request.getHttpRequest().getRequestLine().getMethod().equals(method);
+    return request.getHttpRequest().getMethod().equals(method);
   }
 
   @Override

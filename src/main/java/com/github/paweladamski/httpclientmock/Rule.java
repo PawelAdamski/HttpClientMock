@@ -1,19 +1,20 @@
 package com.github.paweladamski.httpclientmock;
 
 import static java.util.Collections.emptyList;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
+import static org.apache.hc.core5.http.HttpStatus.SC_NOT_FOUND;
 
 import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.action.StatusResponse;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class Rule {
 
@@ -33,12 +34,17 @@ public class Rule {
   }
 
   boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-    return urlConditions.matches(httpRequest.getRequestLine().getUri())
-        && conditions.stream()
-        .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
+    try {
+      return urlConditions.matches(httpRequest.getUri())
+          && conditions.stream()
+          .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
+      return false;
+    }
   }
 
-  HttpResponse nextResponse(Request request) throws IOException {
+  ClassicHttpResponse nextResponse(Request request) throws IOException {
     Action action = (actions.size() > 1) ? actions.poll() : actions.peek();
     return action.getResponse(request);
   }

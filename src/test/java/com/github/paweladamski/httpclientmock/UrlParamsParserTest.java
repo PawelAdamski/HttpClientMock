@@ -3,7 +3,7 @@ package com.github.paweladamski.httpclientmock;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-import org.apache.http.NameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
 import org.junit.Test;
 
 public class UrlParamsParserTest {

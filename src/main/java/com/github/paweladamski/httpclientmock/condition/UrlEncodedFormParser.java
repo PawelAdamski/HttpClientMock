@@ -2,12 +2,14 @@ package com.github.paweladamski.httpclientmock.condition;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import java.util.Scanner;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URLEncodedUtils;
 
 public class UrlEncodedFormParser {
 
@@ -16,7 +18,7 @@ public class UrlEncodedFormParser {
       return Collections.emptyList();
     }
 
-    HttpEntityEnclosingRequest httpRequest = (HttpEntityEnclosingRequest) request.getHttpRequest();
+    HttpEntityContainer httpRequest = (HttpEntityContainer) request.getHttpRequest();
     HttpEntity entity = httpRequest.getEntity();
     if (entity == null) {
       return Collections.emptyList();
@@ -28,13 +30,15 @@ public class UrlEncodedFormParser {
        * request is not "application/x-www-form-urlencoded". So, requests with
        * other kinds of data in the body will correctly be ignored here.
        */
-      return URLEncodedUtils.parse(entity);
+      Scanner s = new Scanner(entity.getContent()).useDelimiter("\\A");
+      String result = s.hasNext() ? s.next() : "";
+      return URLEncodedUtils.parse(result, Charset.defaultCharset());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
   private boolean requestHasBody(Request r) {
-    return (r.getHttpRequest() instanceof HttpEntityEnclosingRequest);
+    return (r.getHttpRequest() instanceof HttpEntityContainer);
   }
 }

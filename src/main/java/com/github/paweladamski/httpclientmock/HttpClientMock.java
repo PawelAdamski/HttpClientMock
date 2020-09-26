@@ -1,31 +1,34 @@
 package com.github.paweladamski.httpclientmock;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.classic.ExecRuntime;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.io.CloseMode;
 
 public class HttpClientMock extends CloseableHttpClient {
 
-  private final HttpParams params = new BasicHttpParams();
   private final Debugger debugger;
 
   private final List<RuleBuilder> rulesUnderConstruction = new ArrayList<>();
@@ -242,25 +245,39 @@ public class HttpClientMock extends CloseableHttpClient {
   }
 
   @Override
-  protected CloseableHttpResponse doExecute(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
+  protected CloseableHttpResponse doExecute(HttpHost httpHost, ClassicHttpRequest httpRequest, HttpContext httpContext) throws IOException {
     finishBuildingRules();
-    executeRequestInterceptors(httpRequest, httpContext);
+    executeRequestInterceptors(httpRequest, getEntityDetails(httpRequest), httpContext);
     HttpResponse response = getHttpResponse(httpHost, httpRequest, httpContext);
-    executeResponseInterceptors(httpContext, response);
-    return new HttpResponseProxy(response);
+    executeResponseInterceptors(httpContext, getEntityDetails(httpRequest), response);
+
+    try {
+      Constructor<CloseableHttpResponse> constructor = CloseableHttpResponse.class.getDeclaredConstructor(ClassicHttpResponse.class, ExecRuntime.class);
+      constructor.setAccessible(true);
+      return constructor.newInstance(response, null);
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
   }
 
-  private void executeResponseInterceptors(HttpContext httpContext, HttpResponse response) throws IOException {
+  private EntityDetails getEntityDetails(Object entityContainer) {
+    if (entityContainer instanceof HttpEntityContainer) {
+      return ((HttpEntityContainer) entityContainer).getEntity();
+    }
+    return null;
+  }
+
+  private void executeResponseInterceptors(HttpContext httpContext, EntityDetails entityDetails, HttpResponse response) throws IOException {
     try {
       for (HttpResponseInterceptor responseInterceptor : responseInterceptors) {
-        responseInterceptor.process(response, httpContext);
+        responseInterceptor.process(response, entityDetails, httpContext);
       }
     } catch (HttpException e) {
       throw new IOException(e);
     }
   }
 
-  private HttpResponse getHttpResponse(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
+  private ClassicHttpResponse getHttpResponse(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) throws IOException {
     Request request = new Request(httpHost, httpRequest, httpContext);
     requests.add(request);
     Rule rule = rules.stream()
@@ -273,10 +290,10 @@ public class HttpClientMock extends CloseableHttpClient {
     return rule.nextResponse(request);
   }
 
-  private void executeRequestInterceptors(HttpRequest httpRequest, HttpContext httpContext) throws IOException {
+  private void executeRequestInterceptors(HttpRequest httpRequest, EntityDetails entityDetails, HttpContext httpContext) throws IOException {
     try {
       for (HttpRequestInterceptor requestInterceptor : requestInterceptors) {
-        requestInterceptor.process(httpRequest, httpContext);
+        requestInterceptor.process(httpRequest, entityDetails, httpContext);
       }
     } catch (HttpException e) {
       throw new IOException(e);
@@ -290,20 +307,6 @@ public class HttpClientMock extends CloseableHttpClient {
       }
       rulesUnderConstruction.clear();
     }
-  }
-
-  @Override
-  public void close() throws IOException {
-  }
-
-  @Override
-  public HttpParams getParams() {
-    return params;
-  }
-
-  @Override
-  public ClientConnectionManager getConnectionManager() {
-    return null;
   }
 
   public void debugOn() {
@@ -320,5 +323,13 @@ public class HttpClientMock extends CloseableHttpClient {
 
   public void addResponseInterceptor(HttpResponseInterceptor responseInterceptor) {
     this.responseInterceptors.add(responseInterceptor);
+  }
+
+  @Override
+  public void close(CloseMode closeMode) {
+  }
+
+  @Override
+  public void close() throws IOException {
   }
 }

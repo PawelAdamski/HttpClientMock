@@ -2,7 +2,7 @@ package com.github.paweladamski.httpclientmock.action;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 
 public class ExceptionAction implements Action {
 
@@ -13,7 +13,7 @@ public class ExceptionAction implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request request) throws IOException {
+  public ClassicHttpResponse getResponse(Request request) throws IOException {
     throw exception;
   }
 }

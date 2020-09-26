@@ -1,7 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
 import java.util.List;
-import org.apache.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequest;
 
 public class Debugger {
 
@@ -27,7 +27,7 @@ public class Debugger {
 
   private void logRequest(Request request) {
     HttpRequest httpRequest = request.getHttpRequest();
-    System.out.println("Request: " + httpRequest.getRequestLine().getMethod() + " " + httpRequest.getRequestLine().getUri());
+    System.out.println("Request: " + httpRequest.getMethod() + " " + httpRequest.getRequestUri());
   }
 
   public void message(boolean matches, String expected) {

@@ -5,7 +5,7 @@ import com.github.paweladamski.httpclientmock.Request;
 import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.util.List;
 import java.util.Set;
-import org.apache.http.NameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
 import org.hamcrest.Matcher;
 
 /**

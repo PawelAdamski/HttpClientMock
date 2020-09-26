@@ -2,9 +2,9 @@ package com.github.paweladamski.httpclientmock.condition;
 
 import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.Request;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public interface Condition {
 

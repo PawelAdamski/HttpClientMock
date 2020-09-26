@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ContentType;
 import org.hamcrest.Matcher;
 
 public class HttpClientMockBuilder {

@@ -1,7 +1,7 @@
 package com.github.paweladamski.httpclientmock;
 
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.apache.http.entity.ContentType.APPLICATION_XML;
+import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
+import static org.apache.hc.core5.http.ContentType.APPLICATION_XML;
 
 import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.action.CookieAction;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.apache.http.NameValuePair;
-import org.apache.http.entity.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.ContentType;
 
 public class HttpClientResponseBuilder {
 

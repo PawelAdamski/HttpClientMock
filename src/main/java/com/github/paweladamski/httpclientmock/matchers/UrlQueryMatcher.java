@@ -4,7 +4,7 @@ import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.UrlParamsParser;
 import java.util.List;
 import java.util.Set;
-import org.apache.http.NameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
 import org.hamcrest.Matcher;
 
 public class UrlQueryMatcher {

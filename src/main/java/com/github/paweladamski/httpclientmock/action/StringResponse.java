@@ -2,11 +2,10 @@ package com.github.paweladamski.httpclientmock.action;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.nio.charset.Charset;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 
 public class StringResponse implements Action {
 
@@ -35,12 +34,11 @@ public class StringResponse implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request request) {
-    BasicHttpResponse response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), statusCode, "ok");
-    StringEntity entity = new StringEntity(this.response, this.charset);
-    entity.setContentType(contentType.toString());
-    response.setEntity(entity);
+  public ClassicHttpResponse getResponse(Request request) {
+    BasicClassicHttpResponse response = new BasicClassicHttpResponse(statusCode, "ok");
+    StringEntity entity = new StringEntity(this.response,contentType, this.charset.toString(),false);
     response.addHeader("Content-type", contentType.toString());
+    response.setEntity(entity);
     return response;
   }
 }

@@ -2,10 +2,11 @@ package com.github.paweladamski.httpclientmock.action;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 
 public class CookieAction implements Action {
 
@@ -20,8 +21,8 @@ public class CookieAction implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request request) throws IOException {
-    HttpResponse response = parentAction.getResponse(request);
+  public ClassicHttpResponse getResponse(Request request) throws IOException {
+    ClassicHttpResponse response = parentAction.getResponse(request);
 
     if (request.getHttpContext() == null) {
       throw new RuntimeException("No Http context");

@@ -1,8 +1,10 @@
 package com.github.paweladamski.httpclientmock;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HttpContext;
+import java.net.URI;
+import java.net.URISyntaxException;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class Request {
 
@@ -29,8 +31,8 @@ public class Request {
     return httpContext;
   }
 
-  public String getUri() {
-    return getHttpRequest().getRequestLine().getUri();
+  public URI getUri() throws URISyntaxException {
+    return getHttpRequest().getUri();
   }
 
 }

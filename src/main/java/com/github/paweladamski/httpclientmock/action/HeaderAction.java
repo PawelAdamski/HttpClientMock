@@ -2,7 +2,7 @@ package com.github.paweladamski.httpclientmock.action;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 
 public class HeaderAction implements Action {
 
@@ -17,8 +17,8 @@ public class HeaderAction implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request r) throws IOException {
-    HttpResponse response = parentAction.getResponse(r);
+  public ClassicHttpResponse getResponse(Request r) throws IOException {
+    ClassicHttpResponse response = parentAction.getResponse(r);
     response.addHeader(name, value);
     return response;
   }

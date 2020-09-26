@@ -1,14 +1,13 @@
 package com.github.paweladamski.httpclientmock.action;
 
-import static org.apache.http.HttpStatus.SC_NO_CONTENT;
+import static org.apache.hc.core5.http.HttpStatus.SC_NO_CONTENT;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
 import java.util.Optional;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 
 public class StatusResponse implements Action {
 
@@ -26,17 +25,17 @@ public class StatusResponse implements Action {
   }
 
   @Override
-  public HttpResponse getResponse(Request request) throws IOException {
-    HttpResponse response;
+  public ClassicHttpResponse getResponse(Request request) throws IOException {
+    ClassicHttpResponse response;
     if (parentAction.isPresent()) {
       response = parentAction.get().getResponse(request);
     } else {
-      response = new BasicHttpResponse(new ProtocolVersion("http", 1, 1), status, "");
+      response = new BasicClassicHttpResponse(status, "");
       if (status != SC_NO_CONTENT) {
         response.setEntity(new StringEntity(""));
       }
     }
-    response.setStatusCode(status);
+    response.setCode(status);
     return response;
   }
 }

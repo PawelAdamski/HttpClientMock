@@ -1,11 +1,9 @@
 package com.github.paweladamski.httpclientmock;
 
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-
 import com.github.paweladamski.httpclientmock.matchers.MatchersList;
 import com.github.paweladamski.httpclientmock.matchers.UrlQueryMatcher;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hamcrest.StringDescription;
@@ -52,36 +50,30 @@ public class UrlConditions {
     this.schemaConditions = schemaConditions;
   }
 
-  boolean matches(String urlText) {
-    try {
-      URL url = new URL(urlText);
+  boolean matches(URI url) {
 
-      return hostConditions.allMatches(url.getHost())
-          && pathConditions.allMatches(url.getPath())
-          && portConditions.allMatches(url.getPort())
-          && referenceConditions.matches(url.getRef())
-          && schemaConditions.matches(url.getProtocol())
-          && urlQueryConditions.matches(url.getQuery());
+    return hostConditions.allMatches(url.getHost())
+        && pathConditions.allMatches(url.getPath())
+        && portConditions.allMatches(url.getPort())
+        && referenceConditions.matches(url.getFragment())
+        && schemaConditions.matches(url.getScheme())
+        && urlQueryConditions.matches(url.getQuery());
 
-    } catch (MalformedURLException e) {
-      return false;
-    }
   }
-
 
   void debug(Request request, Debugger debugger) {
     try {
-      URL url = new URL(request.getUri());
+      URI url = request.getUri();
       debugger.message(hostConditions.allMatches(url.getHost()), "schema is " + describe(schemaConditions));
       debugger.message(hostConditions.allMatches(url.getHost()), "host is " + hostConditions.describe());
       debugger.message(pathConditions.allMatches(url.getPath()), "path is " + pathConditions.describe());
       debugger.message(portConditions.allMatches(url.getPort()), "port is " + portDebugDescription());
-      if (referenceConditions != isEmptyOrNullString() || !referenceConditions.matches(url.getRef())) {
-        debugger.message(referenceConditions.matches(url.getRef()), "reference is " + describe(referenceConditions));
-      }
+//      if (referenceConditions != isEmptyOrNullString() || !referenceConditions.matches(url.get.getRef())) {
+//        debugger.message(referenceConditions.matches(url.getRef()), "reference is " + describe(referenceConditions));
+//      }
       urlQueryConditions.describe(url.getQuery(), debugger);
-    } catch (MalformedURLException e) {
-      System.out.println("Can't parse URL: " + request.getUri());
+    } catch (URISyntaxException e) {
+      System.out.println("Can't parse URL");
     }
   }
 

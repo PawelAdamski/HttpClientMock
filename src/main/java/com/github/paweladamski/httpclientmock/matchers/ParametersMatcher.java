@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.apache.http.NameValuePair;
+import org.apache.hc.core5.http.NameValuePair;
 import org.hamcrest.Matcher;
 
 public class ParametersMatcher {
