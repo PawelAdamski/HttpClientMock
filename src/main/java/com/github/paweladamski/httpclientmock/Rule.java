@@ -36,11 +36,9 @@ public class Rule {
   boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
     try {
       return urlConditions.matches(httpRequest.getUri())
-          && conditions.stream()
-          .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
+          && conditions.stream().allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
     } catch (URISyntaxException e) {
-      e.printStackTrace();
-      return false;
+      throw new IllegalStateException(e);
     }
   }
 

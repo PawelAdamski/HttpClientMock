@@ -31,8 +31,12 @@ public class Request {
     return httpContext;
   }
 
-  public URI getUri() throws URISyntaxException {
-    return getHttpRequest().getUri();
+  public URI getUri() {
+    try {
+      return getHttpRequest().getUri();
+    } catch (URISyntaxException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
 }

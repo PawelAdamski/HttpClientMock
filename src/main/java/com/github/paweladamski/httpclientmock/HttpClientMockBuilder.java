@@ -263,8 +263,8 @@ public class HttpClientMockBuilder {
    * @param response response to return
    * @return response builder
    */
-  public HttpClientResponseBuilder doReturn(String response, Charset charset, ContentType contentType) {
-    return responseBuilder.doReturn(response, charset, contentType);
+  public HttpClientResponseBuilder doReturn(String response, ContentType contentType) {
+    return responseBuilder.doReturn(200, response, contentType);
   }
 
   /**

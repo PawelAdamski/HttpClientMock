@@ -2,6 +2,7 @@ package com.github.paweladamski.httpclientmock;
 
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_XML;
+import static org.apache.hc.core5.http.ContentType.TEXT_PLAIN;
 
 import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.action.CookieAction;
@@ -14,8 +15,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
 
 public class HttpClientResponseBuilder {
 
@@ -105,7 +106,7 @@ public class HttpClientResponseBuilder {
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(String response, Charset charset) {
-    newRule.addAction(new StringResponse(response, charset));
+    newRule.addAction(new StringResponse(200, response, TEXT_PLAIN.withCharset(charset)));
     return new HttpClientResponseBuilder(newRule);
   }
 
@@ -115,8 +116,8 @@ public class HttpClientResponseBuilder {
    * @param response response to return
    * @return response builder
    */
-  public HttpClientResponseBuilder doReturn(String response, Charset charset, ContentType contentType) {
-    newRule.addAction(new StringResponse(response, charset, contentType));
+  public HttpClientResponseBuilder doReturn(String response, ContentType contentType) {
+    newRule.addAction(new StringResponse(200, response, contentType));
     return new HttpClientResponseBuilder(newRule);
   }
 
@@ -129,9 +130,24 @@ public class HttpClientResponseBuilder {
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(int statusCode, String response, Charset charset) {
-    newRule.addAction(new StringResponse(statusCode, response, charset));
+    newRule.addAction(new StringResponse(statusCode, response, TEXT_PLAIN.withCharset(charset)));
     return new HttpClientResponseBuilder(newRule);
   }
+
+
+  /**
+   * Adds action which returns provided response in provided content type and status code.
+   *
+   * @param statusCode status to return
+   * @param response response to return
+   * @param contentType
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturn(int statusCode, String response, ContentType contentType) {
+    newRule.addAction(new StringResponse(statusCode, response, contentType));
+    return new HttpClientResponseBuilder(newRule);
+  }
+
 
   /**
    * Adds action which returns empty message and provided status.
@@ -172,7 +188,8 @@ public class HttpClientResponseBuilder {
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnJSON(String response, Charset charset) {
-    return doReturn(response, charset, APPLICATION_JSON);
+    newRule.addAction(new StringResponse(200, response, APPLICATION_JSON.withCharset(charset)));
+    return new HttpClientResponseBuilder(newRule);
   }
 
   /**
@@ -192,7 +209,8 @@ public class HttpClientResponseBuilder {
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
-    return doReturn(response, charset, APPLICATION_XML);
+    newRule.addAction(new StringResponse(200, response, APPLICATION_XML.withCharset(charset)));
+    return new HttpClientResponseBuilder(newRule);
   }
 
   /**

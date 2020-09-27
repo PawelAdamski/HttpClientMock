@@ -251,6 +251,14 @@ public class HttpClientMock extends CloseableHttpClient {
     HttpResponse response = getHttpResponse(httpHost, httpRequest, httpContext);
     executeResponseInterceptors(httpContext, getEntityDetails(httpRequest), response);
 
+    return buildHttpResponse(response);
+  }
+
+  /**
+   * ClassicHttpResponse doesn't have public constructor so we must use
+   * reflections to create its instance.
+   */
+  private CloseableHttpResponse buildHttpResponse(HttpResponse response) {
     try {
       Constructor<CloseableHttpResponse> constructor = CloseableHttpResponse.class.getDeclaredConstructor(ClassicHttpResponse.class, ExecRuntime.class);
       constructor.setAccessible(true);

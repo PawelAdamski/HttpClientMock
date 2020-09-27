@@ -9,7 +9,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -214,11 +213,7 @@ class TestDebugger extends Debugger {
 
   @Override
   public Rule debug(List<Rule> rules, Request request) {
-    try {
-      this.requests.add(request.getUri().toString());
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    }
+    this.requests.add(request.getUri().toString());
     return super.debug(rules, request);
   }
 

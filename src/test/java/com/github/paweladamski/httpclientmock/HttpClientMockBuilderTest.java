@@ -9,7 +9,6 @@ import static org.hamcrest.Matchers.containsString;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
@@ -97,12 +96,7 @@ public class HttpClientMockBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost");
 
     Condition fooCondition = (request) -> {
-      try {
-        return request.getUri().toString().contains("foo");
-      } catch (URISyntaxException e) {
-        e.printStackTrace();
-        return false;
-      }
+      return request.getUri().toString().contains("foo");
     };
 
     httpClientMock.onGet("http://localhost/foo/bar")

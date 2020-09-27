@@ -11,32 +11,18 @@ public class StringResponse implements Action {
 
   private final int statusCode;
   private final String response;
-  private final Charset charset;
   private final ContentType contentType;
 
-  public StringResponse(String response, Charset charset) {
-    this(200, response, charset);
-  }
-
-  public StringResponse(int statusCode, String response, Charset charset) {
-    this(statusCode, response, charset, ContentType.TEXT_PLAIN.withCharset(charset));
-  }
-
-  public StringResponse(String response, Charset charset, ContentType contentType) {
-    this(200, response, charset, contentType);
-  }
-
-  public StringResponse(int statusCode, String response, Charset charset, ContentType contentType) {
+  public StringResponse(int statusCode, String response, ContentType contentType) {
     this.statusCode = statusCode;
     this.response = response;
-    this.charset = charset;
     this.contentType = contentType;
   }
 
   @Override
   public ClassicHttpResponse getResponse(Request request) {
     BasicClassicHttpResponse response = new BasicClassicHttpResponse(statusCode, "ok");
-    StringEntity entity = new StringEntity(this.response,contentType, this.charset.toString(),false);
+    StringEntity entity = new StringEntity(this.response,contentType, this.contentType.getCharset().toString(),false);
     response.addHeader("Content-type", contentType.toString());
     response.setEntity(entity);
     return response;

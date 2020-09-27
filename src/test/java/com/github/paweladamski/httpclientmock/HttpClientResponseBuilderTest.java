@@ -99,9 +99,9 @@ public class HttpClientResponseBuilderTest {
   public void should_support_response_with_different_contentType() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock
-        .onGet("/json").doReturn("{\"a\":1}", Charset.defaultCharset(), APPLICATION_JSON);
+        .onGet("/json").doReturn("{\"a\":1}", APPLICATION_JSON.withCharset(Charset.defaultCharset()));
     httpClientMock
-        .onGet("/xml").doReturn("<a>1</a>", Charset.defaultCharset(), APPLICATION_XML);
+        .onGet("/xml").doReturn("<a>1</a>", APPLICATION_XML.withCharset(Charset.defaultCharset()));
 
     ClassicHttpResponse jsonResponse = httpClientMock.execute(httpGet("http://localhost:8080/json"));
     ClassicHttpResponse xmlResponse = httpClientMock.execute(httpGet("http://localhost:8080/xml"));
