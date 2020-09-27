@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.hamcrest.Matchers;

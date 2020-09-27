@@ -48,26 +48,6 @@ public class HttpClientMockBuilder {
     return this;
   }
 
-  /**
-   * Adds reference condition. Reference must be equal to provided value.
-   *
-   * @param reference expected reference
-   * @return conditions builder
-   */
-  public HttpClientMockBuilder withReference(String reference) {
-    return withReference(equalTo(reference));
-  }
-
-  /**
-   * Adds reference condition. Reference must match.
-   *
-   * @param matcher reference matcher
-   * @return conditions builder
-   */
-  public HttpClientMockBuilder withReference(Matcher<String> matcher) {
-    ruleBuilder.addReferenceCondition(matcher);
-    return this;
-  }
 
   /**
    * Adds parameter condition. Parameter must be equal to provided value.

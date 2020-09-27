@@ -30,10 +30,8 @@ public class UrlEncodedFormEntityResponse implements Action {
   @Override
   public ClassicHttpResponse getResponse(Request request) {
     BasicClassicHttpResponse response = new BasicClassicHttpResponse(statusCode, "ok");
-
     UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, charset);
     response.setEntity(entity);
-
     return response;
   }
 }

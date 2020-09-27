@@ -81,14 +81,13 @@ httpClientMock.onPost("/edit?user=john").doReturnStatus(200);
 httpClientMock.onGet("http://www.google.com").doReturn("Google") // Absolute paths still work.
 ```
 
-### Host, path, parameters, reference conditions
+### Host, path, parameters conditions
 It is possible to define each part of url separately.
 ```
 httpClientMock.onGet()
   .withHost("httt://locahost")
   .withPath("/login")
   .withParameter("user","john")
-  .withReference("edit")
   .doReturnStatus(200);
 ```
 
@@ -128,7 +127,6 @@ Every condition method accepts [Hamcrest Matcher](https://github.com/hamcrest/Ja
 httpClientMock.onGet("http://localhost")
   .withPath(containsString("login"))
   .withParameter("user",equalToIgnoringCase("John)")
-  .reference(not(equalTo("edit")));
 ```
 
 ### Multiple matching rules

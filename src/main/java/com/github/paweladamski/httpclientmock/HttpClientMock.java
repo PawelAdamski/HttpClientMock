@@ -161,9 +161,9 @@ public class HttpClientMock extends CloseableHttpClient {
 
   /**
    * Starts defining new rule which requires HTTP GET method and url. If provided url starts with "/" request url must be equal to concatenation of default host
-   * and url. Otherwise request url must equal to provided url. If provided url contains query parameters and/or reference they are parsed and added as a
-   * separate conditions. <p> For example:<br> <code> httpClientMock.onGet("http://localhost/login?user=Ben#edit"); </code> <br>is equal to<br> <code>
-   * httpClientMock.onGet("http://localhost/login").withParameter("user","Ben").withReference("edit); </code>
+   * and url. Otherwise request url must equal to provided url. If provided url contains query parameters they are parsed and added as a
+   * separate conditions. <p> For example:<br> <code> httpClientMock.onGet("http://localhost/login?user=Ben"); </code> <br>is equal to<br> <code>
+   * httpClientMock.onGet("http://localhost/login").withParameter("user","Ben"); </code>
    *
    * @param url required url
    * @return HttpClientMockBuilder which allows to define new rule

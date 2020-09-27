@@ -20,7 +20,6 @@ public class UrlParserTest {
     UrlConditions urlConditions = urlParser.parse("http://localhost");
     assertTrue(urlConditions.getHostConditions().get(0).matches("localhost"));
     assertTrue(urlConditions.getPortConditions().get(0).matches(EMPTY_PORT_NUMBER));
-    assertTrue(urlConditions.getReferenceConditions().matches(""));
   }
 
   @Test
@@ -43,13 +42,6 @@ public class UrlParserTest {
     assertTrue(urlConditions.getHostConditions().get(0).matches("localhost"));
     assertTrue(urlConditions.getPathConditions().get(0).matches("/foo/bar"));
     assertTrue(urlConditions.getUrlQueryConditions().matches("a=1&b=2"));
-  }
-
-  @Test
-  public void parseHostReference() {
-    UrlConditions urlConditions = urlParser.parse("http://localhost#abc");
-    assertTrue(urlConditions.getHostConditions().get(0).matches("localhost"));
-    assertTrue(urlConditions.getReferenceConditions().matches("abc"));
   }
 
 }

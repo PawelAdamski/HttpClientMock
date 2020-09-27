@@ -43,27 +43,6 @@ public class HttpClientVerifyBuilder {
   }
 
   /**
-   * Adds reference condition. Reference must be equal to provided value.
-   *
-   * @param reference expected reference
-   * @return conditions builder
-   */
-  public HttpClientVerifyBuilder withReference(String reference) {
-    return withReference(equalTo(reference));
-  }
-
-  /**
-   * Adds reference condition. Reference must match.
-   *
-   * @param matcher reference matcher
-   * @return conditions builder
-   */
-  public HttpClientVerifyBuilder withReference(Matcher<String> matcher) {
-    ruleBuilder.addReferenceCondition(matcher);
-    return this;
-  }
-
-  /**
    * Adds parameter condition. Parameter must be equal to provided value.
    *
    * @param name parameter name

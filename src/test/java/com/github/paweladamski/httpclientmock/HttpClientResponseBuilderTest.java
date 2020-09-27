@@ -25,10 +25,10 @@ import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpEntityContainer;
-import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
-import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class HttpClientResponseBuilderTest {
   @Test
   public void should_return_status_404_when_no_rule_matches() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock();
-    HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost/foo"));
     assertThat(notFound, hasStatus(404));
   }
 
@@ -56,11 +56,11 @@ public class HttpClientResponseBuilderTest {
         .doReturnStatus(300)
         .doThrowException(new IOException());
 
-    HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
 
     assertThat(response1, hasContent("first"));
     assertThat(response2, hasContent("second"));
@@ -68,8 +68,8 @@ public class HttpClientResponseBuilderTest {
     assertThat(response4, hasContent("third"));
     assertThat(response5, hasContent("third"));
 
-    HttpResponse bar1 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
-    HttpResponse bar2 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
+    ClassicHttpResponse bar1 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
+    ClassicHttpResponse bar2 = httpClientMock.execute(new HttpGet("http://localhost/bar"));
     assertThat(bar1, hasContent("bar"));
     assertThat(bar2, hasStatus(300));
 
@@ -86,9 +86,9 @@ public class HttpClientResponseBuilderTest {
         .doReturn("second", StandardCharsets.UTF_16)
         .doReturn("third", StandardCharsets.US_ASCII);
 
-    HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
 
     assertThat(response1, hasContent("first", "UTF-8"));
     assertThat(response2, hasContent("second", "UTF-16"));
@@ -103,8 +103,8 @@ public class HttpClientResponseBuilderTest {
     httpClientMock
         .onGet("/xml").doReturn("<a>1</a>", Charset.defaultCharset(), APPLICATION_XML);
 
-    HttpResponse jsonResponse = httpClientMock.execute(httpGet("http://localhost:8080/json"));
-    HttpResponse xmlResponse = httpClientMock.execute(httpGet("http://localhost:8080/xml"));
+    ClassicHttpResponse jsonResponse = httpClientMock.execute(httpGet("http://localhost:8080/json"));
+    ClassicHttpResponse xmlResponse = httpClientMock.execute(httpGet("http://localhost:8080/xml"));
 
     assertThat(jsonResponse, hasContent("{\"a\":1}"));
     assertThat(jsonResponse.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
@@ -125,11 +125,11 @@ public class HttpClientResponseBuilderTest {
         .doReturn(300, "second")
         .doReturn(400, "third");
 
-    HttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
-    HttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response1 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response2 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response3 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response4 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
+    ClassicHttpResponse response5 = httpClientMock.execute(new HttpGet("http://localhost/foo"));
 
     assertThat(response1, hasContent("first"));
     assertThat(response1, hasStatus(200));
@@ -158,9 +158,9 @@ public class HttpClientResponseBuilderTest {
     httpClientMock.onGet("/abc").doReturnStatus(404);
     httpClientMock.onGet("/error").doReturnStatus(500);
 
-    HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost:8080/login"));
-    HttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost:8080/abc"));
-    HttpResponse error = httpClientMock.execute(new HttpGet("http://localhost:8080/error"));
+    ClassicHttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost:8080/login"));
+    ClassicHttpResponse notFound = httpClientMock.execute(new HttpGet("http://localhost:8080/abc"));
+    ClassicHttpResponse error = httpClientMock.execute(new HttpGet("http://localhost:8080/error"));
 
     assertThat(ok, hasStatus(200));
     assertThat(notFound, hasStatus(404));
@@ -172,7 +172,7 @@ public class HttpClientResponseBuilderTest {
   public void should_do_custom_action() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onPost("/login").doAction(echo());
-    HttpResponse response = httpClientMock.execute(httpPost("http://localhost:8080/login", "foo bar"));
+    ClassicHttpResponse response = httpClientMock.execute(httpPost("http://localhost:8080/login", "foo bar"));
 
     assertThat(response, hasContent("foo bar"));
 
@@ -185,8 +185,8 @@ public class HttpClientResponseBuilderTest {
         .doReturn("foo").withHeader("tracking", "123")
         .doReturn("foo").withHeader("tracking", "456");
 
-    HttpResponse first = httpClientMock.execute(httpPost("http://localhost:8080/login"));
-    HttpResponse second = httpClientMock.execute(httpPost("http://localhost:8080/login"));
+    ClassicHttpResponse first = httpClientMock.execute(httpPost("http://localhost:8080/login"));
+    ClassicHttpResponse second = httpClientMock.execute(httpPost("http://localhost:8080/login"));
 
     assertThat(first.getFirstHeader("tracking").getValue(), equalTo("123"));
     assertThat(second.getFirstHeader("tracking").getValue(), equalTo("456"));
@@ -212,7 +212,7 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/login")
         .doReturn("foo").withStatus(300);
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("foo"));
     assertThat(login, hasStatus(300));
@@ -224,7 +224,7 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/login")
         .doReturnJSON("{foo:1}", StandardCharsets.UTF_8);
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("{foo:1}"));
     assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
@@ -235,7 +235,7 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/login")
         .doReturnJSON("{foo:1}", StandardCharsets.UTF_8);
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("{foo:1}"));
 //    assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_JSON.toString()));
@@ -246,7 +246,7 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/login")
         .doReturnXML("<foo>bar</foo>", StandardCharsets.UTF_8);
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("<foo>bar</foo>"));
     assertThat(login.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
@@ -257,7 +257,7 @@ public class HttpClientResponseBuilderTest {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/login")
         .doReturnXML("<foo>bar</foo>", StandardCharsets.UTF_8);
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("<foo>bar</foo>"));
 //    assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_XML.toString()));
@@ -269,7 +269,7 @@ public class HttpClientResponseBuilderTest {
     httpClientMock.onGet("/login")
         .doReturnStatus(SC_NO_CONTENT);
 
-    HttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
 //    assertNull(login.getEntity());
   }
@@ -281,7 +281,7 @@ public class HttpClientResponseBuilderTest {
         .withBody(equalTo("Body content"))
         .doReturnStatus(200);
 
-    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
+    ClassicHttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
     Assert.assertThat(response, hasStatus(SC_NOT_FOUND));
   }
 
@@ -295,7 +295,7 @@ public class HttpClientResponseBuilderTest {
     );
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
-    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
+    ClassicHttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
 //    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
 
     assertThat(response, hasStatus(200));
@@ -309,7 +309,7 @@ public class HttpClientResponseBuilderTest {
     List<NameValuePair> expected = Collections.emptyList();
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
-    HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
+    ClassicHttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
     //  List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
 
     // assertThat(response, hasStatus(200));

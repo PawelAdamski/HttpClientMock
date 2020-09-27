@@ -13,9 +13,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -124,32 +124,6 @@ public class DebuggingTest {
     httpClientMock.debugOn();
     httpClientMock.execute(httpGet("http://localhost/login?foo=aabb"));
     assertTrue(debugger.matching.contains("query parameter foo is a string starting with \"a\" and a string ending with \"b\""));
-  }
-
-//  @Test
-//  public void should_put_message_about_not_matching_reference() throws IOException {
-//    httpClientMock.onGet("/login#foo")
-//        .doReturn("login");
-//    httpClientMock.execute(httpGet("http://localhost/login"));
-//    assertTrue(debugger.notMatching.contains("reference is \"foo\""));
-//  }
-//
-//  @Test
-//  public void should_put_message_about_matching_reference() throws IOException {
-//    httpClientMock.onGet("/login#foo")
-//        .doReturn("login");
-//    httpClientMock.debugOn();
-//    httpClientMock.execute(httpGet("http://localhost/login#foo"));
-//    assertTrue(debugger.matching.contains("reference is \"foo\""));
-//  }
-
-  @Test
-  public void should_not_put_message_about_reference_when_it_is_not_used() throws IOException {
-    httpClientMock.onGet("/login").doReturn("login");
-    httpClientMock.debugOn();
-    httpClientMock.execute(httpGet("http://localhost/login"));
-    assertTrue(debugger.matching.stream().noneMatch(s -> s.startsWith("reference")));
-    assertTrue(debugger.notMatching.stream().noneMatch(s -> s.startsWith("reference")));
   }
 
   @Test

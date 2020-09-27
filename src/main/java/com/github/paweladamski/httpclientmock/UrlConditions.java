@@ -12,7 +12,6 @@ public class UrlConditions {
 
   private static final int EMPTY_PORT = -1;
   private UrlQueryMatcher urlQueryConditions = new UrlQueryMatcher();
-  private Matcher<String> referenceConditions = Matchers.isEmptyOrNullString();
   private MatchersList<String> hostConditions = new MatchersList<>();
   private MatchersList<String> pathConditions = new MatchersList<>();
   private MatchersList<Integer> portConditions = new MatchersList<>();
@@ -20,14 +19,6 @@ public class UrlConditions {
 
   public UrlQueryMatcher getUrlQueryConditions() {
     return urlQueryConditions;
-  }
-
-  public Matcher<String> getReferenceConditions() {
-    return referenceConditions;
-  }
-
-  public void setReferenceConditions(Matcher<String> referenceConditions) {
-    this.referenceConditions = referenceConditions;
   }
 
   public MatchersList<String> getHostConditions() {
@@ -50,14 +41,13 @@ public class UrlConditions {
     this.schemaConditions = schemaConditions;
   }
 
-  boolean matches(URI url) {
+  boolean matches(URI uri) {
 
-    return hostConditions.allMatches(url.getHost())
-        && pathConditions.allMatches(url.getPath())
-        && portConditions.allMatches(url.getPort())
-        && referenceConditions.matches(url.getFragment())
-        && schemaConditions.matches(url.getScheme())
-        && urlQueryConditions.matches(url.getQuery());
+    return hostConditions.allMatches(uri.getHost())
+        && pathConditions.allMatches(uri.getPath())
+        && portConditions.allMatches(uri.getPort())
+        && schemaConditions.matches(uri.getScheme())
+        && urlQueryConditions.matches(uri.getQuery());
 
   }
 
@@ -68,9 +58,6 @@ public class UrlConditions {
       debugger.message(hostConditions.allMatches(url.getHost()), "host is " + hostConditions.describe());
       debugger.message(pathConditions.allMatches(url.getPath()), "path is " + pathConditions.describe());
       debugger.message(portConditions.allMatches(url.getPort()), "port is " + portDebugDescription());
-//      if (referenceConditions != isEmptyOrNullString() || !referenceConditions.matches(url.get.getRef())) {
-//        debugger.message(referenceConditions.matches(url.getRef()), "reference is " + describe(referenceConditions));
-//      }
       urlQueryConditions.describe(url.getQuery(), debugger);
     } catch (URISyntaxException e) {
       System.out.println("Can't parse URL");

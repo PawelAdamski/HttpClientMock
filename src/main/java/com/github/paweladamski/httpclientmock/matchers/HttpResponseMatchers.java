@@ -1,8 +1,11 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
+import java.io.IOException;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -22,26 +25,24 @@ public final class HttpResponseMatchers {
     };
   }
 
-  public static Matcher<? super HttpResponse> hasContent(final String content) {
+  public static Matcher<? super HttpEntityContainer> hasContent(final String content) {
     return hasContent(content, "UTF-8");
   }
 
-  public static Matcher<? super HttpResponse> hasContent(final String content, final String charset) {
-    return new BaseMatcher<HttpResponse>() {
+  public static Matcher<? super HttpEntityContainer> hasContent(final String content, final String charset) {
+    return new BaseMatcher<HttpEntityContainer>() {
       public boolean matches(Object o) {
-        HttpResponse response = (HttpResponse) o;
+        HttpEntityContainer response = (HttpEntityContainer) o;
 
-        return true;
-//        String targetString;
-//        try {
-//          byte[] bytes = EntityUtils.toByteArray(response.getEntity());
-//          targetString = new String(bytes, charset);
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//          return false;
-//        }
-//
-//        return targetString.equals(content);
+        String targetString;
+        try {
+          byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+          targetString = new String(bytes, charset);
+        } catch (IOException e) {
+          e.printStackTrace();
+          return false;
+        }
+        return targetString.equals(content);
       }
 
       public void describeTo(Description description) {

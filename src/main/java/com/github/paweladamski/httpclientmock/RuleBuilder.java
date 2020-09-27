@@ -60,10 +60,6 @@ class RuleBuilder {
     formParametersCondition.addExpectedParameters(parameters);
   }
 
-  void addReferenceCondition(Matcher<String> matcher) {
-    urlConditions.setReferenceConditions(matcher);
-  }
-
   void addHostCondition(String host) {
     UrlParser urlParser = new UrlParser();
     urlConditions.setHostConditions(urlParser.parse(host).getHostConditions());

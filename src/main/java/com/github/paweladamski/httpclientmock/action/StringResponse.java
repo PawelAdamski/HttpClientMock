@@ -19,7 +19,7 @@ public class StringResponse implements Action {
   }
 
   public StringResponse(int statusCode, String response, Charset charset) {
-    this(statusCode, response, charset, ContentType.TEXT_PLAIN);
+    this(statusCode, response, charset, ContentType.TEXT_PLAIN.withCharset(charset));
   }
 
   public StringResponse(String response, Charset charset, ContentType contentType) {

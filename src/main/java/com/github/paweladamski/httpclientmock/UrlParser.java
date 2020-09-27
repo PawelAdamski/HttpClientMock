@@ -16,21 +16,18 @@ public class UrlParser {
   public UrlConditions parse(String urlText) {
 
     UrlConditions conditions = new UrlConditions();
-    URI url = URI.create(urlText);
+    URI uri = URI.create(urlText);
 
-    String ref = url.getFragment();
-    conditions.setReferenceConditions((ref == null) ? isEmptyOrNullString() : equalTo(ref));
-
-    conditions.setSchemaConditions(Matchers.equalTo(url.getScheme()));
-    conditions.getHostConditions().add(equalTo(url.getHost()));
-    conditions.getPortConditions().add(equalTo(url.getPort()));
-    String path = url.getPath();
+    conditions.setSchemaConditions(Matchers.equalTo(uri.getScheme()));
+    conditions.getHostConditions().add(equalTo(uri.getHost()));
+    conditions.getPortConditions().add(equalTo(uri.getPort()));
+    String path = uri.getPath();
     if (path.isEmpty()) {
       conditions.getPathConditions().add(equalTo("/"));
     } else {
-      conditions.getPathConditions().add(equalTo(url.getPath()));
+      conditions.getPathConditions().add(equalTo(uri.getPath()));
     }
-    List<NameValuePair> params = new UrlParamsParser().parse(url.getQuery(), StandardCharsets.UTF_8);
+    List<NameValuePair> params = new UrlParamsParser().parse(uri.getQuery(), StandardCharsets.UTF_8);
     for (NameValuePair param : params) {
       conditions.getUrlQueryConditions().put(param.getName(), equalTo(param.getValue()));
     }
