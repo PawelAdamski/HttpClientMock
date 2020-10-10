@@ -2,7 +2,7 @@
 
 # HttpClientMock
 
-HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifing number of made requests. 
+HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/apidocs/index.html). It has an intuitive API for defining client behaviour and verifying number of made requests. It works with HttpClient 4.X and 5.X.
 
 * [Installation](#installation)
 * [Usage](#usage)
@@ -18,7 +18,8 @@ HttpClientMock is a library for mocking [Apache HttpClient](https://hc.apache.or
 
 ## Installation 
 HttpClientMock is available in Maven Central Repository. [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.paweladamski/HttpClientMock)
-
+* For mocking HttpClient 4.x use HttpClientMock 1.X.
+* For mocking HttpClient 5.x use HttpClientMock 2.X.
 ## Usage
 
 #### Record
@@ -303,6 +304,10 @@ httpClientMock.verify().get("/login?user=john").called();
 ```
 
 ## Release notes
+
+2.0.0
+- Added support for HttpClient 5.
+- Removed methods for mocking URL reference
 
 1.8.0
 - Added methods {`withExtraParameters`, `withoutExtraParameters`, `withExtraFormParameters`, `withoutExtraFormParameters`} to better control form and query parameters matching.
