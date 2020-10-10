@@ -2,9 +2,10 @@ package com.github.paweladamski.httpclientmock.condition;
 
 import com.github.paweladamski.httpclientmock.Request;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.NameValuePair;
@@ -21,6 +22,10 @@ public class UrlEncodedFormParser {
 
     HttpEntityContainer httpRequest = (HttpEntityContainer) request.getHttpRequest();
     HttpEntity entity = httpRequest.getEntity();
+    return parse(entity);
+  }
+
+  public List<NameValuePair> parse(HttpEntity entity) {
     if (entity == null) {
       return Collections.emptyList();
     }
@@ -31,11 +36,11 @@ public class UrlEncodedFormParser {
        * request is not "application/x-www-form-urlencoded". So, requests with
        * other kinds of data in the body will correctly be ignored here.
        */
-      if (!entity.getContentType().contains("application/x-www-form-urlencoded")) {
+      if (!entity.getContentType().contains(ContentType.APPLICATION_FORM_URLENCODED.getMimeType())) {
         return Collections.emptyList();
       }
       String entityContent = EntityUtils.toString(entity);
-      return URLEncodedUtils.parse(entityContent, Charset.defaultCharset());
+      return URLEncodedUtils.parse(entityContent, StandardCharsets.UTF_8);
     } catch (IOException | ParseException e) {
       throw new RuntimeException(e);
     }

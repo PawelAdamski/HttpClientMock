@@ -1,7 +1,6 @@
 package com.github.paweladamski.httpclientmock.action;
 
 import com.github.paweladamski.httpclientmock.Request;
-import java.nio.charset.Charset;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -22,7 +21,7 @@ public class StringResponse implements Action {
   @Override
   public ClassicHttpResponse getResponse(Request request) {
     BasicClassicHttpResponse response = new BasicClassicHttpResponse(statusCode, "ok");
-    StringEntity entity = new StringEntity(this.response,contentType, this.contentType.getCharset().toString(),false);
+    StringEntity entity = new StringEntity(this.response, contentType, this.contentType.getCharset().toString(), false);
     response.addHeader("Content-type", contentType.toString());
     response.setEntity(entity);
     return response;

@@ -11,12 +11,11 @@ import com.github.paweladamski.httpclientmock.Debugger;
 import com.github.paweladamski.httpclientmock.Request;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.junit.Test;
@@ -27,7 +26,7 @@ import org.junit.Test;
 public class UrlEncodedFormConditionTest {
 
   @Test
-  public void valid_match() throws Exception {
+  public void valid_match() {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("one", equalTo("1"));
     condition.addExpectedParameter("two", equalTo("2"));
@@ -51,12 +50,12 @@ public class UrlEncodedFormConditionTest {
   }
 
   @Test
-  public void case_sensitive_names() throws Exception {
+  public void case_sensitive_names() {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("ONE", equalTo("1"));
 
     HttpPost request = new HttpPost("localhost");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+    request.setEntity(new UrlEncodedFormEntity(Collections.singleton(
         new BasicNameValuePair("one", "1")
     )));
 
@@ -73,7 +72,7 @@ public class UrlEncodedFormConditionTest {
   }
 
   @Test
-  public void no_match() throws Exception {
+  public void no_match() {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("one", equalTo("1"));
     condition.addExpectedParameter("two", equalTo("2"));
@@ -101,7 +100,7 @@ public class UrlEncodedFormConditionTest {
    * Parameters with the same name are not supported because there's no way of telling which Matcher to assign to which parameter.
    */
   @Test
-  public void duplicate_names() throws Exception {
+  public void duplicate_names() {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("one", equalTo("1"));
     condition.addExpectedParameter("one", equalTo(
@@ -126,7 +125,7 @@ public class UrlEncodedFormConditionTest {
   }
 
   @Test
-  public void different_number_of_parameters() throws Exception {
+  public void different_number_of_parameters() {
     UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
     condition.addExpectedParameter("one", equalTo("1"));
 
@@ -150,12 +149,12 @@ public class UrlEncodedFormConditionTest {
   }
 
   /**
-   * The method that is used to extract the form parameters out of the request body also takes the Content-Type of
-   * the request into consideration. If the Content-Type is not "application/x-www-form-urlencoded", then it will not attempt to parse the body and it will act
-   * as if the body has zero form parameters in it.
+   * The method that is used to extract the form parameters out of the request body also takes the Content-Type of the request into consideration. If the
+   * Content-Type is not "application/x-www-form-urlencoded", then it will not attempt to parse the body and it will act as if the body has zero form parameters
+   * in it.
    */
   @Test
-  public void body_contains_form_parameters_but_content_type_is_different() throws Exception {
+  public void body_contains_form_parameters_but_content_type_is_different() {
     {
       UrlEncodedFormCondition condition = new UrlEncodedFormCondition();
 

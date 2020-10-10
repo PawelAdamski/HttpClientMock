@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -164,6 +165,17 @@ public class DebuggingTest {
   }
 
   @Test
+  public void should_put_message_about_not_matching_schema() throws IOException {
+    httpClientMock.onGet("http://localhost:8080/login").doReturn("login");
+    httpClientMock.debugOn();
+    httpClientMock.execute(httpGet("https://localhost:8080/login"));
+    assertTrue(debugger.notMatching.contains("schema is \"http\""));
+    assertTrue(debugger.matching.contains("host is \"localhost\""));
+    assertTrue(debugger.matching.contains("path is \"/login\""));
+    assertTrue(debugger.matching.contains("port is <8080>"));
+  }
+
+  @Test
   public void should_not_put_message_not_expected_query_parameters_when_ExtraParametersAreAllowed() throws IOException {
     httpClientMock.onGet("http://localhost:8080/login")
         .withExtraParameters()
@@ -181,7 +193,7 @@ public class DebuggingTest {
     httpClientMock.debugOn();
 
     HttpPost request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+    request.setEntity(new UrlEncodedFormEntity(Collections.singleton(
         new BasicNameValuePair("foo", "bar")
     )));
     httpClientMock.execute(request);
@@ -196,7 +208,7 @@ public class DebuggingTest {
     httpClientMock.debugOn();
 
     HttpPost request = new HttpPost("http://localhost/login");
-    request.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+    request.setEntity(new UrlEncodedFormEntity(Collections.singleton(
         new BasicNameValuePair("foo", "bar")
     )));
     httpClientMock.execute(request);

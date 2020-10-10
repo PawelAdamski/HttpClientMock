@@ -50,7 +50,7 @@ public class UrlConditions {
 
   void debug(Request request, Debugger debugger) {
     URI uri = request.getUri();
-    debugger.message(hostConditions.allMatches(uri.getHost()), "schema is " + describe(schemaConditions));
+    debugger.message(schemaConditions.matches(uri.getScheme()), "schema is " + describe(schemaConditions));
     debugger.message(hostConditions.allMatches(uri.getHost()), "host is " + hostConditions.describe());
     debugger.message(pathConditions.allMatches(uri.getPath()), "path is " + pathConditions.describe());
     debugger.message(portConditions.allMatches(uri.getPort()), "port is " + portDebugDescription());

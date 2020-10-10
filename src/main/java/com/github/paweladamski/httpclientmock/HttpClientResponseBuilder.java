@@ -103,6 +103,7 @@ public class HttpClientResponseBuilder {
    * Adds action which returns provided response in provided charset and status 200.
    *
    * @param response response to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(String response, Charset charset) {
@@ -114,6 +115,7 @@ public class HttpClientResponseBuilder {
    * Adds action which returns provided response in provided charset, content type and status 200.
    *
    * @param response response to return
+   * @param contentType response content type
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(String response, ContentType contentType) {
@@ -134,20 +136,18 @@ public class HttpClientResponseBuilder {
     return new HttpClientResponseBuilder(newRule);
   }
 
-
   /**
    * Adds action which returns provided response in provided content type and status code.
    *
    * @param statusCode status to return
    * @param response response to return
-   * @param contentType
+   * @param contentType response content type
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(int statusCode, String response, ContentType contentType) {
     newRule.addAction(new StringResponse(statusCode, response, contentType));
     return new HttpClientResponseBuilder(newRule);
   }
-
 
   /**
    * Adds action which returns empty message and provided status.
@@ -185,6 +185,7 @@ public class HttpClientResponseBuilder {
    * Adds action which returns provided JSON in provided encoding and status 200. Additionally it sets "Content-type" header to "application/json".
    *
    * @param response JSON to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnJSON(String response, Charset charset) {
@@ -206,6 +207,7 @@ public class HttpClientResponseBuilder {
    * Adds action which returns provided XML in UTF-8 and status 200. Additionally it sets "Content-type" header to "application/xml".
    *
    * @param response JSON to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
@@ -229,6 +231,7 @@ public class HttpClientResponseBuilder {
    * "application/x-www-form-urlencoded".
    *
    * @param formParameters the parameters to include in the response
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> formParameters, Charset charset) {

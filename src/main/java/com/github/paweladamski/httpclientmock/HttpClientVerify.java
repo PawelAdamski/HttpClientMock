@@ -1,7 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
 import java.util.List;
-
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpHead;

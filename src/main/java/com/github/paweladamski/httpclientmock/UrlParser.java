@@ -1,13 +1,11 @@
 package com.github.paweladamski.httpclientmock;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.hc.core5.http.NameValuePair;
-import org.hamcrest.Matchers;
 
 public class UrlParser {
 
@@ -18,7 +16,7 @@ public class UrlParser {
     UrlConditions conditions = new UrlConditions();
     URI uri = URI.create(urlText);
 
-    conditions.setSchemaConditions(Matchers.equalTo(uri.getScheme()));
+    conditions.setSchemaConditions(equalTo(uri.getScheme()));
     conditions.getHostConditions().add(equalTo(uri.getHost()));
     conditions.getPortConditions().add(equalTo(uri.getPort()));
     String path = uri.getPath();

@@ -12,10 +12,11 @@ import static org.apache.hc.core5.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.hc.core5.http.HttpStatus.SC_NO_CONTENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
 
 import com.github.paweladamski.httpclientmock.action.Action;
+import com.github.paweladamski.httpclientmock.condition.UrlEncodedFormParser;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,9 +26,7 @@ import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpEntityContainer;
-import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.junit.Assert;
@@ -99,20 +98,20 @@ public class HttpClientResponseBuilderTest {
   public void should_support_response_with_different_contentType() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock
-        .onGet("/json").doReturn("{\"a\":1}", APPLICATION_JSON.withCharset(Charset.defaultCharset()));
+        .onGet("/json").doReturn("{\"a\":1}", APPLICATION_JSON.withCharset(StandardCharsets.UTF_8));
     httpClientMock
-        .onGet("/xml").doReturn("<a>1</a>", APPLICATION_XML.withCharset(Charset.defaultCharset()));
+        .onGet("/xml").doReturn("<a>1</a>", APPLICATION_XML.withCharset(StandardCharsets.UTF_8));
 
     ClassicHttpResponse jsonResponse = httpClientMock.execute(httpGet("http://localhost:8080/json"));
     ClassicHttpResponse xmlResponse = httpClientMock.execute(httpGet("http://localhost:8080/xml"));
 
     assertThat(jsonResponse, hasContent("{\"a\":1}"));
     assertThat(jsonResponse.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_JSON.toString()));
-    //   assertThat(ContentType.get(jsonResponse.getEntity()).toString(), equalTo(APPLICATION_JSON.toString()));
+    assertThat(jsonResponse.getEntity().getContentType(), equalTo(APPLICATION_JSON.toString()));
 
     assertThat(xmlResponse, hasContent("<a>1</a>"));
     assertThat(xmlResponse.getFirstHeader("Content-type").getValue(), equalTo(APPLICATION_XML.toString()));
-    //   assertThat(ContentType.get(xmlResponse.getEntity()).toString(), equalTo(APPLICATION_XML.toString()));
+    assertThat(xmlResponse.getEntity().getContentType(), equalTo(APPLICATION_XML.toString()));
 
   }
 
@@ -238,7 +237,7 @@ public class HttpClientResponseBuilderTest {
     ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("{foo:1}"));
-//    assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_JSON.toString()));
+    assertThat(login.getEntity().getContentType(), equalTo(APPLICATION_JSON.toString()));
   }
 
   @Test
@@ -260,7 +259,7 @@ public class HttpClientResponseBuilderTest {
     ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
     assertThat(login, hasContent("<foo>bar</foo>"));
-//    assertThat(ContentType.get(login.getEntity()).toString(), equalTo(APPLICATION_XML.toString()));
+    assertThat(login.getEntity().getContentType(), equalTo(APPLICATION_XML.toString()));
   }
 
   @Test
@@ -271,7 +270,7 @@ public class HttpClientResponseBuilderTest {
 
     ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
 
-//    assertNull(login.getEntity());
+    assertNull(login.getEntity());
   }
 
   @Test
@@ -296,10 +295,10 @@ public class HttpClientResponseBuilderTest {
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
     ClassicHttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
-//    List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
+    List<NameValuePair> actual = new UrlEncodedFormParser().parse(response.getEntity());
 
     assertThat(response, hasStatus(200));
-//    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(expected, actual);
   }
 
   @Test
@@ -310,16 +309,16 @@ public class HttpClientResponseBuilderTest {
     httpClientMock.onGet("/path1").doReturnFormParams(expected);
 
     ClassicHttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path1"));
-    //  List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
+    List<NameValuePair> actual = new UrlEncodedFormParser().parse(response.getEntity());
 
-    // assertThat(response, hasStatus(200));
-    //Assert.assertEquals(expected, actual);
+    assertThat(response, hasStatus(200));
+    Assert.assertEquals(expected, actual);
   }
 
   private Action echo() {
     return r -> {
       HttpEntity entity = ((HttpEntityContainer) r.getHttpRequest()).getEntity();
-      BasicClassicHttpResponse response = new BasicClassicHttpResponse( 200, "ok");
+      BasicClassicHttpResponse response = new BasicClassicHttpResponse(200, "ok");
       response.setEntity(entity);
       return response;
     };

@@ -27,7 +27,7 @@ public class Debugger {
 
   private void logRequest(Request request) {
     HttpRequest httpRequest = request.getHttpRequest();
-    System.out.println("Host: " + request.getHttpHost()+" ,Request: " + httpRequest);
+    System.out.println("Host: " + request.getHttpHost() + " ,Request: " + httpRequest);
   }
 
   public void message(boolean matches, String expected) {

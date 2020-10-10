@@ -37,7 +37,7 @@ public class UrlQueryMatcher {
         boolean matches = expected.matches(param.getName(), param.getValue());
         String message = "query parameter " + param.getName() + " is " + expected.get(param.getName()).describe();
         debugger.message(matches, message);
-      } else if (!allowExtraParameters){
+      } else if (!allowExtraParameters) {
         String message = "query parameter " + param.getName() + " was not expected to be in the request";
         debugger.message(false, message);
       }

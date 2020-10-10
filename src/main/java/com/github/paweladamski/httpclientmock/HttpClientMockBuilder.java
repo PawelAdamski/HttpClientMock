@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.NameValuePair;
 import org.hamcrest.Matcher;
 
 public class HttpClientMockBuilder {
@@ -47,7 +47,6 @@ public class HttpClientMockBuilder {
     ruleBuilder.addCondition(new HeaderCondition(header, matcher));
     return this;
   }
-
 
   /**
    * Adds parameter condition. Parameter must be equal to provided value.
@@ -261,6 +260,7 @@ public class HttpClientMockBuilder {
    * Adds action which returns provided response in provided charset, content-type and status 200.
    *
    * @param response response to return
+   * @param contentType response content-type
    * @return response builder
    */
   public HttpClientResponseBuilder doReturn(String response, ContentType contentType) {
@@ -301,6 +301,7 @@ public class HttpClientMockBuilder {
    * Adds action which returns provided JSON in provided charset and status 200. Additionally it sets "Content-type" header to "application/json".
    *
    * @param response JSON to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnJSON(String response, Charset charset) {
@@ -321,6 +322,7 @@ public class HttpClientMockBuilder {
    * Adds action which returns provided XML in provided charset and status 200. Additionally it sets "Content-type" header to "application/xml".
    *
    * @param response JSON to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnXML(String response, Charset charset) {
@@ -343,11 +345,11 @@ public class HttpClientMockBuilder {
    * "application/x-www-form-urlencoded".
    *
    * @param parameters parameters to return
+   * @param charset response charset
    * @return response builder
    */
   public HttpClientResponseBuilder doReturnFormParams(Collection<NameValuePair> parameters, Charset charset) {
     return responseBuilder.doReturnFormParams(parameters, charset);
   }
-
 
 }

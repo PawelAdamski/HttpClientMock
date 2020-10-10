@@ -2,7 +2,6 @@ package com.github.paweladamski.httpclientmock.action;
 
 import static org.junit.Assert.assertEquals;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
