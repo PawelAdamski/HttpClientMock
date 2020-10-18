@@ -22,12 +22,6 @@ public class StatusResponse implements Action {
     this.parentAction = Optional.empty();
   }
 
-  public StatusResponse(int status, String reason) {
-    this.status = status;
-    this.reason = reason;
-    this.parentAction = Optional.empty();
-  }
-
   public StatusResponse(Action parentAction, int status) {
     this.status = status;
     this.reason = "";
