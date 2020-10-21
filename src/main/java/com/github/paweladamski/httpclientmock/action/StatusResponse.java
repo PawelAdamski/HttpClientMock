@@ -13,14 +13,23 @@ public class StatusResponse implements Action {
 
   private final Optional<Action> parentAction;
   private final int status;
+  private final String reason;
 
   public StatusResponse(int status) {
     this.status = status;
+    this.reason = "";
     this.parentAction = Optional.empty();
   }
 
   public StatusResponse(Action parentAction, int status) {
     this.status = status;
+    this.reason = "";
+    this.parentAction = Optional.of(parentAction);
+  }
+
+  public StatusResponse(Action parentAction, int status, String reason) {
+    this.status = status;
+    this.reason = reason;
     this.parentAction = Optional.of(parentAction);
   }
 
@@ -36,6 +45,7 @@ public class StatusResponse implements Action {
       }
     }
     response.setCode(status);
+    response.setReasonPhrase(reason);
     return response;
   }
 }
