@@ -5,6 +5,7 @@ import static com.github.paweladamski.httpclientmock.Requests.httpGet;
 import static com.github.paweladamski.httpclientmock.Requests.httpPost;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasContent;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasCookie;
+import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasReason;
 import static com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers.hasStatus;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.apache.hc.core5.http.ContentType.APPLICATION_XML;
@@ -216,6 +217,18 @@ public class HttpClientResponseBuilderTest {
     assertThat(login, hasContent("foo"));
     assertThat(login, hasStatus(300));
 
+  }
+
+  @Test
+  public void should_add_status_and_reason_to_response() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
+    httpClientMock.onGet("/login")
+        .doReturn("foo").withStatus(400, "Bad request");
+    ClassicHttpResponse login = httpClientMock.execute(httpGet("http://localhost:8080/login"));
+
+    assertThat(login, hasContent("foo"));
+    assertThat(login, hasStatus(400));
+    assertThat(login, hasReason("Bad request"));
   }
 
   @Test

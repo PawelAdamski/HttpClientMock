@@ -25,6 +25,21 @@ public final class HttpResponseMatchers {
     };
   }
 
+  public static Matcher<? super HttpResponse> hasReason(String expectedReason) {
+    return new BaseMatcher<HttpResponse>() {
+      public boolean matches(Object o) {
+        HttpResponse response = (HttpResponse) o;
+        return response.getReasonPhrase().equals(expectedReason);
+      }
+
+      public void describeTo(Description description) {
+        description.appendValue(expectedReason);
+      }
+    };
+  }
+
+
+
   public static Matcher<? super HttpEntityContainer> hasContent(final String content) {
     return hasContent(content, "UTF-8");
   }

@@ -54,6 +54,20 @@ public class HttpClientResponseBuilder {
   }
 
   /**
+   * Sets response status code and status reason.
+   *
+   * @param statusCode response status code
+   * @param statusReason response status reason
+   * @return response builder
+   */
+  public HttpClientResponseBuilder withStatus(int statusCode, String statusReason) {
+    Action lastAction = newRule.getLastAction();
+    StatusResponse statusAction = new StatusResponse(lastAction, statusCode, statusReason);
+    newRule.overrideLastAction(statusAction);
+    return this;
+  }
+
+  /**
    * Sets response cookie
    *
    * @param cookieName cookie name
