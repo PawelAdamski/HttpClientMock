@@ -67,7 +67,7 @@ httpClientMock.onGet("http://localhost/login?user=john").doReturnStatus(200);
 which is equal to
 ```
 httpClientMock.onGet()
-  .withHost("httt://locahost")
+  .withHost("http://localhost")
   .withPath("/login")
   .withParameter("user","john")
   .doReturnStatus(200);
@@ -86,7 +86,7 @@ httpClientMock.onGet("http://www.google.com").doReturn("Google") // Absolute pat
 It is possible to define each part of url separately.
 ```
 httpClientMock.onGet()
-  .withHost("httt://locahost")
+  .withHost("http://localhost")
   .withPath("/login")
   .withParameter("user","john")
   .doReturnStatus(200);
@@ -127,7 +127,7 @@ Every condition method accepts [Hamcrest Matcher](https://github.com/hamcrest/Ja
 ```
 httpClientMock.onGet("http://localhost")
   .withPath(containsString("login"))
-  .withParameter("user",equalToIgnoringCase("John)")
+  .withParameter("user",equalToIgnoringCase("John"));
 ```
 
 ### Multiple matching rules
