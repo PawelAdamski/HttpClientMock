@@ -29,13 +29,13 @@ public class Rule {
   }
 
   boolean matches(Request request) {
-    return matches(request.getHttpHost(), request.getHttpRequest(), request.getHttpContext());
+    return urlConditions.matches(request.getUri())
+        && conditions.stream()
+        .allMatch(c -> c.matches(request));
   }
 
   boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-    return urlConditions.matches(httpRequest.getRequestLine().getUri())
-        && conditions.stream()
-        .allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
+    return matches(new Request(httpHost, httpRequest, httpContext));
   }
 
   HttpResponse nextResponse(Request request) throws IOException {

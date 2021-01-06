@@ -1,5 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
+import java.net.URI;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;
@@ -30,7 +31,14 @@ public class Request {
   }
 
   public String getUri() {
-    return getHttpRequest().getRequestLine().getUri();
+    URI uri = URI.create(httpRequest.getRequestLine().getUri());
+    String urlText;
+    if (uri.isAbsolute()) {
+      urlText = uri.toString();
+    } else {
+      urlText = httpHost.toString() + uri.toString();
+    }
+    return urlText;
   }
 
 }
