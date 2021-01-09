@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
 import com.github.paweladamski.httpclientmock.condition.Condition;
+import com.github.paweladamski.httpclientmock.matchers.HttpResponseMatchers;
 import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +21,8 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
@@ -530,6 +533,17 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
+  }
+
+  @Test
+  public void should_work_with_non_absolute_uri() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock();
+    httpClientMock.onGet().doReturn("ok");
+    httpClientMock.onGet().withPath("/foo").doReturn("foo");
+    HttpEntityContainer ok = httpClientMock.execute(new HttpHost("localhost"), new HttpGet("/"));
+    HttpEntityContainer foo = httpClientMock.execute(new HttpHost("localhost"), new HttpGet("/foo"));
+    assertThat(ok, hasContent("ok"));
+    assertThat(foo, hasContent("foo"));
   }
 
 }

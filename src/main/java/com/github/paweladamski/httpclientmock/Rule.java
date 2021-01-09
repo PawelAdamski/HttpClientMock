@@ -30,16 +30,13 @@ public class Rule {
   }
 
   boolean matches(Request request) {
-    return matches(request.getHttpHost(), request.getHttpRequest(), request.getHttpContext());
+    return urlConditions.matches(request.getUri())
+        && conditions.stream()
+        .allMatch(c -> c.matches(request));
   }
 
   boolean matches(HttpHost httpHost, HttpRequest httpRequest, HttpContext httpContext) {
-    try {
-      return urlConditions.matches(httpRequest.getUri())
-          && conditions.stream().allMatch(c -> c.matches(httpHost, httpRequest, httpContext));
-    } catch (URISyntaxException e) {
-      throw new IllegalStateException(e);
-    }
+    return matches(new Request(httpHost, httpRequest, httpContext));
   }
 
   ClassicHttpResponse nextResponse(Request request) throws IOException {

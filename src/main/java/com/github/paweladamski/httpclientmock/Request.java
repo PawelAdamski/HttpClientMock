@@ -33,7 +33,11 @@ public class Request {
 
   public URI getUri() {
     try {
-      return getHttpRequest().getUri();
+      if (httpRequest.getUri().isAbsolute()) {
+        return httpRequest.getUri();
+      } else {
+        return new URI(httpHost.toString()+httpRequest.getRequestUri());
+      }
     } catch (URISyntaxException e) {
       throw new IllegalStateException(e);
     }
