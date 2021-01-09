@@ -6,9 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpHost;
 import org.apache.http.client.methods.HttpGet;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 public class HttpClientMockTest {
@@ -31,14 +29,6 @@ public class HttpClientMockTest {
 
     HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost"));
     assertThat(ok.getFirstHeader("foo").getValue(), equalTo("bar"));
-  }
-
-  @Test
-  public void should_work_with_non_absolute_uri() throws IOException {
-    HttpClientMock httpClientMock = new HttpClientMock();
-    httpClientMock.onGet().doReturn("ok");
-    HttpResponse ok = httpClientMock.execute(new HttpHost("localhost"), new HttpGet("/"));
-    assertThat(ok, hasStatus(200));
   }
 
 }

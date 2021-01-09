@@ -305,12 +305,18 @@ httpClientMock.verify().get("/login?user=john").called();
 
 ## Release notes
 
+2.1.1
+- Fixed MalformedURLException when using not absolute paths
+
 2.1.0
 - Added method `withStatus` accepting status code and text
 
 2.0.0
 - Added support for HttpClient 5.
 - Removed methods for mocking URL reference
+
+1.9.1
+- Fixed MalformedURLException when using not absolute paths
 
 1.9.0
 - Added method `withStatus` accepting status code and text

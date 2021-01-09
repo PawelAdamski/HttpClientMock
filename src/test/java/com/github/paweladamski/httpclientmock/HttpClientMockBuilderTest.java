@@ -11,6 +11,7 @@ import com.github.paweladamski.httpclientmock.matchers.ParametersMatcher;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -579,6 +580,17 @@ public class HttpClientMockBuilderTest {
     )));
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
+  }
+
+  @Test
+  public void should_work_with_non_absolute_uri() throws IOException {
+    HttpClientMock httpClientMock = new HttpClientMock();
+    httpClientMock.onGet().doReturn("ok");
+    httpClientMock.onGet().withPath("/foo").doReturn("foo");
+    HttpResponse ok = httpClientMock.execute(new HttpHost("localhost"), new HttpGet("/"));
+    HttpResponse foo = httpClientMock.execute(new HttpHost("localhost"), new HttpGet("/foo"));
+    assertThat(ok, hasContent("ok"));
+    assertThat(foo, hasContent("foo"));
   }
 
 }
