@@ -392,5 +392,4 @@ public class HttpClientMockBuilder {
     return responseBuilder.doReturnFormParams(parameters, charset);
   }
 
-
 }
