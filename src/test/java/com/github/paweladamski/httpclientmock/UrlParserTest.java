@@ -1,16 +1,16 @@
 package com.github.paweladamski.httpclientmock;
 
 import static com.github.paweladamski.httpclientmock.UrlParser.EMPTY_PORT_NUMBER;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class UrlParserTest {
 
   private UrlParser urlParser;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     urlParser = new UrlParser();
   }

@@ -4,10 +4,9 @@ import static java.util.Collections.emptyList;
 import static org.apache.hc.core5.http.HttpStatus.SC_NOT_FOUND;
 
 import com.github.paweladamski.httpclientmock.action.Action;
-import com.github.paweladamski.httpclientmock.action.StatusResponse;
+import com.github.paweladamski.httpclientmock.action.StatusWithEmptyEntityResponse;
 import com.github.paweladamski.httpclientmock.condition.Condition;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class Rule {
 
   private static List<Action> notFoundAction() {
     ArrayList<Action> actions = new ArrayList<>();
-    actions.add(new StatusResponse(SC_NOT_FOUND));
+    actions.add(new StatusWithEmptyEntityResponse(SC_NOT_FOUND));
     return actions;
   }
 

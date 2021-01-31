@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import java.io.IOException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.core5.http.HttpResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HttpClientMockTest {
 

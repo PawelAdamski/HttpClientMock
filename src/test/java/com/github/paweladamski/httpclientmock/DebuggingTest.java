@@ -2,15 +2,14 @@ package com.github.paweladamski.httpclientmock;
 
 import static com.github.paweladamski.httpclientmock.Requests.httpGet;
 import static com.github.paweladamski.httpclientmock.Requests.httpPost;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -18,15 +17,15 @@ import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DebuggingTest {
 
   private HttpClientMock httpClientMock;
   private TestDebugger debugger;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     debugger = new TestDebugger();
     httpClientMock = new HttpClientMock("http://localhost", debugger);
