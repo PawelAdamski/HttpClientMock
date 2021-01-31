@@ -18,7 +18,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HttpClientVerifyTest {
 
@@ -194,15 +195,16 @@ public class HttpClientVerifyTest {
         .notCalled();
   }
 
-  @Test(expected = Exception.class)
+  @Test
   public void should_throw_exception_when_number_of_calls_is_wrong() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock();
 
     httpClientMock.execute(httpPost("http://localhost?a=1"));
 
-    httpClientMock.verify()
-        .post("http://localhost?a=1#abc")
-        .called(2);
+    Assertions.assertThrows(
+        Exception.class,
+        () -> httpClientMock.verify().post("http://localhost?a=1#abc").called(2)
+    );
   }
 
   @Test
@@ -355,7 +357,5 @@ public class HttpClientVerifyTest {
         .withExtraFormParameters()
         .called();
   }
-
-
 
 }

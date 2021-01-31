@@ -1,23 +1,23 @@
 package com.github.paweladamski.httpclientmock.matchers;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ParametersMatcherTest {
 
   ParametersMatcher matcher;
   ArrayList<NameValuePair> actualParameters;
 
-  @Before
+  @BeforeEach
   public void setUp() {
     matcher = new ParametersMatcher();
     actualParameters = new ArrayList<>();

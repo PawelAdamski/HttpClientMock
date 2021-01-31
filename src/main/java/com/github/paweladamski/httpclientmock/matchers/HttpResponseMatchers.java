@@ -26,6 +26,19 @@ public final class HttpResponseMatchers {
     };
   }
 
+  public static Matcher<? super HttpResponse> hasNoEntity() {
+    return new BaseMatcher<HttpResponse>() {
+      public boolean matches(Object o) {
+        HttpResponse response = (HttpResponse) o;
+        return response.getEntity() == null;
+      }
+
+      public void describeTo(Description description) {
+        description.appendValue(null);
+      }
+    };
+  }
+
   public static Matcher<? super HttpResponse> hasReason(String expectedReason) {
     return new BaseMatcher<HttpResponse>() {
       public boolean matches(Object o) {

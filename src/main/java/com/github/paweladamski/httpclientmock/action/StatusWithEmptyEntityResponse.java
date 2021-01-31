@@ -10,25 +10,25 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 
-public class StatusResponse implements Action {
+public class StatusWithEmptyEntityResponse implements Action {
 
   private final Optional<Action> parentAction;
   private final int status;
   private final String reason;
 
-  public StatusResponse(int status) {
+  public StatusWithEmptyEntityResponse(int status) {
     this.status = status;
     this.reason = "";
     this.parentAction = Optional.empty();
   }
 
-  public StatusResponse(Action parentAction, int status) {
+  public StatusWithEmptyEntityResponse(Action parentAction, int status) {
     this.status = status;
     this.reason = "";
     this.parentAction = Optional.of(parentAction);
   }
 
-  public StatusResponse(Action parentAction, int status, String reason) {
+  public StatusWithEmptyEntityResponse(Action parentAction, int status, String reason) {
     this.status = status;
     this.reason = reason;
     this.parentAction = Optional.of(parentAction);

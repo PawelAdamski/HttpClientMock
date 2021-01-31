@@ -23,7 +23,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.message.BasicNameValuePair;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HttpClientMockBuilderTest {
 
@@ -491,7 +491,6 @@ public class HttpClientMockBuilderTest {
     HttpResponse response = httpClientMock.execute(request);
     assertThat(response, hasStatus(404));
   }
-
 
   @Test
   public void withFormParameter_should_Match_when_extraParameterIsPresentAndAllowExtraParametersIsTrue() throws IOException {

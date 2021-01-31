@@ -7,15 +7,15 @@ import static org.hamcrest.Matchers.equalTo;
 import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HttpClientMockTest {
 
   @Test
   public void should_run_requestInterceptors() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock();
-    httpClientMock.addRequestInterceptor((request,context)->request.addHeader("foo","bar"));
-    httpClientMock.onGet().withHeader("foo","bar").doReturn("ok");
+    httpClientMock.addRequestInterceptor((request, context) -> request.addHeader("foo", "bar"));
+    httpClientMock.onGet().withHeader("foo", "bar").doReturn("ok");
 
     HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost"));
     assertThat(ok, hasStatus(200));
@@ -24,7 +24,7 @@ public class HttpClientMockTest {
   @Test
   public void should_run_responseInterceptors() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock();
-    httpClientMock.addResponseInterceptor((request,context)->request.addHeader("foo","bar"));
+    httpClientMock.addResponseInterceptor((request, context) -> request.addHeader("foo", "bar"));
     httpClientMock.onGet().doReturn("ok");
 
     HttpResponse ok = httpClientMock.execute(new HttpGet("http://localhost"));

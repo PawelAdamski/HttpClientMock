@@ -288,11 +288,34 @@ public class HttpClientMockBuilder {
   }
 
   /**
-   * Adds action which returns empty message and provided status.
+   * Adds action which returns provided status and null entity.
    *
    * @param statusCode status to return
    * @return response builder
    */
+  public HttpClientResponseBuilder doReturnWithStatus(int statusCode) {
+    return responseBuilder.doReturnWithStatus(statusCode);
+  }
+
+  /**
+   * Adds action which returns provided status with reason and null entity.
+   *
+   * @param statusCode status to return
+   * @param reason reason to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnWithStatus(int statusCode, String reason) {
+    return responseBuilder.doReturnWithStatus(statusCode, reason);
+  }
+
+  /**
+   * Adds action which returns empty message and provided status.
+   *
+   * @param statusCode status to return
+   * @return response builder
+   * @deprecated use doReturnWithStatus instead
+   */
+  @Deprecated
   public HttpClientResponseBuilder doReturnStatus(int statusCode) {
     return responseBuilder.doReturnStatus(statusCode);
   }

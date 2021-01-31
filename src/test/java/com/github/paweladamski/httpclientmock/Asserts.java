@@ -1,6 +1,6 @@
 package com.github.paweladamski.httpclientmock;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 @SuppressWarnings("unchecked")
 class Asserts {
@@ -8,7 +8,7 @@ class Asserts {
   static <T extends Throwable> T assertThrows(Class<T> expected, ThrowingRunnable action) throws Exception {
     try {
       action.run();
-      Assert.fail("Did not throw expected " + expected.getSimpleName());
+      Assertions.fail("Did not throw expected " + expected.getSimpleName());
       return null; // never actually
     } catch (Exception actual) {
       if (!expected.isAssignableFrom(actual.getClass())) { // runtime '!(actual instanceof expected)'

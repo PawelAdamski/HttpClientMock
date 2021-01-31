@@ -13,7 +13,8 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.apache.http.entity.ContentType.APPLICATION_XML;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.github.paweladamski.httpclientmock.action.Action;
 import java.io.IOException;
@@ -33,8 +34,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicNameValuePair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HttpClientResponseBuilderTest {
 
@@ -146,11 +147,14 @@ public class HttpClientResponseBuilderTest {
     assertThat(response5, hasStatus(400));
   }
 
-  @Test(expected = IOException.class)
+  @Test
   public void should_throw_exception_when_throwing_action_matched() throws IOException {
     HttpClientMock httpClientMock = new HttpClientMock("http://localhost:8080");
     httpClientMock.onGet("/foo").doThrowException(new IOException());
-    httpClientMock.execute(new HttpGet("http://localhost:8080/foo"));
+    Assertions.assertThrows(
+        IOException.class,
+        ()-> httpClientMock.execute(new HttpGet("http://localhost:8080/foo"))
+    );
   }
 
   @Test
@@ -297,7 +301,7 @@ public class HttpClientResponseBuilderTest {
         .doReturnStatus(200);
 
     HttpResponse response = httpClientMock.execute(httpGet("http://localhost:8080/path2"));
-    Assert.assertThat(response, hasStatus(SC_NOT_FOUND));
+    assertThat(response, hasStatus(SC_NOT_FOUND));
   }
 
   @Test
@@ -314,7 +318,7 @@ public class HttpClientResponseBuilderTest {
     List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
 
     assertThat(response, hasStatus(200));
-    Assert.assertEquals(expected, actual);
+    assertEquals(expected, actual);
   }
 
   @Test
@@ -328,7 +332,7 @@ public class HttpClientResponseBuilderTest {
     List<NameValuePair> actual = URLEncodedUtils.parse(response.getEntity());
 
     assertThat(response, hasStatus(200));
-    Assert.assertEquals(expected, actual);
+    assertEquals(expected, actual);
   }
 
   private Action echo() {

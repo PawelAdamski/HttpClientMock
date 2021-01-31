@@ -7,7 +7,8 @@ import com.github.paweladamski.httpclientmock.action.Action;
 import com.github.paweladamski.httpclientmock.action.CookieAction;
 import com.github.paweladamski.httpclientmock.action.ExceptionAction;
 import com.github.paweladamski.httpclientmock.action.HeaderAction;
-import com.github.paweladamski.httpclientmock.action.StatusResponse;
+import com.github.paweladamski.httpclientmock.action.StatusWithEmptyEntityResponse;
+import com.github.paweladamski.httpclientmock.action.StatusWithNullEntityResponse;
 import com.github.paweladamski.httpclientmock.action.StringResponse;
 import com.github.paweladamski.httpclientmock.action.UrlEncodedFormEntityResponse;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class HttpClientResponseBuilder {
    */
   public HttpClientResponseBuilder withStatus(int statusCode) {
     Action lastAction = newRule.getLastAction();
-    StatusResponse statusAction = new StatusResponse(lastAction, statusCode);
+    StatusWithEmptyEntityResponse statusAction = new StatusWithEmptyEntityResponse(lastAction, statusCode);
     newRule.overrideLastAction(statusAction);
     return this;
   }
@@ -61,7 +62,7 @@ public class HttpClientResponseBuilder {
    */
   public HttpClientResponseBuilder withStatus(int statusCode, String statusReason) {
     Action lastAction = newRule.getLastAction();
-    StatusResponse statusAction = new StatusResponse(lastAction, statusCode, statusReason);
+    StatusWithEmptyEntityResponse statusAction = new StatusWithEmptyEntityResponse(lastAction, statusCode, statusReason);
     newRule.overrideLastAction(statusAction);
     return this;
   }
@@ -148,13 +149,39 @@ public class HttpClientResponseBuilder {
   }
 
   /**
-   * Adds action which returns empty message and provided status.
+   * Adds action which returns provided status and null entity.
    *
    * @param statusCode status to return
    * @return response builder
    */
+  public HttpClientResponseBuilder doReturnWithStatus(int statusCode) {
+    newRule.addAction(new StatusWithNullEntityResponse(statusCode));
+    return new HttpClientResponseBuilder(newRule);
+  }
+
+  /**
+   * Adds action which returns provided status with reason and null entity.
+   *
+   * @param statusCode status to return
+   * @param reason reason to return
+   * @return response builder
+   */
+  public HttpClientResponseBuilder doReturnWithStatus(int statusCode, String reason) {
+    newRule.addAction(new StatusWithNullEntityResponse(statusCode, reason));
+    return new HttpClientResponseBuilder(newRule);
+  }
+
+
+  /**
+   * Adds action which returns empty message and provided status.
+   *
+   * @param statusCode status to return
+   * @return response builder
+   * @deprecated use doReturnWithStatus instead
+   */
+  @Deprecated
   public HttpClientResponseBuilder doReturnStatus(int statusCode) {
-    newRule.addAction(new StatusResponse(statusCode));
+    newRule.addAction(new StatusWithEmptyEntityResponse(statusCode));
     return new HttpClientResponseBuilder(newRule);
   }
 
