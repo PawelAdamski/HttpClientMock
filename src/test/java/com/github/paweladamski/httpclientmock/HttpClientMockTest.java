@@ -6,7 +6,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.IOException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.junit.jupiter.api.Test;
 
 public class HttpClientMockTest {
@@ -31,4 +33,17 @@ public class HttpClientMockTest {
     assertThat(ok.getFirstHeader("foo").getValue(), equalTo("bar"));
   }
 
+  @Test
+  public void should_work_when_empty_content_type() throws IOException
+  {
+    HttpClientMock httpClientMock = new HttpClientMock();
+    httpClientMock.onPost("http://localhost/Orders(Id=1)/Cancel").doReturn(200, "");
+
+    HttpPost postReq = new HttpPost("http://localhost/Orders(Id=1)/Cancel");
+    postReq.setEntity(new ByteArrayEntity(new byte[0], null));
+    HttpResponse ok = httpClientMock.execute(postReq);
+
+    assertThat(ok, hasStatus(200));
+    httpClientMock.verify().post("http://localhost/Orders(Id=1)/Cancel").called();
+  }
 }

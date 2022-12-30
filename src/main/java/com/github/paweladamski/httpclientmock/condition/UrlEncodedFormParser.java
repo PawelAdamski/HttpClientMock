@@ -36,7 +36,7 @@ public class UrlEncodedFormParser {
        * request is not "application/x-www-form-urlencoded". So, requests with
        * other kinds of data in the body will correctly be ignored here.
        */
-      if (!entity.getContentType().contains(ContentType.APPLICATION_FORM_URLENCODED.getMimeType())) {
+      if (entity.getContentType() == null || !entity.getContentType().contains(ContentType.APPLICATION_FORM_URLENCODED.getMimeType())) {
         return Collections.emptyList();
       }
       String entityContent = EntityUtils.toString(entity);
