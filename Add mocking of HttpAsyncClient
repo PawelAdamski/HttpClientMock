@@ -1,0 +1,94 @@
+//Download something from the interwebs.
+
+
+public async Foo GetSomethingFromTheInternetAsync()
+{
+    
+    using (var httpClient = new HttpClient())
+    {
+        html = await httpClient.GetStringAsync("http://www.google.com.au");
+    }
+    
+}
+
+//Given an interface (if it existed)
+
+public interface IHttpClient
+{
+    Task<string> GetStringAsync(string requestUri);    
+}
+
+//code will now look like this
+
+public class SomeService(IHttpClient httpClient = null)
+{
+    public async Foo GetSomethingFromTheInternetAsync()
+    {
+        ....
+        using (var httpClient = _httpClient ?? new HttpClient()) // <-- CHANGE dotnet/corefx#1
+        {
+            html = await httpClient.GetStringAsync("http://www.google.com.au");
+        }
+        ....
+    } 
+}
+
+
+//then test class
+
+public async Task GivenAValidEndPoint_GetSomethingFromTheInternetAsync_ReturnsSomeData()
+{
+    // Create the Mock : FakeItEasy > Moq.
+    var httpClient = A.Fake<IHttpClient>();
+
+    // Define what the mock returns.
+    A.CallTo(()=>httpClient.GetStringAsync("http://www.google.com.au")).Returns("some html here");
+
+    // Inject the mock.
+    var service = new SomeService(httpClient);
+    ...
+}
+
+//Then, now with the current way...
+
+create a new Handler class - yes, a class!
+Inject the handler into the service
+public class SomeService(IHttpClient httpClient = null)
+{
+    public async Foo GetSomethingFromTheInternetAsync()
+    {
+        ....
+        using (var httpClient = _handler == null 
+                                    ? new HttpClient()
+                                    : new HttpClient(handler))
+        {
+            html = await httpClient.GetStringAsync("http://www.google.com.au");
+        }
+        ....
+    } 
+}
+public class FakeHttpMessageHandler : HttpClientHandler
+{
+ ...
+}
+
+public async Foo GetSomethingFromTheInternetAsync()
+{
+    string[] results;
+    using (var httpClient = new HttpClient())
+    {
+        var task1 = httpClient.GetStringAsync("http://www.google.com.au");
+        var task2 = httpClient.GetStringAsync("http://www.microsoft.com.au");
+
+        results = Task.WhenAll(task1, task2).Result;
+    }
+    ....
+}
+
+// Now,this can be made so much easier with this..
+
+var httpClient = A.Fake<IHttpClient>();
+A.CallTo(() = >httpClient.GetStringAsync("http://www.google.com.au"))
+    .Returns("gooz was here");
+A.CallTo(() = >httpClient.GetStringAsync("http://www.microsoft.com.au"))
+    .Returns("ms was here");
